@@ -8,6 +8,7 @@ from tqdm import tqdm
 import Bio
 import re
 import stats
+import itertools
 from denoise_functions import denoise_functions
 
 de = denoise_functions()
@@ -62,15 +63,21 @@ if de.part != 3:
         de.data_initial = de.data_initial.loc[(de.data_initial.loc[:, de.count] != 0)]
         if de.entropy:
             # remove seq out of mode length
+            de.data_initial.index = list(range(de.data_initial.shape[0]))
             seq_length = []
-            for i in de.data_initial.loc[:, de.seq]:
-                seq_length.append(len(i))
+            seq_length_per_read = []
+            for i in list(range(de.data_initial.shape[0])):
+                i_seq = de.data_initial.loc[i, de.seq]
+                i_count = de.data_initial.loc[i, de.count]
+                seq_length.append(len(i_seq))
+                seq_length_per_read.append([len(i_seq)]*i_count)
+            seq_length_per_read = list(itertools.chain.from_iterable(seq_length_per_read))
             try:
-                de.data_initial = de.data_initial.loc[(np.asarray(seq_length) == stats.mode(seq_length))]
+                de.data_initial = de.data_initial.loc[(np.asarray(seq_length) == stats.mode(seq_length_per_read))]
             except:
                 print('MOTU no available to run with Entropy. Equal number of seqs with different seq length')
                 exit()
-            del seq_length
+            del seq_length, seq_length_per_read
 
         # reorder index
         de.data_initial.index = list(range(de.data_initial.shape[0]))
@@ -291,7 +298,11 @@ if de.entropy:
     de.MOTUoutfile = str(de.MOTUoutfile + '_Adcorr')
 
 print('writing output_info')
-fieldnames = de.output_info[0].keys()
+if de.possibleMothers > 0:
+    fieldnames = de.output_info[0].keys()
+else:
+    fieldnames = de.output_info_2[0].keys()
+
 with open(str(de.MOTUoutfile + '_denoising_info.csv'), 'w') as output_file:
     dict_writer = csv.DictWriter(output_file, fieldnames=fieldnames)
     dict_writer.writeheader()
