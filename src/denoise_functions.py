@@ -165,10 +165,10 @@ class denoise_functions:
             elif current_argument in ("-y", "--entropy_influence"):
                 if current_value == "T":
                     self.entropy = True
+                    arg_y = True
+                    print("Is entropy taken into account: %s" % self.entropy)
                 else:
-                    self.entropy = False
-                arg_y = True
-                print("Is entropy taken into account: %s" % self.entropy)
+                    print("Is entropy taken into account: False")
 
         if 'arg_i' not in locals():
             print("Err: input file needed")
