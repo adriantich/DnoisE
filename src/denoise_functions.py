@@ -446,16 +446,22 @@ class denoise_functions:
     def difference(self, seq1, seq2):
         # està adaptat per al nostre fragment el qual comença en la posició 2
         difcount = 0
+        difpos1 = 0
+        difpos2 = 0
+        difpos3 = 0
         for i, o in enumerate(seq1):
             if o != seq2[i]:
                 dif_position = (i + self.initial_pos) % 3
                 if dif_position == 1:
                     difcount += self.Ad1
+                    difpos1 += 1
                 elif dif_position == 2:
                     difcount += self.Ad2
+                    difpos2 += 1
                 elif dif_position == 0:
                     difcount += self.Ad3
-        return difcount
+                    difpos3 += 1
+        return difcount, difpos1, difpos2, difpos3
 
     def denoising_Adcorrected(self, pos):
         pD = self.data_initial.loc[pos, 'id']
@@ -494,7 +500,7 @@ class denoise_functions:
                 # obtain d ---> external function:
                 # input: must be seq of both pM and pD
                 # output: d
-            d = self.difference(seq1=pDseq, seq2=pMseq)
+            d, difpos1, difpos2, difpos3 = self.difference(seq1=pDseq, seq2=pMseq)
             # if d:
             # if dd exist & d is higher than dd:
             # break go to next pM
@@ -515,7 +521,8 @@ class denoise_functions:
                 # add to Ml:
                 xavier_criteria = b_ratio / ((1 / 2) ** (self.alpha * d + 1))
                 df1 = [
-                    {'pM': pM, 'pMpos': pMpos, 'pD': pD, 'ratio': b_ratio, 'd': d, 'xavier_criteria': xavier_criteria}]
+                    {'pM': pM, 'pMpos': pMpos, 'pD': pD, 'ratio': b_ratio, 'd': d, 'xavier_criteria': xavier_criteria,
+                     'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3}]
                 Ml = Ml.append(df1)
                 # identification of the pM
                 # ratio
@@ -530,7 +537,8 @@ class denoise_functions:
         if Ml.empty:  # means that is not a daughter
             info = {'daughter': pD, 'mother_d': None, 'd': None,
                     'mother_ratio': None, 'ratio': None,
-                    'mother_xavier_criteria': None, 'xavier_criteria': None}
+                    'mother_xavier_criteria': None, 'xavier_criteria': None,
+                    'difpos1': None, 'difpos2': None, 'difpos3': None}
             self.runned_list.loc[pos, 'runned'] = True
             return [True], [info], [pD], [pD], [pD]
         else:  # it is a daughter
@@ -541,11 +549,15 @@ class denoise_functions:
             if type(pM_ratio) is not str:
                 pM_ratio = pM_ratio.values[-1]
             pM_ratio_d = Ml.loc[(Ml['xavier_criteria'] == min(Ml.loc[:, 'xavier_criteria'])), 'pM'][0]
+            difpos1 = Ml.loc[(Ml['xavier_criteria'] == min(Ml.loc[:, 'xavier_criteria'])), 'difpos1'][0]
+            difpos2 = Ml.loc[(Ml['xavier_criteria'] == min(Ml.loc[:, 'xavier_criteria'])), 'difpos2'][0]
+            difpos3 = Ml.loc[(Ml['xavier_criteria'] == min(Ml.loc[:, 'xavier_criteria'])), 'difpos3'][0]
             if type(pM_ratio_d) is not str:
                 pM_ratio_d = pM_ratio_d.values[-1]
             info = {'daughter': pD, 'mother_d': pM_d, 'd': min(Ml.loc[:, 'd']),
                     'mother_ratio': pM_ratio, 'ratio': min(Ml.loc[:, 'ratio']),
-                    'mother_xavier_criteria': pM_ratio_d, 'xavier_criteria': min(Ml.loc[:, 'xavier_criteria'])}
+                    'mother_xavier_criteria': pM_ratio_d, 'xavier_criteria': min(Ml.loc[:, 'xavier_criteria']),
+                    'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3}
             self.runned_list.loc[pos, 'daughter'] = True
             self.runned_list.loc[pos, 'runned'] = True
             return [False], [info], [pM_d], [pM_ratio], [pM_ratio_d]
@@ -597,7 +609,7 @@ class denoise_functions:
                 # obtain d ---> external function:
                 # input: must be seq of both pM and pD
                 # output: d
-            d = self.difference(pDseq, pMseq)
+            d, difpos1, difpos2, difpos3 = self.difference(seq1=pDseq, seq2=pMseq)
             # if d:
             # if dd exist & d is higher than dd:
             # break go to next pM
@@ -618,7 +630,8 @@ class denoise_functions:
                 # add to Ml:
                 xavier_criteria = b_ratio / ((1 / 2) ** (self.alpha * d + 1))
                 df1 = [
-                    {'pM': pM, 'pMpos': pMpos, 'pD': pD, 'ratio': b_ratio, 'd': d, 'xavier_criteria': xavier_criteria}]
+                    {'pM': pM, 'pMpos': pMpos, 'pD': pD, 'ratio': b_ratio, 'd': d, 'xavier_criteria': xavier_criteria,
+                     'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3}]
                 Ml = Ml.append(df1)
                 # identification of the pM
                 # ratio
@@ -632,7 +645,8 @@ class denoise_functions:
         if Ml.empty:  # means that is not a daughter
             info = {'daughter': pD, 'mother_d': None, 'd': None,
                     'mother_ratio': None, 'ratio': None,
-                    'mother_xavier_criteria': None, 'xavier_criteria': None}
+                    'mother_xavier_criteria': None, 'xavier_criteria': None,
+                    'difpos1': None, 'difpos2': None, 'difpos3': None}
             return True, info, pD, pD, pD
             # exist
         else:  # it is a daughter
@@ -643,11 +657,15 @@ class denoise_functions:
             if type(pM_ratio) is not str:
                 pM_ratio = pM_ratio.values[-1]
             pM_ratio_d = Ml.loc[(Ml['xavier_criteria'] == min(Ml.loc[:, 'xavier_criteria'])), 'pM'][0]
+            difpos1 = Ml.loc[(Ml['xavier_criteria'] == min(Ml.loc[:, 'xavier_criteria'])), 'difpos1'][0]
+            difpos2 = Ml.loc[(Ml['xavier_criteria'] == min(Ml.loc[:, 'xavier_criteria'])), 'difpos2'][0]
+            difpos3 = Ml.loc[(Ml['xavier_criteria'] == min(Ml.loc[:, 'xavier_criteria'])), 'difpos3'][0]
             if type(pM_ratio_d) is not str:
                 pM_ratio_d = pM_ratio_d.values[-1]
             info = {'daughter': pD, 'mother_d': pM_d, 'd': min(Ml.loc[:, 'd']),
                     'mother_ratio': pM_ratio, 'ratio': min(Ml.loc[:, 'ratio']),
-                    'mother_xavier_criteria': pM_ratio_d, 'xavier_criteria': min(Ml.loc[:, 'xavier_criteria'])}
+                    'mother_xavier_criteria': pM_ratio_d, 'xavier_criteria': min(Ml.loc[:, 'xavier_criteria']),
+                    'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3}
             return False, info, pM_d, pM_ratio, pM_ratio_d
 
     def mother_id(self, test, M):
