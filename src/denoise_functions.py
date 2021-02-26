@@ -471,7 +471,8 @@ class denoise_functions:
         if pos == 0:
             info = {'daughter': pD, 'mother_d': None, 'd': None,
                     'mother_ratio': None, 'ratio': None,
-                    'mother_xavier_criteria': None, 'xavier_criteria': None}
+                    'mother_xavier_criteria': None, 'xavier_criteria': None,
+                    'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3}]
             self.runned_list.loc[pos, 'runned'] = True
             # the return: good_seq / executed / info / denoised_d_output / denoised_ratio_output / denoised_ratio_d_output
             return [True], [info], [pD], [pD], [pD]
@@ -480,7 +481,8 @@ class denoise_functions:
         else:
             position = self.runned_list.shape[0]
             # create void list for pM info ---> Motherslist (Ml)
-        Ml = pd.DataFrame(columns=['pM', 'pMpos', 'pD', 'ratio', 'd', 'xavier_criteria'])
+        Ml = pd.DataFrame(columns=['pM', 'pMpos', 'pD', 'ratio', 'd', 'xavier_criteria',
+                     'difpos1', 'difpos2', 'difpos3'])
         # compare with each bigger seq possible Mother (pM).
         for a in range(position):
             # if the pM is running wait (this should be done with a while loop)
@@ -589,7 +591,8 @@ class denoise_functions:
         pDabund = self.data_initial.loc[pos, self.count]
         position = self.runned_list.shape[0]
         # create void list for pM info ---> Motherslist (Ml)
-        Ml = pd.DataFrame(columns=['pM', 'pMpos', 'pD', 'ratio', 'd', 'xavier_criteria'])
+        Ml = pd.DataFrame(columns=['pM', 'pMpos', 'pD', 'ratio', 'd', 'xavier_criteria',
+                     'difpos1', 'difpos2', 'difpos3'])
         # compare with each bigger seq possible Mother (pM).
         for a in range(position):
             # if the pM is running wait (this should be done with a while loop)
