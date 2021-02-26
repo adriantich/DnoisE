@@ -79,8 +79,8 @@ class denoise_functions:
                       "                     In part 1 a directory as database is named as --output\n"
                       "                     In part 2 (parallellitzable) this directory is removed and outputs are printed\n"
                       "                         Part 2 requires --input, --output and --cores if necessary\n"
-                      " -f --fasta_input logical, if T, fasta file as input, if F (default) .csv as input\n"
-                      " -F --fasta_output logical, if T, fasta file as input, if F (default) .csv as input\n"
+                      " -f --fasta_input logical, if T (default), fasta file as input, if F .csv as input\n"
+                      " -F --fasta_output logical, if T (default), fasta file as input, if F .csv as input\n"
                       " -c --cores number of cores, 1 by default\n"
                       " -s --start_sample_cols first sample column (1 == 1st col) if not given, just total read count expected\n"
                       " -z --end_sample_cols first sample column (1 == 1st col) if not given, just total read count expected\n"
@@ -472,7 +472,7 @@ class denoise_functions:
             info = {'daughter': pD, 'mother_d': None, 'd': None,
                     'mother_ratio': None, 'ratio': None,
                     'mother_xavier_criteria': None, 'xavier_criteria': None,
-                    'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3}]
+                    'difpos1': None, 'difpos2': None, 'difpos3': None}]
             self.runned_list.loc[pos, 'runned'] = True
             # the return: good_seq / executed / info / denoised_d_output / denoised_ratio_output / denoised_ratio_d_output
             return [True], [info], [pD], [pD], [pD]
