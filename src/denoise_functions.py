@@ -472,7 +472,7 @@ class denoise_functions:
             info = {'daughter': pD, 'mother_d': None, 'd': None,
                     'mother_ratio': None, 'ratio': None,
                     'mother_xavier_criteria': None, 'xavier_criteria': None,
-                    'difpos1': None, 'difpos2': None, 'difpos3': None}]
+                    'difpos1': None, 'difpos2': None, 'difpos3': None}
             self.runned_list.loc[pos, 'runned'] = True
             # the return: good_seq / executed / info / denoised_d_output / denoised_ratio_output / denoised_ratio_d_output
             return [True], [info], [pD], [pD], [pD]
