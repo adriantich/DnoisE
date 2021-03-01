@@ -44,7 +44,7 @@ class denoise_functions:
     q8 = 0
     q9 = 0
     q10 = 0
-    initial_pos = 2
+    initial_pos = 3
     justcount = True
     abund_col_names = []
     first_col_names = []
