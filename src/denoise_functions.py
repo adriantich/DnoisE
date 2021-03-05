@@ -524,7 +524,7 @@ class denoise_functions:
                 xavier_criteria = b_ratio / ((1 / 2) ** (self.alpha * d + 1))
                 df1 = [
                     {'pM': pM, 'pMpos': pMpos, 'pD': pD, 'ratio': b_ratio, 'd': d, 'xavier_criteria': xavier_criteria,
-                     'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3}]
+                     'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3}
                 Ml = Ml.append(df1)
                 # identification of the pM
                 # ratio
