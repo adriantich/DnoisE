@@ -472,7 +472,7 @@ class denoise_functions:
             info = {'daughter': pD, 'mother_d': None, 'd': None,
                     'mother_ratio': None, 'ratio': None,
                     'mother_xavier_criteria': None, 'xavier_criteria': None,
-                    'difpos1': None, 'difpos2': None, 'difpos3': None}]
+                    'difpos1': None, 'difpos2': None, 'difpos3': None}
             self.runned_list.loc[pos, 'runned'] = True
             # the return: good_seq / executed / info / denoised_d_output / denoised_ratio_output / denoised_ratio_d_output
             return [True], [info], [pD], [pD], [pD]
@@ -524,7 +524,7 @@ class denoise_functions:
                 xavier_criteria = b_ratio / ((1 / 2) ** (self.alpha * d + 1))
                 df1 = [
                     {'pM': pM, 'pMpos': pMpos, 'pD': pD, 'ratio': b_ratio, 'd': d, 'xavier_criteria': xavier_criteria,
-                     'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3}
+                     'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3}]
                 Ml = Ml.append(df1)
                 # identification of the pM
                 # ratio
