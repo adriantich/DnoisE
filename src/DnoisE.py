@@ -42,7 +42,7 @@ if de.part != 3:
 
         # define alpha and minimum min_mother reads
 
-        de.min_mother = 1 / (1 / 2) ** (de.alpha * min(de.Ad1, de.Ad2, de.Ad3) + 1)
+        de.min_mother = 1 / (1 / 2) ** (de.alpha * 1 + 1 + (min(de.Ad1, de.Ad2, de.Ad3)-1) * 1)
         print('min_mother equals to %s' % de.min_mother)
         print('and Ad corr:')
         print(de.Ad1, de.Ad2, de.Ad3)
