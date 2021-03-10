@@ -5,7 +5,8 @@ import multiprocessing as mp
 import csv
 import sys
 from tqdm import tqdm
-import Bio
+from needed_modules.Bio import SeqIO
+# from Bio import SeqIO
 import re
 import stats
 import itertools
@@ -29,9 +30,10 @@ if de.part != 3:
         print('reading input file')
         if de.fasta:
             # data_initial = pd.DataFrame()
-            for fastaseq in Bio.SeqIO.parse("fasta.fasta", "fasta"):
+            for fastaseq in SeqIO.parse(de.MOTUfile, "fasta"):
                 seq_seq = fastaseq.seq._data
-                seq_id = re.findall('(.+); ', fastaseq.description)[0]
+                print(fastaseq.description)
+                seq_id = re.findall('(.+);', fastaseq.description)[0]
                 seq_count = re.findall('size=(.+);', fastaseq.description)[0]
                 de.data_initial = pd.concat(
                     [de.data_initial, pd.DataFrame({"id": seq_id, "count": int(seq_count), "sequence": [seq_seq]})])
