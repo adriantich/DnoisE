@@ -9,10 +9,9 @@ import sys
 
 
 class denoise_functions:
-    not_possibleMothers = 0
-    possibleMothers = 0
     data_initial = pd.DataFrame()
-    runned_list = pd.DataFrame()
+    runned_list = []
+    runned_list_2 = []
     alpha = 5
     min_mother = 20
     Ad1 = 0.8379801130824722
@@ -237,43 +236,33 @@ class denoise_functions:
                 self.Ad3 = E3 / (E1 + E2 + E3) * 3
 
     def quartiles_runned(self):
-        q = self.not_possibleMothers - 1 - self.possibleMothers
+        q = self.data_initial.shape[0]
 
-        self.q1 = int(q * 1 / 10) + self.possibleMothers
-        self.q2 = int(q * 2 / 10) + self.possibleMothers
-        self.q3 = int(q * 3 / 10) + self.possibleMothers
-        self.q4 = int(q * 4 / 10) + self.possibleMothers
-        self.q5 = int(q * 5 / 10) + self.possibleMothers
-        self.q6 = int(q * 6 / 10) + self.possibleMothers
-        self.q7 = int(q * 7 / 10) + self.possibleMothers
-        self.q8 = int(q * 8 / 10) + self.possibleMothers
-        self.q9 = int(q * 9 / 10) + self.possibleMothers
-        self.q10 = self.not_possibleMothers - 1
+        self.q1 = int(q * 1 / 10)
+        self.q2 = int(q * 2 / 10)
+        self.q3 = int(q * 3 / 10)
+        self.q4 = int(q * 4 / 10)
+        self.q5 = int(q * 5 / 10)
+        self.q6 = int(q * 6 / 10)
+        self.q7 = int(q * 7 / 10)
+        self.q8 = int(q * 8 / 10)
+        self.q9 = int(q * 9 / 10)
+        self.q10 = q - 1
 
     def denoising(self, pos):
         pD = self.data_initial.loc[pos, 'id']
         pDseq = self.data_initial.loc[pos, self.seq]
         pDabund = self.data_initial.loc[pos, self.count]
-        if pos == 0:
-            info = {'daughter': pD, 'mother_d': None, 'd': None,
-                    'mother_ratio': None, 'ratio': None,
-                    'mother_xavier_criteria': None, 'xavier_criteria': None}
-            self.runned_list.loc[pos, 'runned'] = True
-            # the return: good_seq / executed / info / denoised_d_output / denoised_ratio_output / denoised_ratio_d_output
-            return [True], [info], [pD], [pD], [pD]
-        if pD in list(self.runned_list.loc[:, 'id']):
-            position = self.runned_list[self.runned_list['id'] == pD].index.tolist()[0]
-        else:
-            position = self.runned_list.shape[0]
+        position = len(self.runned_list)
             # create void list for pM info ---> Motherslist (Ml)
         Ml = pd.DataFrame(columns=['pM', 'pMpos', 'pD', 'ratio', 'd', 'xavier_criteria'])
         # compare with each bigger seq possible Mother (pM).
         for a in range(position):
             # if the pM is running wait (this should be done with a while loop)
             # if the pM is daughter break to the next pM
-            if self.runned_list.loc[a].at['daughter']:
+            if self.runned_list[a].get('daughter'):
                 continue
-            pM = self.runned_list.iloc[a, 0]
+            pM = self.runned_list[a].get('id')
             pMpos = a
             pMseq = self.data_initial.loc[pMpos, self.seq]
             pMabund = self.data_initial.loc[pMpos, self.count]
@@ -323,8 +312,8 @@ class denoise_functions:
             info = {'daughter': pD, 'mother_d': None, 'd': None,
                     'mother_ratio': None, 'ratio': None,
                     'mother_xavier_criteria': None, 'xavier_criteria': None}
-            self.runned_list.loc[pos, 'runned'] = True
-            return [True], [info], [pD], [pD], [pD]
+            runned_list = {'id': pD, self.count: pDabund, 'runned': True, 'daughter': False}
+            return [True], [info], [pD], [pD], [pD], [runned_list]
         else:  # it is a daughter
             # print pD name to each pM depending on different criteria
             # _mothers_d
@@ -338,9 +327,8 @@ class denoise_functions:
             info = {'daughter': pD, 'mother_d': pM_d, 'd': min(Ml.loc[:, 'd']),
                     'mother_ratio': pM_ratio, 'ratio': min(Ml.loc[:, 'ratio']),
                     'mother_xavier_criteria': pM_ratio_d, 'xavier_criteria': min(Ml.loc[:, 'xavier_criteria'])}
-            self.runned_list.loc[pos, 'daughter'] = True
-            self.runned_list.loc[pos, 'runned'] = True
-            return [False], [info], [pM_d], [pM_ratio], [pM_ratio_d]
+            runned_list = {'id': pD, self.count: pDabund, 'runned': True, 'daughter': True}
+            return [False], [info], [pM_d], [pM_ratio], [pM_ratio_d], [runned_list]
 
     def denoising_parallel(self, pos):
 
@@ -368,16 +356,16 @@ class denoise_functions:
         pD = self.data_initial.loc[pos, 'id']
         pDseq = self.data_initial.loc[pos, self.seq]
         pDabund = self.data_initial.loc[pos, self.count]
-        position = self.runned_list.shape[0]
+        position = len(self.runned_list)
         # create void list for pM info ---> Motherslist (Ml)
         Ml = pd.DataFrame(columns=['pM', 'pMpos', 'pD', 'ratio', 'd', 'xavier_criteria'])
         # compare with each bigger seq possible Mother (pM).
         for a in range(position):
             # if the pM is running wait (this should be done with a while loop)
             # if the pM is daughter break to the next pM
-            if self.runned_list.iloc[a].at['daughter']:
+            if self.runned_list[a].get('daughter'):
                 continue
-            pM = self.runned_list.iloc[a, 0]
+            pM = self.runned_list[a].get('id')
             pMpos = a
             pMseq = self.data_initial.loc[pMpos, self.seq]
             pMabund = self.data_initial.loc[pMpos, self.count]
@@ -426,7 +414,8 @@ class denoise_functions:
             info = {'daughter': pD, 'mother_d': None, 'd': None,
                     'mother_ratio': None, 'ratio': None,
                     'mother_xavier_criteria': None, 'xavier_criteria': None}
-            return True, info, pD, pD, pD
+            runned_list = {'id': pD, self.count: pDabund, 'runned': True, 'daughter': False}
+            return True, info, pD, pD, pD, runned_list
             # exist
         else:  # it is a daughter
             # print pD name to each pM depending on different criteria
@@ -441,8 +430,8 @@ class denoise_functions:
             info = {'daughter': pD, 'mother_d': pM_d, 'd': min(Ml.loc[:, 'd']),
                     'mother_ratio': pM_ratio, 'ratio': min(Ml.loc[:, 'ratio']),
                     'mother_xavier_criteria': pM_ratio_d, 'xavier_criteria': min(Ml.loc[:, 'xavier_criteria'])}
-            return False, info, pM_d, pM_ratio, pM_ratio_d
-
+            runned_list = {'id': pD, self.count: pDabund, 'runned': True, 'daughter': True}
+            return False, info, pM_d, pM_ratio, pM_ratio_d, runned_list
 
     def difference(self, seq1, seq2):
         # està adaptat per al nostre fragment el qual comença en la posició 2
@@ -468,29 +457,17 @@ class denoise_functions:
         pD = self.data_initial.loc[pos, 'id']
         pDseq = self.data_initial.loc[pos, self.seq]
         pDabund = self.data_initial.loc[pos, self.count]
-
-        if pos == 0:
-            info = {'daughter': pD, 'mother_d': None, 'd': None,
-                    'mother_ratio': None, 'ratio': None,
-                    'mother_xavier_criteria': None, 'xavier_criteria': None,
-                    'difpos1': None, 'difpos2': None, 'difpos3': None}
-            self.runned_list.loc[pos, 'runned'] = True
-            # the return: good_seq / executed / info / denoised_d_output / denoised_ratio_output / denoised_ratio_d_output
-            return [True], [info], [pD], [pD], [pD]
-        if pD in list(self.runned_list.loc[:, 'id']):
-            position = self.runned_list[self.runned_list['id'] == pD].index.tolist()[0]
-        else:
-            position = self.runned_list.shape[0]
-            # create void list for pM info ---> Motherslist (Ml)
+        position = len(self.runned_list)
+        # create void list for pM info ---> Motherslist (Ml)
         Ml = pd.DataFrame(columns=['pM', 'pMpos', 'pD', 'ratio', 'd', 'xavier_criteria',
                                    'difpos1', 'difpos2', 'difpos3'])
         # compare with each bigger seq possible Mother (pM).
         for a in range(position):
             # if the pM is running wait (this should be done with a while loop)
             # if the pM is daughter break to the next pM
-            if self.runned_list.loc[a].at['daughter']:
+            if self.runned_list[a].get('daughter'):
                 continue
-            pM = self.runned_list.iloc[a, 0]
+            pM = self.runned_list[a].get('id')
             pMpos = a
             pMseq = self.data_initial.loc[pMpos, self.seq]
             pMabund = self.data_initial.loc[pMpos, self.count]
@@ -542,8 +519,8 @@ class denoise_functions:
                     'mother_ratio': None, 'ratio': None,
                     'mother_xavier_criteria': None, 'xavier_criteria': None,
                     'difpos1': None, 'difpos2': None, 'difpos3': None}
-            self.runned_list.loc[pos, 'runned'] = True
-            return [True], [info], [pD], [pD], [pD]
+            runned_list = {'id': pD, self.count: pDabund, 'runned': True, 'daughter': False}
+            return [True], [info], [pD], [pD], [pD], [runned_list]
         else:  # it is a daughter
             # print pD name to each pM depending on different criteria
             # _mothers_d
@@ -561,9 +538,8 @@ class denoise_functions:
                     'mother_ratio': pM_ratio, 'ratio': min(Ml.loc[:, 'ratio']),
                     'mother_xavier_criteria': pM_ratio_d, 'xavier_criteria': min(Ml.loc[:, 'xavier_criteria']),
                     'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3}
-            self.runned_list.loc[pos, 'daughter'] = True
-            self.runned_list.loc[pos, 'runned'] = True
-            return [False], [info], [pM_d], [pM_ratio], [pM_ratio_d]
+            runned_list = {'id': pD, self.count: pDabund, 'runned': True, 'daughter': True}
+            return [False], [info], [pM_d], [pM_ratio], [pM_ratio_d], [runned_list]
 
     def denoising_Adcorrected_parallel(self, pos):
         if pos == self.q1:
@@ -590,7 +566,7 @@ class denoise_functions:
         pD = self.data_initial.loc[pos, 'id']
         pDseq = self.data_initial.loc[pos, self.seq]
         pDabund = self.data_initial.loc[pos, self.count]
-        position = self.runned_list.shape[0]
+        position = len(self.runned_list)
         # create void list for pM info ---> Motherslist (Ml)
         Ml = pd.DataFrame(columns=['pM', 'pMpos', 'pD', 'ratio', 'd', 'xavier_criteria',
                                    'difpos1', 'difpos2', 'difpos3'])
@@ -598,9 +574,9 @@ class denoise_functions:
         for a in range(position):
             # if the pM is running wait (this should be done with a while loop)
             # if the pM is daughter break to the next pM
-            if self.runned_list.iloc[a].at['daughter']:
+            if self.runned_list[a].get('daughter'):
                 continue
-            pM = self.runned_list.iloc[a, 0]
+            pM = self.runned_list[a].get('id')
             pMpos = a
             pMseq = self.data_initial.loc[pMpos, self.seq]
             pMabund = self.data_initial.loc[pMpos, self.count]
@@ -651,7 +627,8 @@ class denoise_functions:
                     'mother_ratio': None, 'ratio': None,
                     'mother_xavier_criteria': None, 'xavier_criteria': None,
                     'difpos1': None, 'difpos2': None, 'difpos3': None}
-            return True, info, pD, pD, pD
+            runned_list = {'id': pD, self.count: pDabund, 'runned': True, 'daughter': False}
+            return True, info, pD, pD, pD, runned_list
             # exist
         else:  # it is a daughter
             # print pD name to each pM depending on different criteria
@@ -670,7 +647,8 @@ class denoise_functions:
                     'mother_ratio': pM_ratio, 'ratio': min(Ml.loc[:, 'ratio']),
                     'mother_xavier_criteria': pM_ratio_d, 'xavier_criteria': min(Ml.loc[:, 'xavier_criteria']),
                     'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3}
-            return False, info, pM_d, pM_ratio, pM_ratio_d
+            runned_list = {'id': pD, self.count: pDabund, 'runned': True, 'daughter': True}
+            return False, info, pM_d, pM_ratio, pM_ratio_d, runned_list
 
     # def difference(self, seq1, seq2):
     #     # està adaptat per al nostre fragment el qual comença en la posició 2
@@ -920,9 +898,6 @@ class denoise_functions:
         variables = {"entropy": self.entropy,
                      "cores": self.cores,
                      "alpha": self.alpha,
-                     "min_mother": self.min_mother,
-                     "possibleMothers": self.possibleMothers,
-                     "not_possibleMothers": self.not_possibleMothers,
                      "MOTUfile": self.MOTUfile,
                      "MOTUoutfile": self.MOTUoutfile,
                      "justcount": self.justcount,
@@ -951,7 +926,7 @@ class denoise_functions:
             self.data_initial.to_json(doc_json, orient='table')
 
         with open(str(directory + '/runned_list.json'), 'w') as doc_json:
-            self.runned_list.to_json(doc_json, orient='table')
+            json.dump(str(self.runned_list), doc_json)
 
         with open(str(directory + '/good_seq.json'), 'w') as doc_json:
             json.dump(str(self.good_seq), doc_json)
@@ -968,53 +943,6 @@ class denoise_functions:
         with open(str(directory + '/denoised_ratio_d_output.json'), 'w') as doc_json:
             json.dump(str(self.denoised_ratio_d_output), doc_json)
 
-    def read_variables(self):
-        directory = str(self.MOTUoutfile + '_dir')
-
-        with open(str(directory + '/variables.json'), 'r') as doc_json:
-            variables = literal_eval(json.load(doc_json))
-
-        with open(str(directory + '/data_initial.json'), 'r') as doc_json:
-            self.data_initial = pd.read_json(doc_json, orient='table')
-
-        with open(str(directory + '/runned_list.json'), 'r') as doc_json:
-            self.runned_list = pd.read_json(doc_json, orient='table')
-
-        with open(str(directory + '/good_seq.json'), 'r') as doc_json:
-            self.good_seq = literal_eval(json.load(doc_json))
-
-        with open(str(directory + '/output_info.json'), 'r') as doc_json:
-            self.output_info = literal_eval(json.load(doc_json))
-
-        with open(str(directory + '/denoised_d.json'), 'r') as doc_json:
-            self.denoised_d_output = literal_eval(json.load(doc_json))
-
-        with open(str(directory + '/denoised_ratio.json'), 'r') as doc_json:
-            self.denoised_ratio_output = literal_eval(json.load(doc_json))
-
-        with open(str(directory + '/denoised_ratio_d_output.json'), 'r') as doc_json:
-            self.denoised_ratio_d_output = literal_eval(json.load(doc_json))
-
-        self.entropy = variables['entropy']
-        self.cores = variables['cores']
-        self.alpha = variables['alpha']
-        self.min_mother = variables['min_mother']
-        self.possibleMothers = variables['possibleMothers']
-        self.not_possibleMothers = variables['not_possibleMothers']
-        self.justcount = variables['justcount']
-        self.abund_col_names = variables['abund_col_names']
-        self.first_col_names = variables['first_col_names']
-        self.seq = variables['seq']
-        self.count = variables['count']
-        self.fasta_output = variables['fasta_output']
-
-        if variables['entropy']:
-            self.Ad1 = variables['Ad1']
-            self.Ad2 = variables['Ad2']
-            self.Ad3 = variables['Ad3']
-
-        # shutil.rmtree(directory, ignore_errors=True)
-
     def read_variables2(self):
         directory = str(self.MOTUoutfile + '_dir')
         # part 1
@@ -1025,7 +953,7 @@ class denoise_functions:
             self.data_initial = pd.read_json(doc_json, orient='table')
 
         with open(str(directory + '/runned_list.json'), 'r') as doc_json:
-            self.runned_list = pd.read_json(doc_json, orient='table')
+            self.runned_list = literal_eval(json.load(doc_json))
 
         with open(str(directory + '/good_seq.json'), 'r') as doc_json:
             self.good_seq = literal_eval(json.load(doc_json))
@@ -1042,27 +970,10 @@ class denoise_functions:
         with open(str(directory + '/denoised_ratio_d_output.json'), 'r') as doc_json:
             self.denoised_ratio_d_output = literal_eval(json.load(doc_json))
         # part 2
-        with open(str(directory + '/good_seq_daughters.json'), 'r') as doc_json:
-            self.good_seq_2 = literal_eval(json.load(doc_json))
-
-        with open(str(directory + '/output_info_daughters.json'), 'r') as doc_json:
-            self.output_info_2 = literal_eval(json.load(doc_json))
-
-        with open(str(directory + '/denoised_d_daughters.json'), 'r') as doc_json:
-            self.denoised_d_output_2 = literal_eval(json.load(doc_json))
-
-        with open(str(directory + '/denoised_ratio_daughters.json'), 'r') as doc_json:
-            self.denoised_ratio_output_2 = literal_eval(json.load(doc_json))
-
-        with open(str(directory + '/denoised_ratio_d_output_daughters.json'), 'r') as doc_json:
-            self.denoised_ratio_d_output_2 = literal_eval(json.load(doc_json))
 
         self.entropy = variables['entropy']
         self.cores = variables['cores']
         self.alpha = variables['alpha']
-        self.min_mother = variables['min_mother']
-        self.possibleMothers = variables['possibleMothers']
-        self.not_possibleMothers = variables['not_possibleMothers']
         self.justcount = variables['justcount']
         self.abund_col_names = variables['abund_col_names']
         self.first_col_names = variables['first_col_names']
@@ -1077,48 +988,3 @@ class denoise_functions:
 
         # shutil.rmtree(directory, ignore_errors=True)
 
-    def write_outputs(self):
-
-        directory = str(self.MOTUoutfile + '_dir')
-
-        print(str('outputs in ' + directory))
-
-        if not os.path.isdir(directory):
-            os.mkdir(directory)
-
-        if not os.path.isfile(str(directory + '/data_initial.json')):
-            with open(str(directory + '/data_initial.json'), 'w') as doc_json:
-                self.data_initial.to_json(doc_json, orient='table')
-        if not os.path.isfile(str(directory + '/runned_list.json')):
-            with open(str(directory + '/runned_list.json'), 'w') as doc_json:
-                self.runned_list.to_json(doc_json, orient='table')
-        if not os.path.isfile(str(directory + '/good_seq.json')):
-            with open(str(directory + '/good_seq.json'), 'w') as doc_json:
-                json.dump(str(self.good_seq), doc_json)
-        if not os.path.isfile(str(directory + '/output_info.json')):
-            with open(str(directory + '/output_info.json'), 'w') as doc_json:
-                json.dump(str(self.output_info), doc_json)
-        if not os.path.isfile(str(directory + '/denoised_d.json')):
-            with open(str(directory + '/denoised_d.json'), 'w') as doc_json:
-                json.dump(str(self.denoised_d_output), doc_json)
-        if not os.path.isfile(str(directory + '/denoised_ratio.json')):
-            with open(str(directory + '/denoised_ratio.json'), 'w') as doc_json:
-                json.dump(str(self.denoised_ratio_output), doc_json)
-        if not os.path.isfile(str(directory + '/denoised_ratio_d_output.json')):
-            with open(str(directory + '/denoised_ratio_d_output.json'), 'w') as doc_json:
-                json.dump(str(self.denoised_ratio_d_output), doc_json)
-
-        with open(str(directory + '/good_seq_daughters.json'), 'w') as doc_json:
-            json.dump(str(self.good_seq_2), doc_json)
-
-        with open(str(directory + '/output_info_daughters.json'), 'w') as doc_json:
-            json.dump(str(self.output_info_2), doc_json)
-
-        with open(str(directory + '/denoised_d_daughters.json'), 'w') as doc_json:
-            json.dump(str(self.denoised_d_output_2), doc_json)
-
-        with open(str(directory + '/denoised_ratio_daughters.json'), 'w') as doc_json:
-            json.dump(str(self.denoised_ratio_output_2), doc_json)
-
-        with open(str(directory + '/denoised_ratio_d_output_daughters.json'), 'w') as doc_json:
-            json.dump(str(self.denoised_ratio_d_output_2), doc_json)
