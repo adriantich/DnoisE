@@ -194,7 +194,7 @@ if de.part != 3:
 
             del (de.cores, de.alpha, de.min_mother)
         else:
-            for pos in tqdm(range(1,de.data_initial.shape[0])):
+            for pos in tqdm(range(1, de.data_initial.shape[0])):
                 [de.good_seq[len(de.good_seq):],
                  de.output_info[len(de.output_info):],
                  de.denoised_d_output[len(de.denoised_d_output):],
