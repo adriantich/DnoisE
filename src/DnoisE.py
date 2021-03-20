@@ -130,9 +130,9 @@ if de.part != 3:
                 if run_to == len(de.runned_list):
                     run_to += 1
                 de.quartiles_runned()
-                pool = mp.Pool(de.cores)
                 print('running until %s reads' % de.min_mother)
                 print(len(de.runned_list) / de.data_initial.shape[0] * 100, '%')
+                pool = mp.Pool(de.cores)
                 [de.good_seq_2,
                  de.output_info_2,
                  de.denoised_d_output_2,
@@ -141,14 +141,16 @@ if de.part != 3:
                  de.runned_list_2] = zip(*pool.map(de.denoising_Adcorrected_parallel, [pos for pos in
                                                                                        range(len(de.runned_list),
                                                                                              run_to)]))
+                pool.close()
                 de.good_seq.extend(list(de.good_seq_2))
                 de.output_info.extend(list(de.output_info_2))
                 de.denoised_d_output.extend(list(de.denoised_d_output_2))
                 de.denoised_ratio_output.extend(list(de.denoised_ratio_output_2))
                 de.denoised_ratio_d_output.extend(list(de.denoised_ratio_d_output_2))
                 de.runned_list.extend(list(de.runned_list_2))
+                print('runned until %s reads' % de.min_mother)
+                print(len(de.runned_list) / de.data_initial.shape[0] * 100, '%')
 
-                pool.close()
             del (pool, de.cores, de.alpha, de.min_mother)
         else:
             for pos in tqdm(range(1, de.data_initial.shape[0])):
@@ -167,9 +169,9 @@ if de.part != 3:
                 if run_to == len(de.runned_list):
                     run_to += 1
                 de.quartiles_runned()
-                pool = mp.Pool(de.cores)
                 print('running until %s reads' % de.min_mother)
                 print(len(de.runned_list)/de.data_initial.shape[0] *100, '%')
+                pool = mp.Pool(de.cores)
                 [de.good_seq_2,
                  de.output_info_2,
                  de.denoised_d_output_2,
@@ -178,14 +180,16 @@ if de.part != 3:
                  de.runned_list_2] = zip(*pool.map(de.denoising_parallel, [pos for pos in
                                                                            range(len(de.runned_list),
                                                                                  run_to)]))
+                pool.close()
                 de.good_seq.extend(list(de.good_seq_2))
                 de.output_info.extend(list(de.output_info_2))
                 de.denoised_d_output.extend(list(de.denoised_d_output_2))
                 de.denoised_ratio_output.extend(list(de.denoised_ratio_output_2))
                 de.denoised_ratio_d_output.extend(list(de.denoised_ratio_d_output_2))
                 de.runned_list.extend(list(de.runned_list_2))
+                print('runned until %s reads' % de.min_mother)
+                print(len(de.runned_list) / de.data_initial.shape[0] * 100, '%')
 
-                pool.close()
             del (pool, de.cores, de.alpha, de.min_mother)
         else:
             for pos in tqdm(range(1,de.data_initial.shape[0])):
