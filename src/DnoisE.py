@@ -142,6 +142,7 @@ if de.part != 3:
                                                                                        range(len(de.runned_list),
                                                                                              run_to)]))
                 pool.close()
+                del pool
                 de.good_seq.extend(list(de.good_seq_2))
                 de.output_info.extend(list(de.output_info_2))
                 de.denoised_d_output.extend(list(de.denoised_d_output_2))
@@ -151,7 +152,7 @@ if de.part != 3:
                 print('runned until %s reads' % de.min_mother)
                 print(len(de.runned_list) / de.data_initial.shape[0] * 100, '%')
 
-            del (pool, de.cores, de.alpha, de.min_mother)
+            del (de.cores, de.alpha, de.min_mother)
         else:
             for pos in tqdm(range(1, de.data_initial.shape[0])):
                 [de.good_seq[len(de.good_seq):],
@@ -181,6 +182,7 @@ if de.part != 3:
                                                                            range(len(de.runned_list),
                                                                                  run_to)]))
                 pool.close()
+                del pool
                 de.good_seq.extend(list(de.good_seq_2))
                 de.output_info.extend(list(de.output_info_2))
                 de.denoised_d_output.extend(list(de.denoised_d_output_2))
@@ -190,7 +192,7 @@ if de.part != 3:
                 print('runned until %s reads' % de.min_mother)
                 print(len(de.runned_list) / de.data_initial.shape[0] * 100, '%')
 
-            del (pool, de.cores, de.alpha, de.min_mother)
+            del (de.cores, de.alpha, de.min_mother)
         else:
             for pos in tqdm(range(1,de.data_initial.shape[0])):
                 [de.good_seq[len(de.good_seq):],
