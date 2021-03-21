@@ -151,6 +151,8 @@ if de.part != 3:
                 de.runned_list.extend(list(de.runned_list_2))
                 print('runned until %s reads' % de.min_mother)
                 print(len(de.runned_list) / de.data_initial.shape[0] * 100, '%')
+                del (de.good_seq_2, de.output_info_2, de.denoised_d_output_2, de.denoised_ratio_output_2,
+                     de.denoised_ratio_d_output_2, de.runned_list_2)
 
             del (de.cores, de.alpha, de.min_mother)
         else:
@@ -171,7 +173,7 @@ if de.part != 3:
                     run_to += 1
                 de.quartiles_runned()
                 print('running until %s reads' % de.min_mother)
-                print(len(de.runned_list)/de.data_initial.shape[0] *100, '%')
+                print(len(de.runned_list)/de.data_initial.shape[0] * 100, '%')
                 pool = mp.Pool(de.cores)
                 [de.good_seq_2,
                  de.output_info_2,
@@ -191,6 +193,8 @@ if de.part != 3:
                 de.runned_list.extend(list(de.runned_list_2))
                 print('runned until %s reads' % de.min_mother)
                 print(len(de.runned_list) / de.data_initial.shape[0] * 100, '%')
+                del (de.good_seq_2, de.output_info_2, de.denoised_d_output_2, de.denoised_ratio_output_2,
+                     de.denoised_ratio_d_output_2, de.runned_list_2)
 
             del (de.cores, de.alpha, de.min_mother)
         else:
