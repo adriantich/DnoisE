@@ -51,6 +51,7 @@ if de.part != 3:
         # print('min_mother equals to %s' % de.min_mother)
         print('and Ad corr:')
         print(de.Ad1, de.Ad2, de.Ad3)
+        de.max_ratio = (1 / 2) ** (de.alpha * 1 * min(de.Ad1, de.Ad2, de.Ad3) + 1)
         # the program should work with different seq_length, if not, filter and get de mode
 
         # obtain a column with total reads per seq.
@@ -124,8 +125,7 @@ if de.part != 3:
     if de.entropy:
         if de.cores > 1:
             while len(de.runned_list) < de.data_initial.shape[0]:
-                de.min_mother = de.runned_list[-1].get(de.count) * (1 / 2) ** (
-                            de.alpha * 1 * min(de.Ad1, de.Ad2, de.Ad3) + 1)
+                de.min_mother = de.runned_list[-1].get(de.count) * de.max_ratio
                 run_to = sum(de.data_initial.loc[:, de.count] > de.min_mother)
                 if run_to == len(de.runned_list):
                     run_to += 1
@@ -167,7 +167,7 @@ if de.part != 3:
     else:
         if de.cores > 1:
             while len(de.runned_list) < de.data_initial.shape[0]:
-                de.min_mother = de.runned_list[-1].get(de.count) * (1 / 2) ** (de.alpha * 1 * min(de.Ad1, de.Ad2, de.Ad3) + 1)
+                de.min_mother = de.runned_list[-1].get(de.count) * de.max_ratio
                 run_to = sum(de.data_initial.loc[:, de.count] > de.min_mother)
                 if run_to == len(de.runned_list):
                     run_to += 1

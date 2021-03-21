@@ -13,10 +13,11 @@ class denoise_functions:
     runned_list = []
     runned_list_2 = []
     alpha = 5
-    min_mother = 20
     Ad1 = 0.8379801130824722
     Ad2 = 0.357379606161045
     Ad3 = 0.8379801130824722
+    max_ratio = (1 / 2) ** (alpha * 1 * min(Ad1, Ad2, Ad3) + 1)
+    min_mother = 1/max_ratio
     MOTUfile = ""
     good_seq = []
     output_info = []
@@ -270,7 +271,7 @@ class denoise_functions:
             b_ratio = pDabund / pMabund
             # if ratio is less than minimum (1/64)
             # break comparing with more pM
-            if b_ratio > (1 / self.min_mother):
+            if b_ratio > self.max_ratio:
                 break
                 # obtain d ---> external function:
                 # input: must be seq of both pM and pD
@@ -373,7 +374,7 @@ class denoise_functions:
             b_ratio = pDabund / pMabund
             # if ratio is less than minimum (1/64)
             # break comparing with more pM
-            if b_ratio > (1 / self.min_mother):
+            if b_ratio > self.max_ratio:
                 break
                 # obtain d ---> external function:
                 # input: must be seq of both pM and pD
@@ -475,7 +476,7 @@ class denoise_functions:
             b_ratio = pDabund / pMabund
             # if ratio is less than minimum (1/64)
             # break comparing with more pM
-            if b_ratio > (1 / self.min_mother):
+            if b_ratio > self.max_ratio:
                 break
                 # obtain d ---> external function:
                 # input: must be seq of both pM and pD
@@ -584,7 +585,7 @@ class denoise_functions:
             b_ratio = pDabund / pMabund
             # if ratio is less than minimum (1/64)
             # break comparing with more pM
-            if b_ratio > (1 / self.min_mother):
+            if b_ratio > self.max_ratio:
                 break
                 # obtain d ---> external function:
                 # input: must be seq of both pM and pD
@@ -898,6 +899,7 @@ class denoise_functions:
         variables = {"entropy": self.entropy,
                      "cores": self.cores,
                      "alpha": self.alpha,
+                     "max_ratio": self.max_ratio,
                      "MOTUfile": self.MOTUfile,
                      "MOTUoutfile": self.MOTUoutfile,
                      "justcount": self.justcount,
@@ -974,6 +976,7 @@ class denoise_functions:
         self.entropy = variables['entropy']
         self.cores = variables['cores']
         self.alpha = variables['alpha']
+        self.max_ratio = variables['max_ratio']
         self.justcount = variables['justcount']
         self.abund_col_names = variables['abund_col_names']
         self.first_col_names = variables['first_col_names']
