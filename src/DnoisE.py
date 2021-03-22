@@ -5,9 +5,8 @@ import multiprocessing as mp
 import csv
 import sys
 from tqdm import tqdm
-from needed_modules.Bio import SeqIO
-# from Bio import SeqIO
-import re
+# from needed_modules.Bio import SeqIO
+# import re
 import stats
 import itertools
 from denoise_functions import denoise_functions
@@ -20,7 +19,10 @@ full_cmd_arguments = sys.argv
 # Keep all but the first
 # argument_list = ['-i', '/home/adriantich/Nextcloud/1_tesi_Adrià/Denoise/PHY1bis_final_subset.csv', '-o', '/home/adriantich/Nextcloud/1_tesi_Adrià/Denoise/PHY1bis_final_subset.csv_Adcorr_nou',
 #                  '-P', '3', '-f', 'F', '-F', 'F', '-c', '2', '-n', 'reads', '-a', '5', '-q', 'seq', '-p', '2', '-e', '0.4727,0.2266,1.0212', '-y', 'T']
-argument_list = full_cmd_arguments[1:]
+
+argument_list = ['-i', '/home/adriantich/Nextcloud/1_tesi_Adrià/test_DnoisE/PHY1bis_final.fa', '-o', '/home/adriantich/Nextcloud/1_tesi_Adrià/test_DnoisE/PHY1bis_final.fa_Adcorr_nou',
+                 '-f', 'T', '-F', 'T', '-c', '2', '-n', 'size', '-a', '5', '-y', 'F']
+# argument_list = full_cmd_arguments[1:]
 
 print(argument_list)
 de.read_parameters(argument_list)
@@ -32,13 +34,15 @@ if de.part != 3:
         print('reading input file')
         if de.fasta:
             # data_initial = pd.DataFrame()
-            for fastaseq in SeqIO.parse(de.MOTUfile, "fasta"):
-                seq_seq = fastaseq.seq._data
-                print(fastaseq.description)
-                seq_id = re.findall('(.+);', fastaseq.description)[0]
-                seq_count = re.findall('size=(.+);', fastaseq.description)[0]
-                de.data_initial = pd.concat(
-                    [de.data_initial, pd.DataFrame({"id": seq_id, "count": int(seq_count), "sequence": [seq_seq]})])
+            input_file = pd.read_csv(de.MOTUfile, sep=';', header=None)
+            seqs = list(input_file.loc[list(range(1, input_file.shape[0], 2)), 0])
+            ids = list(input_file.loc[list(range(0, input_file.shape[0], 2)), 0])
+            size = list(input_file.loc[list(range(0, input_file.shape[0], 2)), 1])
+            de.data_initial = pd.DataFrame({'id': ids, de.count: size, de.seq: seqs})
+            de.data_initial = de.data_initial.replace(to_replace='>', value='', regex=True)
+            de.data_initial = de.data_initial.replace(to_replace='size=', value='', regex=True)
+            del input_file, seqs, ids, size
+
         else:
             de.data_initial = pd.read_csv(de.MOTUfile, sep=de.sep)
 
