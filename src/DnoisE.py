@@ -104,9 +104,13 @@ if de.part != 3:
         ###
         ###
         #first position is always the same
-        de.denoised_d_output = [de.data_initial.loc[0, 'id']]
-        de.denoised_ratio_output = [de.data_initial.loc[0, 'id']]
-        de.denoised_ratio_d_output = [de.data_initial.loc[0, 'id']]
+        if de.output_type == 'ratio':
+            de.denoised_ratio_output = [de.data_initial.loc[0, 'id']]
+        else:
+            de.denoised_d_output = [de.data_initial.loc[0, 'id']]
+            de.denoised_ratio_output = [de.data_initial.loc[0, 'id']]
+            de.denoised_ratio_d_output = [de.data_initial.loc[0, 'id']]
+
         if de.entropy:
             de.output_info = [{'daughter': de.data_initial.loc[0, 'id'], 'mother_d': None, 'd': None,
                                'mother_ratio': None, 'ratio': None,
@@ -128,87 +132,158 @@ if de.part != 3:
         # programm or test whether a seq is A. or B. to run the last part of the code
     if de.entropy:
         if de.cores > 1:
-            while len(de.runned_list) < de.data_initial.shape[0]:
-                de.min_mother = de.runned_list[-1].get(de.count) * de.max_ratio
-                run_to = sum(de.data_initial.loc[:, de.count] > de.min_mother)
-                if run_to == len(de.runned_list):
-                    run_to += 1
-                de.quartiles_runned()
-                print('running until %s reads' % de.min_mother)
-                print(len(de.runned_list) / de.data_initial.shape[0] * 100, '%')
-                pool = mp.Pool(de.cores)
-                [de.good_seq_2,
-                 de.output_info_2,
-                 de.denoised_d_output_2,
-                 de.denoised_ratio_output_2,
-                 de.denoised_ratio_d_output_2,
-                 de.runned_list_2] = zip(*pool.map(de.denoising_Adcorrected_parallel, [pos for pos in
-                                                                                       range(len(de.runned_list),
-                                                                                             run_to)]))
-                pool.close()
-                del pool
-                de.good_seq.extend(list(de.good_seq_2))
-                de.output_info.extend(list(de.output_info_2))
-                de.denoised_d_output.extend(list(de.denoised_d_output_2))
-                de.denoised_ratio_output.extend(list(de.denoised_ratio_output_2))
-                de.denoised_ratio_d_output.extend(list(de.denoised_ratio_d_output_2))
-                de.runned_list.extend(list(de.runned_list_2))
-                print('runned until %s reads' % de.min_mother)
-                print(len(de.runned_list) / de.data_initial.shape[0] * 100, '%')
-                del (de.good_seq_2, de.output_info_2, de.denoised_d_output_2, de.denoised_ratio_output_2,
-                     de.denoised_ratio_d_output_2, de.runned_list_2)
+            if de.output_type == 'ratio':
+                while len(de.runned_list) < de.data_initial.shape[0]:
+                    de.min_mother = de.runned_list[-1].get(de.count) * de.max_ratio
+                    run_to = sum(de.data_initial.loc[:, de.count] > de.min_mother)
+                    if run_to == len(de.runned_list):
+                        run_to += 1
+                    de.quartiles_runned()
+                    print('running until %s reads' % de.min_mother)
+                    print(len(de.runned_list) / de.data_initial.shape[0] * 100, '%')
+                    pool = mp.Pool(de.cores)
+                    [de.good_seq_2,
+                     de.output_info_2,
+                     de.denoised_ratio_output_2,
+                     de.runned_list_2] = zip(*pool.map(de.denoising_Adcorrected_parallel_ratio, [pos for pos in
+                                                                                                 range(len(de.runned_list),
+                                                                                                       run_to)]))
+                    pool.close()
+                    del pool
+                    de.good_seq.extend(list(de.good_seq_2))
+                    de.output_info.extend(list(de.output_info_2))
+                    de.denoised_ratio_output.extend(list(de.denoised_ratio_output_2))
+                    de.runned_list.extend(list(de.runned_list_2))
+                    print('runned until %s reads' % de.min_mother)
+                    print(len(de.runned_list) / de.data_initial.shape[0] * 100, '%')
+                    del (de.good_seq_2, de.output_info_2, de.denoised_d_output_2, de.denoised_ratio_output_2,
+                         de.denoised_ratio_d_output_2, de.runned_list_2)
 
+            else:
+                while len(de.runned_list) < de.data_initial.shape[0]:
+                    de.min_mother = de.runned_list[-1].get(de.count) * de.max_ratio
+                    run_to = sum(de.data_initial.loc[:, de.count] > de.min_mother)
+                    if run_to == len(de.runned_list):
+                        run_to += 1
+                    de.quartiles_runned()
+                    print('running until %s reads' % de.min_mother)
+                    print(len(de.runned_list) / de.data_initial.shape[0] * 100, '%')
+                    pool = mp.Pool(de.cores)
+                    [de.good_seq_2,
+                     de.output_info_2,
+                     de.denoised_d_output_2,
+                     de.denoised_ratio_output_2,
+                     de.denoised_ratio_d_output_2,
+                     de.runned_list_2] = zip(*pool.map(de.denoising_Adcorrected_parallel, [pos for pos in
+                                                                                           range(len(de.runned_list),
+                                                                                                 run_to)]))
+                    pool.close()
+                    del pool
+                    de.good_seq.extend(list(de.good_seq_2))
+                    de.output_info.extend(list(de.output_info_2))
+                    de.denoised_d_output.extend(list(de.denoised_d_output_2))
+                    de.denoised_ratio_output.extend(list(de.denoised_ratio_output_2))
+                    de.denoised_ratio_d_output.extend(list(de.denoised_ratio_d_output_2))
+                    de.runned_list.extend(list(de.runned_list_2))
+                    print('runned until %s reads' % de.min_mother)
+                    print(len(de.runned_list) / de.data_initial.shape[0] * 100, '%')
+                    del (de.good_seq_2, de.output_info_2, de.denoised_d_output_2, de.denoised_ratio_output_2,
+                         de.denoised_ratio_d_output_2, de.runned_list_2)
             del (de.cores, de.alpha, de.min_mother)
         else:
-            for pos in tqdm(range(1, de.data_initial.shape[0])):
-                [de.good_seq[len(de.good_seq):],
-                 de.output_info[len(de.output_info):],
-                 de.denoised_d_output[len(de.denoised_d_output):],
-                 de.denoised_ratio_output[len(de.denoised_ratio_output):],
-                 de.denoised_ratio_d_output[len(de.denoised_ratio_d_output):],
-                 de.runned_list[len(de.runned_list):]] = de.denoising_Adcorrected(pos)
+            if de.output_type == 'ratio':
+                for pos in tqdm(range(1, de.data_initial.shape[0])):
+                    [de.good_seq[len(de.good_seq):],
+                     de.output_info[len(de.output_info):],
+                     de.denoised_ratio_output[len(de.denoised_ratio_output):],
+                     de.runned_list[len(de.runned_list):]] = de.denoising_Adcorrected_ratio(pos)
+
+            else:
+                for pos in tqdm(range(1, de.data_initial.shape[0])):
+                    [de.good_seq[len(de.good_seq):],
+                     de.output_info[len(de.output_info):],
+                     de.denoised_d_output[len(de.denoised_d_output):],
+                     de.denoised_ratio_output[len(de.denoised_ratio_output):],
+                     de.denoised_ratio_d_output[len(de.denoised_ratio_d_output):],
+                     de.runned_list[len(de.runned_list):]] = de.denoising_Adcorrected(pos)
+
 
     else:
         if de.cores > 1:
-            while len(de.runned_list) < de.data_initial.shape[0]:
-                de.min_mother = de.runned_list[-1].get(de.count) * de.max_ratio
-                run_to = sum(de.data_initial.loc[:, de.count] > de.min_mother)
-                if run_to == len(de.runned_list):
-                    run_to += 1
-                de.quartiles_runned()
-                print('running until %s reads' % de.min_mother)
-                print(len(de.runned_list)/de.data_initial.shape[0] * 100, '%')
-                pool = mp.Pool(de.cores)
-                [de.good_seq_2,
-                 de.output_info_2,
-                 de.denoised_d_output_2,
-                 de.denoised_ratio_output_2,
-                 de.denoised_ratio_d_output_2,
-                 de.runned_list_2] = zip(*pool.map(de.denoising_parallel, [pos for pos in
-                                                                           range(len(de.runned_list),
-                                                                                 run_to)]))
-                pool.close()
-                del pool
-                de.good_seq.extend(list(de.good_seq_2))
-                de.output_info.extend(list(de.output_info_2))
-                de.denoised_d_output.extend(list(de.denoised_d_output_2))
-                de.denoised_ratio_output.extend(list(de.denoised_ratio_output_2))
-                de.denoised_ratio_d_output.extend(list(de.denoised_ratio_d_output_2))
-                de.runned_list.extend(list(de.runned_list_2))
-                print('runned until %s reads' % de.min_mother)
-                print(len(de.runned_list) / de.data_initial.shape[0] * 100, '%')
-                del (de.good_seq_2, de.output_info_2, de.denoised_d_output_2, de.denoised_ratio_output_2,
-                     de.denoised_ratio_d_output_2, de.runned_list_2)
-
+            if de.output_type == 'ratio':
+                while len(de.runned_list) < de.data_initial.shape[0]:
+                    de.min_mother = de.runned_list[-1].get(de.count) * de.max_ratio
+                    run_to = sum(de.data_initial.loc[:, de.count] > de.min_mother)
+                    if run_to == len(de.runned_list):
+                        run_to += 1
+                    de.quartiles_runned()
+                    print('running until %s reads' % de.min_mother)
+                    print(len(de.runned_list) / de.data_initial.shape[0] * 100, '%')
+                    pool = mp.Pool(de.cores)
+                    [de.good_seq_2,
+                     de.output_info_2,
+                     de.denoised_ratio_output_2,
+                     de.runned_list_2] = zip(*pool.map(de.denoising_parallel_ratio(), [pos for pos in
+                                                                                       range(len(de.runned_list),
+                                                                                             run_to)]))
+                    pool.close()
+                    del pool
+                    de.good_seq.extend(list(de.good_seq_2))
+                    de.output_info.extend(list(de.output_info_2))
+                    de.denoised_d_output.extend(list(de.denoised_d_output_2))
+                    de.denoised_ratio_output.extend(list(de.denoised_ratio_output_2))
+                    de.denoised_ratio_d_output.extend(list(de.denoised_ratio_d_output_2))
+                    de.runned_list.extend(list(de.runned_list_2))
+                    print('runned until %s reads' % de.min_mother)
+                    print(len(de.runned_list) / de.data_initial.shape[0] * 100, '%')
+                    del (de.good_seq_2, de.output_info_2, de.denoised_d_output_2, de.denoised_ratio_output_2,
+                         de.denoised_ratio_d_output_2, de.runned_list_2)
+            else:
+                while len(de.runned_list) < de.data_initial.shape[0]:
+                    de.min_mother = de.runned_list[-1].get(de.count) * de.max_ratio
+                    run_to = sum(de.data_initial.loc[:, de.count] > de.min_mother)
+                    if run_to == len(de.runned_list):
+                        run_to += 1
+                    de.quartiles_runned()
+                    print('running until %s reads' % de.min_mother)
+                    print(len(de.runned_list) / de.data_initial.shape[0] * 100, '%')
+                    pool = mp.Pool(de.cores)
+                    [de.good_seq_2,
+                     de.output_info_2,
+                     de.denoised_d_output_2,
+                     de.denoised_ratio_output_2,
+                     de.denoised_ratio_d_output_2,
+                     de.runned_list_2] = zip(*pool.map(de.denoising_parallel, [pos for pos in
+                                                                               range(len(de.runned_list),
+                                                                                     run_to)]))
+                    pool.close()
+                    del pool
+                    de.good_seq.extend(list(de.good_seq_2))
+                    de.output_info.extend(list(de.output_info_2))
+                    de.denoised_d_output.extend(list(de.denoised_d_output_2))
+                    de.denoised_ratio_output.extend(list(de.denoised_ratio_output_2))
+                    de.denoised_ratio_d_output.extend(list(de.denoised_ratio_d_output_2))
+                    de.runned_list.extend(list(de.runned_list_2))
+                    print('runned until %s reads' % de.min_mother)
+                    print(len(de.runned_list) / de.data_initial.shape[0] * 100, '%')
+                    del (de.good_seq_2, de.output_info_2, de.denoised_d_output_2, de.denoised_ratio_output_2,
+                         de.denoised_ratio_d_output_2, de.runned_list_2)
             del (de.cores, de.alpha, de.min_mother)
         else:
-            for pos in tqdm(range(1, de.data_initial.shape[0])):
-                [de.good_seq[len(de.good_seq):],
-                 de.output_info[len(de.output_info):],
-                 de.denoised_d_output[len(de.denoised_d_output):],
-                 de.denoised_ratio_output[len(de.denoised_ratio_output):],
-                 de.denoised_ratio_d_output[len(de.denoised_ratio_d_output):],
-                 de.runned_list[len(de.runned_list):]] = de.denoising(pos)
+            if de.output_type == 'ratio':
+                for pos in tqdm(range(1, de.data_initial.shape[0])):
+                    [de.good_seq[len(de.good_seq):],
+                     de.output_info[len(de.output_info):],
+                     de.denoised_ratio_output[len(de.denoised_ratio_output):],
+                     de.runned_list[len(de.runned_list):]] = de.denoising_ratio(pos)
+            else:
+                for pos in tqdm(range(1, de.data_initial.shape[0])):
+                    [de.good_seq[len(de.good_seq):],
+                     de.output_info[len(de.output_info):],
+                     de.denoised_d_output[len(de.denoised_d_output):],
+                     de.denoised_ratio_output[len(de.denoised_ratio_output):],
+                     de.denoised_ratio_d_output[len(de.denoised_ratio_d_output):],
+                     de.runned_list[len(de.runned_list):]] = de.denoising(pos)
 
     de.write_variables()
 
@@ -233,82 +308,85 @@ de.data_initial = de.data_initial.set_index(de.data_initial.loc[:, 'id'])
 
 good_mothers = de.data_initial.loc[de.good_seq][de.first_col_names + de.abund_col_names + [de.seq]]
 
-print('writing output_d')
-# writing d
-denoised_d = pd.DataFrame(columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
+if (de.output_type == 'ratio') or (de.output_type == 'all'):
+    print('writing output_ratio')
+    # writing ratio
+    denoised_ratio = pd.DataFrame(columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
 
-for mother in good_mothers.loc[:, 'id']:
-    row = [good_mothers[list(good_mothers.loc[:, 'id'] == mother)][de.first_col_names].values.tolist()[0] +
-           list(de.data_initial.loc[[de.mother_id(x, mother) for x in list(
-               de.denoised_d_output)], de.abund_col_names].sum(0)) +
-           good_mothers[list(good_mothers.loc[:, 'id'] == mother)][de.seq].values.tolist()]
-    row = pd.Series(row[0], index=[de.first_col_names + de.abund_col_names + [de.seq]][0])
-    denoised_d = denoised_d.append(row, ignore_index=True)
+    for mother in good_mothers.loc[:, 'id']:
+        row = [good_mothers[list(good_mothers.loc[:, 'id'] == mother)][de.first_col_names].values.tolist()[0] +
+               list(de.data_initial.loc[[de.mother_id(x, mother) for x in list(
+                   de.denoised_ratio_output)], de.abund_col_names].sum(0)) +
+               good_mothers[list(good_mothers.loc[:, 'id'] == mother)][de.seq].values.tolist()]
+        row = pd.Series(row[0], index=[de.first_col_names + de.abund_col_names + [de.seq]][0])
+        denoised_ratio = denoised_ratio.append(row, ignore_index=True)
+
+    if de.fasta_output:
+        denoised_ratio = denoised_ratio.to_dict(orient='index')
+        ofile = open(str(de.MOTUoutfile + '_denoised_ratio.fasta'), "w")
+        for i in range(len(denoised_ratio)):
+            ofile.write(">" + denoised_ratio[i]['id'] + ';size=' + str(denoised_ratio[i]['count']) +
+                        ";\n" + denoised_ratio[i]['sequence'].upper() + "\n")
+        # do not forget to close it
+        ofile.close()
+    else:
+        denoised_ratio.to_csv(str(de.MOTUoutfile + '_denoised_ratio.csv'), index=False)
+
+    del (denoised_ratio, de.denoised_ratio_output)
+
+if (de.output_type == 'd') or (de.output_type == 'all'):
+    print('writing output_d')
+    # writing d
+    denoised_d = pd.DataFrame(columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
+
+    for mother in good_mothers.loc[:, 'id']:
+        row = [good_mothers[list(good_mothers.loc[:, 'id'] == mother)][de.first_col_names].values.tolist()[0] +
+               list(de.data_initial.loc[[de.mother_id(x, mother) for x in list(
+                   de.denoised_d_output)], de.abund_col_names].sum(0)) +
+               good_mothers[list(good_mothers.loc[:, 'id'] == mother)][de.seq].values.tolist()]
+        row = pd.Series(row[0], index=[de.first_col_names + de.abund_col_names + [de.seq]][0])
+        denoised_d = denoised_d.append(row, ignore_index=True)
+
+    if de.fasta_output:
+        denoised_d = denoised_d.to_dict(orient='index')
+        ofile = open(str(de.MOTUoutfile + '_denoised_d.fasta'), "w")
+        for i in range(len(denoised_d)):
+            ofile.write(">" + denoised_d[i]['id'] + ';size=' + str(denoised_d[i]['count']) + ";\n" +
+                        denoised_d[i]['sequence'].upper() + "\n")
+        # do not forget to close it
+        ofile.close()
+    else:
+        denoised_d.to_csv(str(de.MOTUoutfile + '_denoised_d.csv'), index=False)
+
+    del (denoised_d, de.denoised_d_output)
 
 
-if de.fasta_output:
-    denoised_d = denoised_d.to_dict(orient='index')
-    ofile = open(str(de.MOTUoutfile + '_denoised_d.fasta'), "w")
-    for i in range(len(denoised_d)):
-        ofile.write(">" + denoised_d[i]['id'] + ';size=' + str(denoised_d[i]['count']) + ";\n" +
-                    denoised_d[i]['sequence'].upper() + "\n")
-    # do not forget to close it
-    ofile.close()
-else:
-    denoised_d.to_csv(str(de.MOTUoutfile + '_denoised_d.csv'), index=False)
-
-del(denoised_d, de.denoised_d_output)
 
 
-print('writing output_ratio')
-# writing ratio
-denoised_ratio = pd.DataFrame(columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
+if (de.output_type == 'ratio_d') or (de.output_type == 'all'):
+    print('writing output_ratio_d')
+    # writing ratio_d
+    denoised_ratio_d = pd.DataFrame(columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
 
-for mother in good_mothers.loc[:, 'id']:
-    row = [good_mothers[list(good_mothers.loc[:, 'id'] == mother)][de.first_col_names].values.tolist()[0] +
-           list(de.data_initial.loc[[de.mother_id(x, mother) for x in list(
-               de.denoised_ratio_output)], de.abund_col_names].sum(0)) +
-           good_mothers[list(good_mothers.loc[:, 'id'] == mother)][de.seq].values.tolist()]
-    row = pd.Series(row[0], index=[de.first_col_names + de.abund_col_names + [de.seq]][0])
-    denoised_ratio = denoised_ratio.append(row, ignore_index=True)
+    for mother in good_mothers.loc[:, 'id']:
+        row = [good_mothers[list(good_mothers.loc[:, 'id'] == mother)][de.first_col_names].values.tolist()[0] +
+               list(de.data_initial.loc[[de.mother_id(x, mother) for x in list(
+                   de.denoised_ratio_d_output)], de.abund_col_names].sum(0)) +
+               good_mothers[list(good_mothers.loc[:, 'id'] == mother)][de.seq].values.tolist()]
+        row = pd.Series(row[0], index=[de.first_col_names + de.abund_col_names + [de.seq]][0])
+        denoised_ratio_d = denoised_ratio_d.append(row, ignore_index=True)
 
-if de.fasta_output:
-    denoised_ratio = denoised_ratio.to_dict(orient='index')
-    ofile = open(str(de.MOTUoutfile + '_denoised_ratio.fasta'), "w")
-    for i in range(len(denoised_ratio)):
-        ofile.write(">" + denoised_ratio[i]['id'] + ';size=' + str(denoised_ratio[i]['count']) +
-                    ";\n" + denoised_ratio[i]['sequence'].upper() + "\n")
-    # do not forget to close it
-    ofile.close()
-else:
-    denoised_ratio.to_csv(str(de.MOTUoutfile + '_denoised_ratio.csv'), index=False)
+    if de.fasta_output:
+        denoised_ratio_d = denoised_ratio_d.to_dict(orient='index')
+        ofile = open(str(de.MOTUoutfile + '_denoised_ratio_d.fasta'), "w")
+        for i in range(len(denoised_ratio_d)):
+            ofile.write(">" + denoised_ratio_d[i]['id'] + ';size=' + str(denoised_ratio_d[i]['count']) +
+                        ";\n" + denoised_ratio_d[i]['sequence'].upper() + "\n")
+        # do not forget to close it
+        ofile.close()
+    else:
+        denoised_ratio_d.to_csv(str(de.MOTUoutfile + '_denoised_ratio_d.csv'), index=False)
 
-del(denoised_ratio, de.denoised_ratio_output)
-
-
-print('writing output_ratio_d')
-# writing ratio_d
-denoised_ratio_d = pd.DataFrame(columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
-
-for mother in good_mothers.loc[:, 'id']:
-    row = [good_mothers[list(good_mothers.loc[:, 'id'] == mother)][de.first_col_names].values.tolist()[0] +
-           list(de.data_initial.loc[[de.mother_id(x, mother) for x in list(
-               de.denoised_ratio_d_output)], de.abund_col_names].sum(0)) +
-           good_mothers[list(good_mothers.loc[:, 'id'] == mother)][de.seq].values.tolist()]
-    row = pd.Series(row[0], index=[de.first_col_names + de.abund_col_names + [de.seq]][0])
-    denoised_ratio_d = denoised_ratio_d.append(row, ignore_index=True)
-
-if de.fasta_output:
-    denoised_ratio_d = denoised_ratio_d.to_dict(orient='index')
-    ofile = open(str(de.MOTUoutfile + '_denoised_ratio_d.fasta'), "w")
-    for i in range(len(denoised_ratio_d)):
-        ofile.write(">" + denoised_ratio_d[i]['id'] + ';size=' + str(denoised_ratio_d[i]['count']) +
-                    ";\n" + denoised_ratio_d[i]['sequence'].upper() + "\n")
-    # do not forget to close it
-    ofile.close()
-else:
-    denoised_ratio_d.to_csv(str(de.MOTUoutfile + '_denoised_ratio_d.csv'), index=False)
-
-del(denoised_ratio_d, de.denoised_ratio_d_output)
+    del (denoised_ratio_d, de.denoised_ratio_d_output)
 
 print('done')
