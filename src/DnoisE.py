@@ -224,7 +224,7 @@ if de.part != 3:
                     [de.good_seq_2,
                      de.output_info_2,
                      de.denoised_ratio_output_2,
-                     de.runned_list_2] = zip(*pool.map(de.denoising_parallel_ratio(), [pos for pos in
+                     de.runned_list_2] = zip(*pool.map(de.denoising_parallel_ratio, [pos for pos in
                                                                                        range(len(de.runned_list),
                                                                                              run_to)]))
                     pool.close()
