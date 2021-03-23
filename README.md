@@ -18,3 +18,7 @@ Pros versus Unoise:
 4 - It also accepts both .csv and .fasta inputs and can return both too. 
 
 5 - DnoisE allows to user to choose the joining method. As derived from Edgar's equation (beta(d)=.5^(alpha\*d+1)), Unoise algorithm joins incorrect sequences to the most abundant mother sequence that satisfies the equation (ratio criteria). From our point of view this can lead to an overjoining of sequences to the most abundant one. We have developed an algorithm that returns two extra types of joining criteria outputs. The first one (d criteria) joins sequences to the most similar and most abundant sequence. The later, joins sequences to that for which the ratio abundance divided per beta(d) is the lowest (ratio_d criteria).
+
+
+*INPUT FILES*
+Input files can be as both .csv format and .fasta
