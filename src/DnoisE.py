@@ -17,12 +17,12 @@ de = denoise_functions()
 full_cmd_arguments = sys.argv
 
 # Keep all but the first
-# argument_list = ['-i', '/home/adriantich/Nextcloud/1_tesi_Adrià/Denoise/PHY1bis_final_subset.csv', '-o', '/home/adriantich/Nextcloud/1_tesi_Adrià/Denoise/PHY1bis_final_subset.csv_Adcorr_nou',
-#                  '-P', '3', '-f', 'F', '-F', 'F', '-c', '2', '-n', 'reads', '-a', '5', '-q', 'seq', '-p', '2', '-e', '0.4727,0.2266,1.0212', '-y', 'T']
+argument_list = ['-i', '/home/adriantich/Nextcloud/1_tesi_Adrià/Denoise/PHY1bis_final_subset.csv', '-o', '/home/adriantich/Nextcloud/1_tesi_Adrià/Denoise/PHY1bis_final_subset.csv_Adcorr_nou',
+                 '-P', '3', '-f', 'F', '-F', 'F', '-c', '2', '-n', 'reads', '-a', '5', '-q', 'seq', '-p', '2', '-e', '0.4727,0.2266,1.0212', '-y', 'T']
 
 # argument_list = ['-i', '/home/adriantich/Nextcloud/1_tesi_Adrià/test_DnoisE/PHY1bis_final.fa', '-o', '/home/adriantich/Nextcloud/1_tesi_Adrià/test_DnoisE/PHY1bis_final.fa_Adcorr_nou',
 #                  '-f', 'T', '-F', 'T', '-c', '2', '-n', 'size', '-a', '5', '-y', 'F']
-argument_list = full_cmd_arguments[1:]
+# argument_list = full_cmd_arguments[1:]
 
 print(argument_list)
 de.read_parameters(argument_list)
@@ -306,20 +306,26 @@ del(dict_writer, de.output_info, fieldnames)
 
 de.data_initial = de.data_initial.set_index(de.data_initial.loc[:, 'id'])
 
-good_mothers = de.data_initial.loc[de.good_seq][de.first_col_names + de.abund_col_names + [de.seq]]
+de.good_mothers = de.data_initial.loc[de.good_seq][de.first_col_names + de.abund_col_names + [de.seq]]
 
 if (de.output_type == 'ratio') or (de.output_type == 'all'):
     print('writing output_ratio')
     # writing ratio
-    denoised_ratio = pd.DataFrame(columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
-
-    for mother in good_mothers.loc[:, 'id']:
-        row = [good_mothers[list(good_mothers.loc[:, 'id'] == mother)][de.first_col_names].values.tolist()[0] +
-               list(de.data_initial.loc[[de.mother_id(x, mother) for x in list(
-                   de.denoised_ratio_output)], de.abund_col_names].sum(0)) +
-               good_mothers[list(good_mothers.loc[:, 'id'] == mother)][de.seq].values.tolist()]
-        row = pd.Series(row[0], index=[de.first_col_names + de.abund_col_names + [de.seq]][0])
-        denoised_ratio = denoised_ratio.append(row, ignore_index=True)
+    if de.cores > 1:
+        pool = mp.Pool(de.cores)
+        [row] = zip(*pool.map(de.write_output_ratio, [mother for mother in de.good_mothers.loc[:, 'id']]))
+        pool.close()
+        denoised_ratio = pd.DataFrame(row, columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
+    else:
+        denoised_ratio = pd.DataFrame(columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
+        for mother in de.good_mothers.loc[:, 'id']:
+            row = [de.good_mothers[list(de.good_mothers.loc[:, 'id'] == mother)][de.first_col_names].values.tolist()[0] +
+                   list(de.data_initial.loc[[de.mother_id(x, mother) for x in list(
+                       de.denoised_ratio_output)], de.abund_col_names].sum(0)) +
+                   de.good_mothers[list(de.good_mothers.loc[:, 'id'] == mother)][de.seq].values.tolist()]
+            row = pd.Series(row[0], index=[de.first_col_names + de.abund_col_names + [de.seq]][0])
+            denoised_ratio = denoised_ratio.append(row, ignore_index=True)
+    del row
 
     if de.fasta_output:
         denoised_ratio = denoised_ratio.to_dict(orient='index')
@@ -337,15 +343,21 @@ if (de.output_type == 'ratio') or (de.output_type == 'all'):
 if (de.output_type == 'd') or (de.output_type == 'all'):
     print('writing output_d')
     # writing d
-    denoised_d = pd.DataFrame(columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
-
-    for mother in good_mothers.loc[:, 'id']:
-        row = [good_mothers[list(good_mothers.loc[:, 'id'] == mother)][de.first_col_names].values.tolist()[0] +
-               list(de.data_initial.loc[[de.mother_id(x, mother) for x in list(
-                   de.denoised_d_output)], de.abund_col_names].sum(0)) +
-               good_mothers[list(good_mothers.loc[:, 'id'] == mother)][de.seq].values.tolist()]
-        row = pd.Series(row[0], index=[de.first_col_names + de.abund_col_names + [de.seq]][0])
-        denoised_d = denoised_d.append(row, ignore_index=True)
+    if de.cores > 1:
+        pool = mp.Pool(de.cores)
+        [row] = zip(*pool.map(de.write_output_d, [mother for mother in de.good_mothers.loc[:, 'id']]))
+        pool.close()
+        denoised_d = pd.DataFrame(row, columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
+    else:
+        denoised_d = pd.DataFrame(columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
+        for mother in de.good_mothers.loc[:, 'id']:
+            row = [de.good_mothers[list(de.good_mothers.loc[:, 'id'] == mother)][de.first_col_names].values.tolist()[0] +
+                   list(de.data_initial.loc[[de.mother_id(x, mother) for x in list(
+                       de.denoised_d_output)], de.abund_col_names].sum(0)) +
+                   de.good_mothers[list(de.good_mothers.loc[:, 'id'] == mother)][de.seq].values.tolist()]
+            row = pd.Series(row[0], index=[de.first_col_names + de.abund_col_names + [de.seq]][0])
+            denoised_d = denoised_d.append(row, ignore_index=True)
+    del row
 
     if de.fasta_output:
         denoised_d = denoised_d.to_dict(orient='index')
@@ -366,15 +378,21 @@ if (de.output_type == 'd') or (de.output_type == 'all'):
 if (de.output_type == 'ratio_d') or (de.output_type == 'all'):
     print('writing output_ratio_d')
     # writing ratio_d
-    denoised_ratio_d = pd.DataFrame(columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
-
-    for mother in good_mothers.loc[:, 'id']:
-        row = [good_mothers[list(good_mothers.loc[:, 'id'] == mother)][de.first_col_names].values.tolist()[0] +
-               list(de.data_initial.loc[[de.mother_id(x, mother) for x in list(
-                   de.denoised_ratio_d_output)], de.abund_col_names].sum(0)) +
-               good_mothers[list(good_mothers.loc[:, 'id'] == mother)][de.seq].values.tolist()]
-        row = pd.Series(row[0], index=[de.first_col_names + de.abund_col_names + [de.seq]][0])
-        denoised_ratio_d = denoised_ratio_d.append(row, ignore_index=True)
+    if de.cores > 1:
+        pool = mp.Pool(de.cores)
+        [row] = zip(*pool.map(de.write_output_ratio_d, [mother for mother in de.good_mothers.loc[:, 'id']]))
+        pool.close()
+        denoised_ratio_d = pd.DataFrame(row, columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
+    else:
+        denoised_ratio_d = pd.DataFrame(columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
+        for mother in de.good_mothers.loc[:, 'id']:
+            row = [de.good_mothers[list(de.good_mothers.loc[:, 'id'] == mother)][de.first_col_names].values.tolist()[0] +
+                   list(de.data_initial.loc[[de.mother_id(x, mother) for x in list(
+                       de.denoised_ratio_d_output)], de.abund_col_names].sum(0)) +
+                   de.good_mothers[list(de.good_mothers.loc[:, 'id'] == mother)][de.seq].values.tolist()]
+            row = pd.Series(row[0], index=[de.first_col_names + de.abund_col_names + [de.seq]][0])
+            denoised_ratio_d = denoised_ratio_d.append(row, ignore_index=True)
+    del row
 
     if de.fasta_output:
         denoised_ratio_d = denoised_ratio_d.to_dict(orient='index')
