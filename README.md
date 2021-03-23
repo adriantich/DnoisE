@@ -8,10 +8,13 @@ DnoisE is a denoising software that use Unoise equation algorithm to detect inco
 DnoisE has been tested with COI barcode region in Antich et al. (2021).
 
 Pros versus Unoise:
-1 - DnoisE algorithm is parallelizable leading computational speed depending on computational hardware and a very good option if multicore computer is available. 
 
-2- DnoisE is written all in Python3 which makes it user changeable.
+1 - DnoisE can correct the heigh of differences depending on the position of nucleotides in the codon based on Entropy values of each position.
 
-3- It also accepts both .csv and .fasta inputs and can return both too. 
+2 - DnoisE algorithm is parallelizable leading computational speed depending on computational hardware and a very good option if multicore computer is available. 
 
-4- 
+3 - DnoisE is written all in Python3 which makes it user changeable.
+
+4 - It also accepts both .csv and .fasta inputs and can return both too. 
+
+5 - DnoisE allows to user to choose the joining method. As derived from Edgar's equation (beta(d)=.5^(alpha\*d+1)), Unoise algorithm joins incorrect sequences to the most abundant mother sequence that satisfies the equation (ratio criteria). From our point of view this can lead to an overjoining of sequences to the most abundant one. We have developed an algorithm that returns two extra types of joining criteria outputs. The first one (d criteria) joins sequences to the most similar and most abundant sequence. The later, joins sequences to that for which the ratio abundance divided per beta(d) is the lowest (ratio_d criteria).
