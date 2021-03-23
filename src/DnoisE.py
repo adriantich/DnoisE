@@ -20,8 +20,8 @@ full_cmd_arguments = sys.argv
 # argument_list = ['-i', '/home/adriantich/Nextcloud/1_tesi_Adrià/Denoise/PHY1bis_final_subset.csv', '-o', '/home/adriantich/Nextcloud/1_tesi_Adrià/Denoise/PHY1bis_final_subset.csv_Adcorr_nou',
 #                  '-P', '3', '-f', 'F', '-F', 'F', '-c', '2', '-n', 'reads', '-a', '5', '-q', 'seq', '-p', '2', '-e', '0.4727,0.2266,1.0212', '-y', 'T']
 
-# argument_list = ['-i', '/home/adriantich/Nextcloud/1_tesi_Adrià/test_DnoisE/PHY1bis_final.fa', '-o', '/home/adriantich/Nextcloud/1_tesi_Adrià/test_DnoisE/PHY1bis_final.fa_Adcorr_nou',
-#                  '-f', 'T', '-F', 'T', '-c', '2', '-n', 'size', '-a', '5', '-y', 'F']
+argument_list = ['-i', '/home/adriantich/Nextcloud/1_tesi_Adrià/test_DnoisE/PHY1bis_final.fa', '-o', '/home/adriantich/Nextcloud/1_tesi_Adrià/test_DnoisE/PHY1bis_final.fa_Adcorr_nou',
+                 '-f', 'T', '-F', 'T', '-c', '2', '-n', 'size', '-a', '5', '-y', 'F']
 argument_list = full_cmd_arguments[1:]
 
 print(argument_list)
@@ -41,6 +41,7 @@ if de.part != 3:
             de.data_initial = pd.DataFrame({'id': ids, de.count: size, de.seq: seqs})
             de.data_initial = de.data_initial.replace(to_replace='>', value='', regex=True)
             de.data_initial = de.data_initial.replace(to_replace='size=', value='', regex=True)
+            de.data_initial[de.count] = pd.to_numeric(de.data_initial[de.count])
             del input_file, seqs, ids, size
 
         else:
