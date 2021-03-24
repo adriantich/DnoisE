@@ -20,8 +20,8 @@ full_cmd_arguments = sys.argv
 # argument_list = ['-i', '/home/adriantich/Nextcloud/1_tesi_Adrià/Denoise/PHY1bis_final_subset.csv', '-o', '/home/adriantich/Nextcloud/1_tesi_Adrià/Denoise/PHY1bis_final_subset.csv_Adcorr_nou',
 #                  '-P', '3', '-f', 'F', '-F', 'F', '-c', '2', '-n', 'reads', '-a', '5', '-q', 'seq', '-p', '2', '-e', '0.4727,0.2266,1.0212', '-y', 'T']
 
-argument_list = ['-i', '/home/adriantich/Nextcloud/1_tesi_Adrià/test_DnoisE/PHY1bis_final.fa', '-o', '/home/adriantich/Nextcloud/1_tesi_Adrià/test_DnoisE/PHY1bis_final.fa_Adcorr_nou',
-                 '-f', 'T', '-F', 'T', '-c', '2', '-n', 'size', '-a', '5', '-y', 'F']
+# argument_list = ['-i', '/home/adriantich/Nextcloud/1_tesi_Adrià/test_DnoisE/PHY1bis_final.fa', '-o', '/home/adriantich/Nextcloud/1_tesi_Adrià/test_DnoisE/PHY1bis_final.fa_Adcorr_nou',
+#                  '-f', 'T', '-F', 'T', '-c', '2', '-n', 'size', '-a', '5', '-y', 'F']
 argument_list = full_cmd_arguments[1:]
 
 print(argument_list)
@@ -157,8 +157,7 @@ if de.part != 3:
                     de.runned_list.extend(list(de.runned_list_2))
                     print('runned until %s reads' % de.min_mother)
                     print(len(de.runned_list) / de.data_initial.shape[0] * 100, '%')
-                    del (de.good_seq_2, de.output_info_2, de.denoised_d_output_2, de.denoised_ratio_output_2,
-                         de.denoised_ratio_d_output_2, de.runned_list_2)
+                    del (de.good_seq_2, de.output_info_2, de.denoised_ratio_output_2, de.runned_list_2)
 
             else:
                 while len(de.runned_list) < de.data_initial.shape[0]:
@@ -237,8 +236,7 @@ if de.part != 3:
                     de.runned_list.extend(list(de.runned_list_2))
                     print('runned until %s reads' % de.min_mother)
                     print(len(de.runned_list) / de.data_initial.shape[0] * 100, '%')
-                    del (de.good_seq_2, de.output_info_2, de.denoised_d_output_2, de.denoised_ratio_output_2,
-                         de.denoised_ratio_d_output_2, de.runned_list_2)
+                    del (de.good_seq_2, de.output_info_2, de.denoised_ratio_output_2, de.runned_list_2)
             else:
                 while len(de.runned_list) < de.data_initial.shape[0]:
                     de.min_mother = de.runned_list[-1].get(de.count) * de.max_ratio
