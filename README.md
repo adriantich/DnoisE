@@ -13,7 +13,7 @@ Pros versus Unoise:
 
 2 - DnoisE algorithm is parallelizable leading computational speed depending on computational hardware and a very good option if multicore computer is available. 
 
-3 - DnoisE is written all in Python3 which makes it user changeable.
+3 - DnoisE is written in Python3 and Open access which makes it user changeable.
 
 4 - It also accepts both .csv and .fasta inputs and can return both too. 
 
@@ -21,4 +21,15 @@ Pros versus Unoise:
 
 
 *INPUT FILES*
+
 Input files can be as both .csv format and .fasta
+
+If input file is a fasta, sequence must be in a single row and both id and size must have ";" closing.
+
+
+      >Seq_000000012;size=433081;
+      TTTGAGTTCAATACAAAGTCATTCAGGAGCTGCTATTGACTTAGCTATCTTCAGTTTACATCTTTCAGGAGCTTCTTCGATTCTAGGAGCAATTAATTTTATTTCTACCATTATAAATATGCGAAATCCTGGACAAACATTTTATCGCATTCCTTTATTTGTTTGATCGATTTTCGTAACTGCTTTACTACTATTATTAGCAGTACCAGTTTTAGCAGGAGCTATTACCATGTTACTAACTGATCGTAATTTTAATACAGCCTTTTTTGACCCTTCTGGAGGTGGTGATCCTGTACTTTATCAACATTTATTT
+
+If input file is a .csv, separation between columns can be specified usind -p parameter (see help)
+
+
