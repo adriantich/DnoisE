@@ -17,15 +17,15 @@ de = denoise_functions()
 full_cmd_arguments = sys.argv
 
 # Keep all but the first
-argument_list = ['-i', '/home/adriantich/Nextcloud/1_tesi_Adrià/Denoise/PHY1bis_final_subset.csv', '-o', '/home/adriantich/Nextcloud/1_tesi_Adrià/Denoise/PHY1bis_final_subset.csv_Adcorr_nou',
-                 '-P', '3', '-f', 'F', '-F', 'F', '-c', '2', '-n', 'reads', '-a', '5', '-q', 'seq', '-p', '2', '-e', '0.4727,0.2266,1.0212', '-y', 'T']
+# argument_list = ['-i', '/home/adriantich/Nextcloud/1_tesi_Adrià/Denoise/PHY1bis_final_subset.csv', '-o', '/home/adriantich/Nextcloud/1_tesi_Adrià/Denoise/PHY1bis_final_subset.csv_Adcorr_nou',
+#                  '-P', '3', '-f', 'F', '-F', 'F', '-c', '2', '-n', 'reads', '-a', '5', '-q', 'seq', '-p', '2', '-e', '0.4727,0.2266,1.0212', '-y', 'T']
 # argument_list = ['-i', '/home/adriantich/Nextcloud/1_tesi_Adrià/test_DnoisE/PHY1bis_final.fa',
 #                  '-o', '/home/adriantich/Nextcloud/1_tesi_Adrià/test_DnoisE/D/PHY1bis_final.fa_D',
 #                  '-P', '3']
 
 # argument_list = ['-i', '/home/adriantich/Nextcloud/1_tesi_Adrià/test_DnoisE/PHY1bis_final.fa', '-o', '/home/adriantich/Nextcloud/1_tesi_Adrià/test_DnoisE/PHY1bis_final.fa_Adcorr_nou',
 #                  '-f', 'T', '-F', 'T', '-c', '2', '-n', 'size', '-a', '5', '-y', 'F']
-# argument_list = full_cmd_arguments[1:]
+argument_list = full_cmd_arguments[1:]
 
 print(argument_list)
 de.read_parameters(argument_list)
