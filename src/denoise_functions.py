@@ -1405,8 +1405,7 @@ class denoise_functions:
     def write_output_ratio(self, mother):
         row = [
             self.good_mothers[list(self.good_mothers.loc[:, 'id'] == mother)][self.first_col_names].values.tolist()[0] +
-            list(self.data_initial.loc[[self.mother_id(x, mother) for x in list(
-                self.denoised_ratio_output)], self.abund_col_names].sum(0)) +
+            list(self.data_initial.loc[list(pd.Series(self.denoised_ratio_output) == mother), self.abund_col_names].sum(0)) +
             self.good_mothers[list(self.good_mothers.loc[:, 'id'] == mother)][self.seq].values.tolist()]
 
         return row
@@ -1414,8 +1413,7 @@ class denoise_functions:
     def write_output_d(self, mother, output):
         row = [
             self.good_mothers[list(self.good_mothers.loc[:, 'id'] == mother)][self.first_col_names].values.tolist()[0] +
-            list(self.data_initial.loc[[self.mother_id(x, mother) for x in list(
-                self.denoised_d_output)], self.abund_col_names].sum(0)) +
+            list(self.data_initial.loc[list(pd.Series(self.denoised_d_output) == mother), self.abund_col_names].sum(0)) +
             self.good_mothers[list(self.good_mothers.loc[:, 'id'] == mother)][self.seq].values.tolist()]
 
         return row
@@ -1423,8 +1421,7 @@ class denoise_functions:
     def write_output_ratio_d(self, mother, output):
         row = [
             self.good_mothers[list(self.good_mothers.loc[:, 'id'] == mother)][self.first_col_names].values.tolist()[0] +
-            list(self.data_initial.loc[[self.mother_id(x, mother) for x in list(
-                self.denoised_ratio_d_output)], self.abund_col_names].sum(0)) +
+            list(self.data_initial.loc[list(pd.Series(self.denoised_ratio_d_output) == mother), self.abund_col_names].sum(0)) +
             self.good_mothers[list(self.good_mothers.loc[:, 'id'] == mother)][self.seq].values.tolist()]
 
         return row
