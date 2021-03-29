@@ -5,8 +5,6 @@ import multiprocessing as mp
 import csv
 import sys
 from tqdm import tqdm
-# from needed_modules.Bio import SeqIO
-# import re
 import stats
 import itertools
 from denoise_functions import denoise_functions
