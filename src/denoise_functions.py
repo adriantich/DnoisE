@@ -61,11 +61,11 @@ class denoise_functions:
         print("starting to denoise")
 
     def read_parameters(self, argument_list):
-        short_options = "hi:o:P:f:F:j:c:s:z:n:a:q:p:e:y:"
+        short_options = "hi:o:P:f:F:j:c:s:z:n:a:q:p:e:y:x:"
         long_options = ["help", "input=", "output=", "part=", "fasta_input=", "fasta_output=", "joining_type", "cores=",
                         "start_sample_cols=",
                         "end_sample_cols=", "count_name=", "alpha=", "sequence=", "separation=", "entropy=",
-                        "entropy_influence="]
+                        "entropy_influence=", "first_nt_position=" ]
         try:
             arguments, values = getopt.getopt(argument_list, short_options, long_options)
         except getopt.error as err:
@@ -99,7 +99,8 @@ class denoise_functions:
                       "                     3=';'\n"
                       " -e --entropy entropy of different positions [0.4298,0.1833,0.9256] by default\n"
                       " -y --entropy_influence logical, if T, Ad correction parameter is used. When this happens, only "
-                      "sequences with mode length are computed")
+                      "sequences with mode length are computed\n"
+                      " -x --first_nt_position as far as DnoisE has been performed for COI barcode amplified with Leray-XT primers, default value is 3")
                 exit()
             elif current_argument in ("-i", "--input"):
                 print("Denoising %s file" % current_value)
@@ -186,6 +187,11 @@ class denoise_functions:
                     print("Is entropy taken into account: %s" % self.entropy)
                 else:
                     print("Is entropy taken into account: False")
+            elif current_argument in ("-x", "--first_nt_position"):
+                self.initial_pos = int(current_argument)
+                arg_x = True
+                print("first nt is a position %s" % current_value)
+            
 
         if 'arg_i' not in locals():
             print("Err: input file needed")
@@ -201,6 +207,8 @@ class denoise_functions:
             if 'arg_c' not in locals():
                 print("cores not given, 1 core by default")
                 self.cores = 1
+            if 'arg_x' not in locals():
+                self.initial_pos = 3
             if 'arg_f' not in locals():
                 # de moment per a la opcio amb fasta no hi ha la opció de posar samples
                 print("by default, fasta file expected")
