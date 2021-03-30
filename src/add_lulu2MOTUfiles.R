@@ -1,7 +1,7 @@
 arg <- commandArgs(T)
 
 if (length(arg)<3) {
-  stop("EEEEEEPPPPPP!!!! falta alguna cosa")
+  stop("WAAAAIIITTT!!!! something is missing")
 } else{
   parent_motu <- arg[1]
   data_lulu_input <- arg[2]
