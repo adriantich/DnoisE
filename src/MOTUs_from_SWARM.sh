@@ -7,7 +7,7 @@ Help()
    # Display Help
    echo "Generating a .csv file of each MOTU sequences using output of SWARM"
    echo
-   echo "Syntax: bash MOTUs_from_SWARM.sh [-h|i|o|r|t|d|l]"
+   echo "Syntax: bash MOTUs_from_SWARM.sh [-h] [-i] [motu_list_file] [-o] [output_file_from_SWARM] [-r] [-t] [sample_abundances] [-d] [output_directory] [-l] [lulu_deleted_seqs]"
    echo "options:"
    echo "h     Print this Help."
    echo "i     .txt containing MOTU ids for which to create a .csv file"
