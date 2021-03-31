@@ -2,11 +2,12 @@
 ## __An open source parallelizable alternative to Unoise__
 by Adrià Antich (CEAB-CSIC, Center of Advanced Studies of Blanes)
 
-Here we present a new program to denoise sequence data sets from Illumina using d (distance) corrected by Entropy. DnoisE is a denoising software that uses the Unoise algorithm (Edgar 2016) to detect incorrect sequences from PCR and sequencing errors. For coding sequences where the entropy of nucleotides depends on codon position, a correction is needed to avoid merging of correct sequences that have changes in position 3 of the codons (highly variable in nature). DnoisE has been tested with the Leray fragment of the COI barcode region in Antich et al. (2021).
+Here we present a new program to denoise sequence data sets from Illumina using parameter d (distance) corrected (optionally) according to the entropy of each codon position. DnoisE is a denoising software that uses the Unoise algorithm (Edgar 2016) to detect incorrect sequences from PCR and sequencing errors. The incorrect (“daughter”) sequences are merged with the correct “mother” sequence. For coding sequences where the entropy of each codon position is highly variable, a correction is advisable to avoid merging correct sequences that have changes in position 3 of the codons (highly variable in nature). DnoisE has been tested with the Leray fragment of the COI barcode region in Antich et al. (2021).
 
-Pros versus Unoise:
 
-1 - DnoisE can weight differences depending on the position of nucleotides in the codon based on Entropy values of each position.
+Pros of DnoisE versus Unoise:
+
+1 - DnoisE can weight distances depending on the codon position of nucleotides where changes occur, based on entropy values of each codon position.
 
 2 - DnoisE algorithm is parallelizable leading to high computational speed depending on computational hardware. It is a very good option if a multicore computer is available.
 
@@ -14,7 +15,7 @@ Pros versus Unoise:
 
 4 - It accepts both .csv and .fasta input files and can return both file-types too.
 
-5 - DnoisE allows the user to choose among three joining method. Following Edgar's equation (beta(d)=.5^(alpha\*d+1)), the Unoise algorithm joins incorrect “daughter” sequences to the most abundant “mother” sequence with which they have an abundance ratio below beta(d). From our point of view this can lead to over-joining of sequences to the most abundant ones. We have developed an algorithm that returns two extra types of joining criteria outputs. For a given sequence, all potential “mothers” that satisfy the condition abundance skew ratio<beta(d) are stored. We then choose the correct “mother” as (1) the one having the lowest skew ratio with the potential “daughter” (ratio criterion, corresponding to the original Unoise formulation); (2) the “mother” with which it has the lowest d (distance criterion), or (3) the “mother” for which the skew abundance ratio divided by beta(d) is the lowest (ratio_distance criterion). These criteria are short-named r, d, and r_d criteria.
+5 - DnoisE allows the user to choose among three joining method. Following Edgar's equation (beta(d)=.5^(alpha\*d+1)), the Unoise algorithm joins incorrect “daughter” sequences to the most abundant “mother” sequence with which they have an abundance ratio below beta(d). From our point of view this can lead to over-joining of sequences to the most abundant ones. Our algorithm returns two extra types of joining criteria outputs. For a given sequence, all potential “mothers” that satisfy the condition abundance skew ratio<beta(d) are stored. We then choose the correct “mother” as (1) the one having the lowest skew ratio with the potential “daughter” (ratio criterion, corresponding to the original Unoise formulation); (2) the “mother” with which it has the lowest d (distance criterion), or (3) the “mother” for which the skew abundance ratio divided by beta(d) is the lowest (ratio_distance criterion). These criteria are short-named r, d, and r_d criteria.
 
 ### __INSTALLING DnoisE__
 
@@ -66,21 +67,22 @@ We also recomend to use pyenv to create an environment to run DnoisE (see pyenv 
 DnoisE has been created to run both after and before clustering as described in Antich et al. (2021).
 Therefore, it accepts and returns both .fasta and .csv files. However, writing output is faster if .csv.
 
-Parameters od DnoisE are described in help but some are explained in more detail following.
+Parameters of DnoisE are described in help but some are explained in more detail below.
 
 ```console
 > python3 DnoisE/src/DnoisE.py -h
 
 *HELP*
- -h --help Display help
+ -h --help display help
  -i --input input file path
  -o --output common output files path
- -P --part Denoise can be run by parts, part 1 runs only possible mothers and part 2 runs the others
-                     In part = 1 runs normally and a directory as database is named as --output (default)
-                     In part = 3 returns outputs from database
+ -P --part DnoisE can be run by parts, part 1 runs the main program, but if crushes, 
+               part 3 can return outputs from database
+                     - If part = 1 runs normally and a directory as database is named as --output (default)
+                     - If part = 3 returns outputs from database
                          Part 3 requires --input, --output and --cores if necessary
- -f --fasta_input logical, if T (default), fasta file as input, if F .csv as input
- -F --fasta_output logical, if T (default), fasta file as input, if F .csv as input
+ -f --fasta_input logical, if T (default), fasta file as input, if F, .csv as input
+ -F --fasta_output logical, if T (default), fasta file as output, if F, .csv as output
  -j --joining_type 1-> will join by the lesser [abundance ratio / beta(d)] (ratio_d) (default)
                    2-> will join by the lesser abundance ratio (ratio)
                    3-> will join by the lesser d value (d)
@@ -91,7 +93,7 @@ Parameters od DnoisE are described in help but some are explained in more detail
  -n --count_name count name column (count/reads/size..) 'count' by default
  -a --alpha alpha value, 5 by default
  -q --sequence sequence column name, 'sequence' by default
- -p --sep separation 1='        '
+ -p --sep separation 1='        ' (tab)
                      2=','
                      3=';'
  -e --entropy entropy of the different codon positions [0.4298,0.1833,0.9256] by default
