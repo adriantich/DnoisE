@@ -33,7 +33,7 @@ class denoise_functions:
     cores = 1
     MOTUoutfile = ""
     seq = 'sequence'
-    count = 'count'
+    count = 'size'
     q1 = 0
     q2 = 0
     q3 = 0
@@ -213,15 +213,17 @@ class denoise_functions:
                 # de moment per a la opcio amb fasta no hi ha la opció de posar samples
                 print("by default, fasta file expected")
                 self.fasta = True
-                self.count = "count"
+                if "arg_n" not in locals():
+                    print("count_name not given, 'size' by default")
+                    self.count = "size"
                 self.justcount = True
                 if 'arg_F' not in locals():
                     self.fasta_output = True
                     print("by default, fasta output")
             else:
                 if "arg_n" not in locals():
-                    print("count_name not given, 'count' by default")
-                    self.count = "count"
+                    print("count_name not given, 'size' by default")
+                    self.count = "size"
                 if "arg_s" not in locals():
                     if "arg_z" not in locals():
                         print("start and end not given, no samples in file")
