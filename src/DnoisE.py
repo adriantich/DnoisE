@@ -41,7 +41,7 @@ if de.part != 3:
             size = list(input_file.loc[list(range(0, input_file.shape[0], 2)), 1])
             de.data_initial = pd.DataFrame({'id': ids, de.count: size, de.seq: seqs})
             de.data_initial = de.data_initial.replace(to_replace='>', value='', regex=True)
-            de.data_initial = de.data_initial.replace(to_replace='size=', value='', regex=True)
+            de.data_initial = de.data_initial.replace(to_replace=(de.count+'='), value='', regex=True)
             de.data_initial[de.count] = pd.to_numeric(de.data_initial[de.count])
             del input_file, seqs, ids, size
 
