@@ -143,10 +143,11 @@ The correction is applied as follows:
 
 The original Edgar’s formula is:
 
-- <img src="https://latex.codecogs.com/gif.latex?\beta(d)=(1/2)^{\alpha *d+1}" />
+![equation](https://latex.codecogs.com/gif.download?%5Cbeta%28d%29%3D%281/2%29%5E%7B%5Calpha%20*d+1%7D)
 
 We correct the d value as follows:
 
+![equation](https://latex.codecogs.com/gif.download?d%20%3D%20%5Csum%5Climits_%7Bi%3D1%7D%5E%7B3%7D%20d_i%20*%20%5Cfrac%7BE_i%20*%203%7D%7BE_1%20+%20E_2%20+%20E_3%7D)
 $d = \sum\limits_{i=1}^{3} d_i * \frac{E_i * 3}{E_1 + E_2 + E_3}$
 
 Entropy values can be input manually. They can be calculated using the entrpy.R script as follows:
