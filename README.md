@@ -102,11 +102,11 @@ Parameters of DnoisE are described in help but some are explained in more detail
 
 ```
 
-__*INPUT FILES (-i/-f/-n/-q/-p)*__
+__*INPUT FILES (-i|-f|-n|-q|-p)*__
 
 Input files can be in both .csv and .fasta format. This can be specified using *-f* parameter set as T as default meaning that input file is in .fasta format.
 
-Different pipelines use different names to number of reads (size/count/reads...). This can be specified using parameter *-n* followed by string name (for instance: -n size, default).  
+Different pipelines use different names to number of reads (size/count/reads...). This can be specified using parameter *-n* followed by string name (for instance: -n size, default).  Sequence name can also be specified using *-q* parameter (sequence/seq...)(*-q* sequence, default)
 
 If input is a fasta file, the sequence must be in a single line and both id and size must end by ";".
 
@@ -117,14 +117,14 @@ If input is a fasta file, the sequence must be in a single line and both id and 
 If input file is a .csv (*-f* F), separator between columns can be specified using the *-p* parameter (see help).
 
 
-__*INPUT AND OUTPUT PATHS (-i/-o)*__
+__*INPUT AND OUTPUT PATHS (-i|-o)*__
 
 Path before file name is required but can be in form of ./ to avoid larger strings.
 Output path is also required as far as it can be used to specify output name.
 For instance, the output path './file_to_denoise will' will return a file './file_to_denoise_denoising_info.csv' among others.
 
 
-__*ENTROPY CORRECTION (-e/-y/-x)*__
+__*ENTROPY CORRECTION (-e|-y|-x)*__
 
 As described in Antich et al. (2021) a correction of the distance value (d) in Edgar's algorithm (2016) can be performed using the entropy values of each codon position in coding barcodes.
 We performed DnoisE for COI Leray/Leray-XT primers (Leray et al. 2013; Wangensteen et al. 2018) and therefore sequences start with a codon position 3 and the first codon position is in the second sequence position as follow
@@ -179,6 +179,9 @@ Options:
 
 ```
 
+__*SAMPLE INFORMATION (-s|-z)*__
+
+Sample information is only allowed when input file is in .csv format. When sample information is given, first column (*-s*) and last column (*-z*) position of sample information must be specified.
 
 #### __Running DnoisE after SWARM within MOTU__
 
