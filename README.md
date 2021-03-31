@@ -97,7 +97,7 @@ Parameters of DnoisE are described in help but some are explained in more detail
                      2=','
                      3=';'
  -e --entropy entropy of the different codon positions [0.4298,0.1833,0.9256] by default
- -y --entropy_correction logical, if T, A distance correction based on entropy is performed (see ENTROPY CORRECTION below). If set to F, no correction for entropy is performed (corresponding to the standard Unoise formulation). 
+ -y --entropy_correction logical, if T, A distance correction based on entropy is performed (see ENTROPY CORRECTION below). If set to F, no correction for entropy is performed (corresponding to the standard Unoise formulation)
  -x --first_nt_codon_position as DnoisE has been developed for COI sequences amplified with Leray-XT primers, default value is 3
 
 ```

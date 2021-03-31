@@ -28,7 +28,7 @@ argument_list = full_cmd_arguments[1:]
 print(argument_list)
 de.read_parameters(argument_list)
 
-if de.part != 3:
+if de.part != 2:
     # preparing data
 
     if de.part == 1:
@@ -287,7 +287,7 @@ if de.part != 3:
 
     de.write_variables()
 
-if de.part == 3:
+if de.part == 2:
     de.read_variables2()
 
 if de.entropy:

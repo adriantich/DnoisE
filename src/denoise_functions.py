@@ -56,16 +56,17 @@ class denoise_functions:
     output_type = 'ratio_d'
     part = 1
     good_mothers = []
+    new_output_part_2 = False
 
     def __init__(self):
         print("starting to denoise")
 
     def read_parameters(self, argument_list):
         short_options = "hi:o:P:f:F:j:c:s:z:n:a:q:p:e:y:x:"
-        long_options = ["help", "input=", "output=", "part=", "fasta_input=", "fasta_output=", "joining_type", "cores=",
+        long_options = ["help", "input=", "output=", "part=", "fasta_input=", "fasta_output=", "joining_criteria", "cores=",
                         "start_sample_cols=",
                         "end_sample_cols=", "count_name=", "alpha=", "sequence=", "separation=", "entropy=",
-                        "entropy_influence=", "first_nt_position=" ]
+                        "entropy_correction=", "first_nt_codon_position=" ]
         try:
             arguments, values = getopt.getopt(argument_list, short_options, long_options)
         except getopt.error as err:
@@ -75,32 +76,34 @@ class denoise_functions:
         for current_argument, current_value in arguments:
             if current_argument in ("-h", "--help"):
                 print("Displaying help\n"
-                      " -h --help Display help\n"
+                      " -h --help display help\n"
                       " -i --input input file path\n"
                       " -o --output common output files path\n"
-                      " -P --part Denoise can be runned per parts, part 1 run just possible mothers and part 2 run the others\n"
-                      "                     In part = 1 runs normally and a directory as database is named as --output (default)\n"
-                      "                     In part = 3 returns outputs from database\n"
-                      "                         Part 3 requires --input, --output and --cores if necessary\n"
-                      " -f --fasta_input logical, if T (default), fasta file as input, if F .csv as input\n"
-                      " -F --fasta_output logical, if T (default), fasta file as input, if F .csv as input\n"
-                      " -j --joining_type 1-> will join by the lesser [abundance ratio / beta(d)] (ratio_d) (default)\n"
-                      "                   2-> will join by the lesser abundance ratio (ratio)\n"
-                      "                   3-> will join by the lesser d value (d)\n"
-                      "                   4-> will give all joining types in three different outputs\n"
+                      " -P --part DnoisE can be run by parts, part 1 runs the main program and returns specified output and database\n"
+                      "                 part 2 can return outputs from this database without running all comparisions (see README.md)\n"
+                      "                     - If part = 1 (default) runs normally and a directory as database is named as --output\n"
+                      "                     - If part = 2 returns outputs from database\n"
+                      "                         Part 2 requires --input, --output and --cores if necessary\n"
+                      " -f --fasta_input logical, if T (default), fasta file as input, if F, .csv as input\n"
+                      " -F --fasta_output logical, if T (default), fasta file as output, if F, .csv as output\n"
+                      " -j --joining_criteria   1-> will join by the lesser [abundance ratio / beta(d)] (r_d criterion) (default)\n"
+                      "                         2-> will join by the lesser abundance ratio (r criterion)\n"
+                      "                         3-> will join by the lesser d value (d criterion)\n"
+                      "                         4-> will provide all joining criteria in three different outputs\n"
                       " -c --cores number of cores, 1 by default\n"
-                      " -s --start_sample_cols first sample column (1 == 1st col) if not given, just total read count expected\n"
-                      " -z --end_sample_cols first sample column (1 == 1st col) if not given, just total read count expected\n"
-                      " -n --count_name count name column (count/reads/size..) 'count' by default\n"
+                      " -s --start_sample_cols first sample column (1 == 1st col) if not given, just total read count expected (see README.md)\n"
+                      " -z --end_sample_cols first sample column (1 == 1st col) if not given, just total read count expected (see README.md)\n"
+                      " -n --count_name count name column (size/reads/count...) 'size' by default\n"
                       " -a --alpha alpha value, 5 by default\n"
-                      " -q --sequence sequence column name, 'sequence' by default\n"
-                      " -p --sep separation 1='\t'\n"
+                      " -q --sequence sequence column name (sequence/seq...), 'sequence' by default\n"
+                      " -p --sep separation 1='\t' (tab)\n"
                       "                     2=','\n"
                       "                     3=';'\n"
-                      " -e --entropy entropy of different positions [0.4298,0.1833,0.9256] by default\n"
-                      " -y --entropy_influence logical, if T, Ad correction parameter is used. When this happens, only "
-                      "sequences with mode length are computed\n"
-                      " -x --first_nt_position as far as DnoisE has been performed for COI barcode amplified with Leray-XT primers, default value is 3")
+                      " -e --entropy entropy of the different codon positions [0.47,0.23,1.02] by default\n"
+                      " -y --entropy_correction logical, if T, A distance correction based on entropy is performed "
+                      "(see ENTROPY CORRECTION below). If set to F, no correction for entropy is performed "
+                      "(corresponding to the standard Unoise formulation)\n"
+                      " -x --first_nt_codon_position as DnoisE has been developed for COI sequences amplified with Leray-XT primers, default value is 3")
                 exit()
             elif current_argument in ("-i", "--input"):
                 print("Denoising %s file" % current_value)
@@ -132,7 +135,7 @@ class denoise_functions:
                     self.fasta_output = False
                 arg_F = True
                 print("Fasta output file: %s" % self.fasta_output)
-            elif current_argument in ("-j", "--joining_type"):
+            elif current_argument in ("-j", "--joining_criteria"):
                 if current_value == "1":
                     self.output_type = 'ratio_d'
                 elif current_value == "2":
@@ -180,14 +183,14 @@ class denoise_functions:
                 E2 = float(E2)
                 E3 = float(E3)
                 arg_e = True
-            elif current_argument in ("-y", "--entropy_influence"):
+            elif current_argument in ("-y", "--entropy_correction"):
                 if current_value == "T":
                     self.entropy = True
                     arg_y = True
                     print("Is entropy taken into account: %s" % self.entropy)
                 else:
                     print("Is entropy taken into account: False")
-            elif current_argument in ("-x", "--first_nt_position"):
+            elif current_argument in ("-x", "--first_nt_codon_position"):
                 self.initial_pos = int(current_argument)
                 arg_x = True
                 print("first nt is a position %s" % current_value)
@@ -256,12 +259,18 @@ class denoise_functions:
                 self.Ad1, self.Ad2, self.Ad3 = (1, 1, 1)
             else:
                 if "arg_e" not in locals():
-                    E1, E2, E3 = (0.4298, 0.1833, 0.9256)
-                    print("Entropy set as 0.4298, 0.1833 and 0.9256 by default")
+                    E1, E2, E3 = (0.47, 0.23, 1.02)
+                    print("Entropy set as 0.47, 0.23 and 1.02 by default")
                 # defining Ad correction factor taking into account Entropy
                 self.Ad1 = E1 / (E1 + E2 + E3) * 3
                 self.Ad2 = E2 / (E1 + E2 + E3) * 3
                 self.Ad3 = E3 / (E1 + E2 + E3) * 3
+        else:
+            if 'arg_j' not in locals():
+                self.new_output_part_2 = False
+            else:
+                self.new_output_part_2 = True
+
 
     def quartiles_runned(self):
         q = self.data_initial.shape[0]
@@ -1379,7 +1388,8 @@ class denoise_functions:
         self.seq = variables['seq']
         self.count = variables['count']
         self.fasta_output = variables['fasta_output']
-        self.output_type = variables['output_type']
+        if not self.new_output_part_2:
+            self.output_type = variables['output_type']
 
         if variables['entropy']:
             self.Ad1 = variables['Ad1']
