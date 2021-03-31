@@ -2,7 +2,7 @@
 ## __An open source parallelizable alternative to Unoise__
 by Adrià Antich (CEAB-CSIC, Center of Advanced Studies of Blanes)
 
-Here we present a new program to denoise sequence data sets from Illumina using parameter d (distance) corrected (optionally) according to the entropy of each codon position. DnoisE is a denoising software that uses the Unoise algorithm (Edgar 2016) to detect incorrect sequences from PCR and sequencing errors. The incorrect (“daughter”) sequences are merged with the correct “mother” sequence. For coding sequences where the entropy of each codon position is highly variable, a correction is advisable to avoid merging correct sequences that have changes in position 3 of the codons (highly variable in nature). DnoisE has been tested with the Leray fragment of the COI barcode region in Antich et al. (2021).
+Here we present a new program to denoise sequence data sets from Illumina using parameter d (distance) corrected (optionally) according to the entropy of each codon position. DnoisE is a denoising software that uses the Unoise algorithm (Edgar 2016) to detect incorrect sequences from PCR and sequencing errors. The incorrect (“daughter”) sequences are merged with the correct “mother” sequence. For coding sequences where the entropy of each codon position is highly variable, a correction is advisable to avoid merging correct sequences that have changes in position 3 of the codons (highly variable in nature). DnoisE has been tested with the Leray fragment of the COI barcode region in Antich et al. (2021). For sequence comparision, Levenshtein distance is calculated as d value. However, when entropy correction is aplied Levenshtein distance is not valid as far as difference position is needed. Only sequences with modal sequence lenght are used when performing this correction.
 
 
 Pros of DnoisE versus Unoise:
@@ -76,35 +76,37 @@ Parameters of DnoisE are described in help but some are explained in more detail
  -h --help display help
  -i --input input file path
  -o --output common output files path
- -P --part DnoisE can be run by parts, part 1 runs the main program, but if crushes, 
-               part 3 can return outputs from database
-                     - If part = 1 runs normally and a directory as database is named as --output (default)
-                     - If part = 3 returns outputs from database
-                         Part 3 requires --input, --output and --cores if necessary
+ -P --part DnoisE can be run by parts, part 1 runs the main program and returns specified output and database
+               part 2 can return outputs from this database without running all comparisions (see README.md)
+                     - If part = 1 (default) runs normally and a directory as database is named as --output
+                     - If part = 2 returns outputs from database
+                         Part 2 requires --input, --output and --cores if necessary
  -f --fasta_input logical, if T (default), fasta file as input, if F, .csv as input
  -F --fasta_output logical, if T (default), fasta file as output, if F, .csv as output
- -j --joining_type 1-> will join by the lesser [abundance ratio / beta(d)] (ratio_d) (default)
-                   2-> will join by the lesser abundance ratio (ratio)
-                   3-> will join by the lesser d value (d)
-                   4-> will give all joining types in three different outputs
+ -j --joining_criteria 1-> will join by the lesser [abundance ratio / beta(d)] (r_d criterion) (default)
+                       2-> will join by the lesser abundance ratio (r criterion)
+                       3-> will join by the lesser d value (d criterion)
+                       4-> will provide all joining criteria in three different outputs
  -c --cores number of cores, 1 by default
- -s --start_sample_cols first sample column (1 == 1st col) if not given, just total read count expected
- -z --end_sample_cols first sample column (1 == 1st col) if not given, just total read count expected
- -n --count_name count name column (count/reads/size..) 'count' by default
+ -s --start_sample_cols first sample column (1 == 1st col) if not given, just total read count expected (see README.md)
+ -z --end_sample_cols first sample column (1 == 1st col) if not given, just total read count expected (see README.md)
+ -n --count_name count name column (size/reads/count...) 'size' by default
  -a --alpha alpha value, 5 by default
- -q --sequence sequence column name, 'sequence' by default
- -p --sep separation 1='        ' (tab)
+ -q --sequence sequence column name (sequence/seq...), 'sequence' by default
+ -p --sep separator 1='        ' (tab)
                      2=','
                      3=';'
  -e --entropy entropy of the different codon positions [0.4298,0.1833,0.9256] by default
- -y --entropy_influence logical, if T, Ad correction parameter is used. In this case, only sequences with mode length are processed
- -x --first_nt_position as far as DnoisE has been performed for COI barcode amplified with Leray-XT primers, default value is 3
+ -y --entropy_correction logical, if T, A distance correction based on entropy is performed (see ENTROPY CORRECTION below). If set to F, no correction for entropy is performed (corresponding to the standard Unoise formulation). 
+ -x --first_nt_codon_position as DnoisE has been developed for COI sequences amplified with Leray-XT primers, default value is 3
 
 ```
 
-__*INPUT FILES*__
+__*INPUT FILES (-i/-f/-n/-q/-p)*__
 
-Input files can be in both .csv and .fasta format
+Input files can be in both .csv and .fasta format. This can be specified using *-f* parameter set as T as default meaning that input file is in .fasta format.
+
+Different pipelines use different names to number of reads (size/count/reads...). This can be specified using parameter *-n* followed by string name (for instance: -n size, default).  
 
 If input is a fasta file, the sequence must be in a single line and both id and size must end by ";".
 
@@ -112,36 +114,42 @@ If input is a fasta file, the sequence must be in a single line and both id and 
       >Seq_000000012;size=433081;
       TTTGAGTTCAATACAAAGTCATTCAGGAGCTGCTATTGACTTAGCTATCTTCAGTTTACATCTTTCAGGAGCTTCTTCGATTCTAGGAGCAATTAATTTTATTTCTACCATTATAAATATGCGAAATCCTGGACAAACATTTTATCGCATTCCTTTATTTGTTTGATCGATTTTCGTAACTGCTTTACTACTATTATTAGCAGTACCAGTTTTAGCAGGAGCTATTACCATGTTACTAACTGATCGTAATTTTAATACAGCCTTTTTTGACCCTTCTGGAGGTGGTGATCCTGTACTTTATCAACATTTATTT
 
-If input file is a .csv, separation between columns can be specified using the -p parameter (see help)
+If input file is a .csv (*-f* F), separator between columns can be specified using the *-p* parameter (see help).
 
-__*INPUT AND OUTPUT PATHS*__
+
+__*INPUT AND OUTPUT PATHS (-i/-o)*__
 
 Path before file name is required but can be in form of ./ to avoid larger strings.
 Output path is also required as far as it can be used to specify output name.
 For instance, the output path './file_to_denoise will' will return a file './file_to_denoise_denoising_info.csv' among others.
 
-__*ENTROPY CORRECTION*__
 
-As described in Antich et al. (2021) a correction to the importance of d in Edgar's algorith (2016) from entropy values of each nucleotide position in codon for coding barcodes.
-We performed DnoisE for COI Leray/Leray-XT primers (Leray et al. 2013; Wangensteen et al. 2018) and therefore sequences starts with a position 3 and de first first codon position is in the second sequence position as follow
+__*ENTROPY CORRECTION (-e/-y/-x)*__
+
+As described in Antich et al. (2021) a correction of the distance value (d) in Edgar's algorithm (2016) can be performed using the entropy values of each codon position in coding barcodes.
+We performed DnoisE for COI Leray/Leray-XT primers (Leray et al. 2013; Wangensteen et al. 2018) and therefore sequences start with a codon position 3 and the first codon position is in the second sequence position as follow
+
 ```console
 seq       --> T-T-T-G-A-G-T-T-C-A-A-T-...
 position  --> 3-1-2-3-1-2-3-1-2-3-1-2-...
 ```
---first_nt_position is set as 3 by default.
+*-x/--first_nt_position* is set as 3 by default.
 
-Entropy values are given as E1,E2,E3 independent from later parameter.
-The correction is aplied as following.
+When entropy correction is performed, comparision of nucleotides one by one is used to calculate distance value instead of Levenshtein distance, and therefore, all sequences must have the same length (modal length)
 
-If the original Edgar formula is:
+Entropy values are given as E_1, E_2, E_3, where 1, 2, and 3 are the codon positions (default as *-e* 0.4298,0.1833,0.9256).
+
+The correction is applied as follows:
+
+The original Edgar’s formula is:
 
 $\beta(d) = (1/2)^{\alpha * d + 1}$
 
-We have performed a correction to d value as following:
+We correct the d value as follows:
 
 $d = \sum\limits_{i=1}^{3} d_i * \frac{E_i * 3}{E_1 + E_2 + E_3}$
 
-Entropy values can be calculated using the entrpy.R script as following:
+Entropy values can be input manually. They can be calculated using the entrpy.R script as follows:
 
 ```console
 Rscript --vanilla entrpy.R -i [input_file] -o [output_file] -f [TRUE|FALSE] 
@@ -174,15 +182,15 @@ Options:
 
 #### __Running DnoisE after SWARM within MOTU__
 
-If DnoisE is runned after SWARM (see [Torognes](https://github.com/torognes/swarm)) creating an independent .csv for each MOTU is needed.
-MOTUs_from_Swarm.sh will return a directory were all MOTUs composition will be stored as independent .csv
+If DnoisE is run after SWARM (see [Torognes](https://github.com/torognes/swarm)) a separate .csv file for each MOTU is needed.
+MOTUs_from_Swarm.sh will return a directory were all MOTUs will be stored as separate .csv files
 
 ```console
 > bash DnoisE/src/MOTUs_from_Swarm.sh -h
 
-Generating a .csv file of each MOTU sequences using output of SWARM
+Generating a .csv file for each MOTU sequences using the output of SWARM
 
-Syntax: bash MOTUs_from_SWARM.sh [-h] [-i] [motu_list_file] [-o] [output_file_from_SWARM] [-r] [-t] [sample_abundances] [-d] [output_directory] [-l] [lulu_deleted_seqs]
+Syntax: bash MOTUs_from_SWARM.sh [-h] [-i] [motu_list_file] [-o] [output_file_from_SWARM] [-r] [-t] [sample_abundances] [-d] [output_directory] [-l] [output_file_from_lulu]
 options:
 h     Print this Help.
 i     .txt containing MOTU ids for which to create a .csv file
@@ -191,10 +199,10 @@ i     .txt containing MOTU ids for which to create a .csv file
       		seq2_id
       		seq3_id
 o     output swarm
-r     remove databases that will be created during process on the output directory
+r     remove databases that will be created during process in the output directory
 t     .tab file containing sample information of original sequences
 d     output directory
-l     lulu delated sequences (opcional) 
+l     lulu corrected_sequences file, an output file from lulu (opcional) 
 
 ```
 __*MANDATORY INPUTS*__
@@ -205,5 +213,12 @@ __*MANDATORY INPUTS*__
 
 __*OUTPUTS*__
 
-* directory with .csv of each MOTU
+* directory with a .csv file of each MOTU
 * a database with all the files that have been created during the process if not '-r'
+
+__*LULU FILE*__
+
+* output file from lulu with deleted/corrected sequences
+
+Some pipelines use LULU to merge incorrect MOTUs to correct ones. This script retrieves motu sequence composition from original motus. -l [output_file_from_lulu] gives information of which MOTUs sequences (deleted by lulu) have to be merged to the original MOTU
+
