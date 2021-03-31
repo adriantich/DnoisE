@@ -143,7 +143,7 @@ The correction is applied as follows:
 
 The original Edgar’s formula is:
 
-$\beta(d) = (1/2)^{\alpha * d + 1}$
+- <img src="https://latex.codecogs.com/gif.latex?\beta(d)=(1/2)^{\alpha *d+1}" />
 
 We correct the d value as follows:
 
