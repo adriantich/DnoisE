@@ -143,7 +143,10 @@ The correction is applied as follows:
 
 The original Edgar’s formula is:
 
-![equation](https://latex.codecogs.com/gif.download?%5Cbeta%28d%29%3D%281/2%29%5E%7B%5Calpha%20*d+1%7D)
+![equation](https://latex.codecogs.com/png.latex?\beta(d)&space;=&space;(1/2)^{\alpha&space;*&space;d&space;&plus;&space;1})
+
+
+<a href="https://www.codecogs.com/eqnedit.php?latex=\beta(d)&space;=&space;(1/2)^{\alpha&space;*&space;d&space;&plus;&space;1}" target="_blank"><img src="https://latex.codecogs.com/png.latex?\beta(d)&space;=&space;(1/2)^{\alpha&space;*&space;d&space;&plus;&space;1}" title="\beta(d) = (1/2)^{\alpha * d + 1}" /></a>
 
 We correct the d value as follows:
 
