@@ -117,6 +117,16 @@ If input is a fasta file, the sequence must be in a single line and both id and 
 If input file is a .csv (*-f* F), separator between columns can be specified using the *-p* parameter (see help).
 
 
+__*OUTPUT FILES (-j|-F|-P)*__
+
+DnoisE can return three different types of output files. When a "daughter" sequence is found, different joining criteria can be performed if Edgar equation meets different possible "mothers". As comparisions are done sequencially from higher to lower abundances when a sequence meets its "mother" comparisions will break if r criteria (*-j* 2) is choosed, this is the lesser ratio value between "daughter" abundance and "mother" abundance. However, this doesn't mean that the "mother" found is the best. If d criteria (*-j* 3), lesser d value, or r_d criteria (*-j* 1), lesser value of the skew abundance ratio divided by beta(d), is choosed more comparisions are performed still the lesser d value is found (there can be equal d distance but higher abundance ratio).
+
+Therefore, when r criteria is choosed, computation time became lower as far as less comparisions are performed. However we recomend r_d criteria and that is why is set as default value. 
+
+To have different types of output for both criteria (*-j*) and format (*-F*; T set as default for .fasta files and F for .csv files) even after DnoisE is finished, DnoisE creates a database in output directory which contains information of how to join all incorrect sequences. Output can be difined again by running with the parameter *-P* set as 2 and set again both *-j* and *-F* parameters. However, when DnoisE originally has been runned with -j 2, none but ratio joining criteria is returned as joining sequences output. 
+Finally we have added an option of returnin the three different outputs when *-j* 4.
+
+
 __*INPUT AND OUTPUT PATHS (-i|-o)*__
 
 Path before file name is required but can be in form of ./ to avoid larger strings.
