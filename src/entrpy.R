@@ -5,7 +5,7 @@ library("stringr")
 
 option_list = list(
   make_option(c("-i", "--input"), type="character", default=NULL, 
-              help="dataset file name of format .fa/.fasta/.csv with just id, size and sequence.\nIf .csv, only ',' accepted", metavar="character"),
+              help="dataset file name of format .fa/.fasta/.csv with just id, size and sequence. If .csv, only ',' accepted", metavar="character"),
   make_option(c("-x", "--first_nt_position"), type="numeric", default=3, 
               help="first nucleotide position, 3 by default", metavar="numeric"),
   make_option(c("-o", "--output_name"), type="character", default=NULL, 

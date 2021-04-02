@@ -74,31 +74,32 @@ Parameters of DnoisE are described in help but some are explained in more detail
 > python3 DnoisE/src/DnoisE.py -h
 
 *HELP*
+Displaying help
  -h --help display help
  -i --input input file path
  -o --output common output files path
- -P --part DnoisE can be run by parts, part 1 runs the main program and returns specified output and database
-               part 2 can return outputs from this database without running all comparisions (see README.md)
-                     - If part = 1 (default) runs normally and a directory as database is named as --output
+ -P --part DnoisE can be run by parts, part 1 runs the main program and returns the specified output and a database where results are stored
+                 part 2 can re-analyse this database and return further outputs without running again the program (see README.md)
+                     - If part = 1 (default) runs normally and a directory and database is named as --output
                      - If part = 2 returns outputs from database
                          Part 2 requires --input, --output and --cores if necessary
  -f --fasta_input logical, if T (default), fasta file as input, if F, .csv as input
  -F --fasta_output logical, if T (default), fasta file as output, if F, .csv as output
- -j --joining_criteria 1-> will join by the lesser [abundance ratio / beta(d)] (r_d criterion) (default)
-                       2-> will join by the lesser abundance ratio (r criterion)
-                       3-> will join by the lesser d value (d criterion)
-                       4-> will provide all joining criteria in three different outputs
+ -j --joining_criteria   1-> will join by the lesser [abundance ratio / beta(d)] (r_d criterion) (default)
+                         2-> will join by the lesser abundance ratio (r criterion)
+                         3-> will join by the lesser d value (d criterion)
+                         4-> will provide all joining criteria in three different outputs
  -c --cores number of cores, 1 by default
- -s --start_sample_cols first sample column (1 == 1st col) if not given, just total read count expected (see README.md)
- -z --end_sample_cols first sample column (1 == 1st col) if not given, just total read count expected (see README.md)
+ -s --start_sample_cols first sample column (1 == 1st col) if not given, just one column with total read count expected (see README.md)
+ -z --end_sample_cols last sample column (n == nst col) if not given, just one column with total read count expected (see README.md)
  -n --count_name count name column (size/reads/count...) 'size' by default
  -a --alpha alpha value, 5 by default
  -q --sequence sequence column name (sequence/seq...), 'sequence' by default
- -p --sep separator 1='        ' (tab)
+ -p --sep separation 1='        ' (tab)
                      2=','
                      3=';'
- -e --entropy entropy of the different codon positions [0.4298,0.1833,0.9256] by default
- -y --entropy_correction logical, if T, A distance correction based on entropy is performed (see ENTROPY CORRECTION below). If set to F, no correction for entropy is performed (corresponding to the standard Unoise formulation)
+ -e --entropy entropy (or any user-settable measure of variability) of the different codon positions [0.47,0.23,1.02] by default
+ -y --entropy_correction logical, if T, a distance correction based on entropy is performed (see ENTROPY CORRECTION below). If set to F, no correction for entropy is performed (corresponding to the standard Unoise formulation)
  -x --first_nt_codon_position as DnoisE has been developed for COI sequences amplified with Leray-XT primers, default value is 3
 
 ```
@@ -120,9 +121,9 @@ If input file is a .csv (*-f* F), the separator between columns can be specified
 
 __*OUTPUT FILES (-j|-F|-P)*__
 
-DnoisE can return three different types of output files. When a "daughter" sequence is found, different joining criteria can be applied if more than one possible "mother" meets Edgar’s equation requirement. As comparisons are done sequentially from higher to lower abundances, when a sequence meets a "mother", comparisons will stop if r criteria (*-j* 2) is chosen (i.e., the lesser ratio value between "daughter" abundance and "mother" abundance). However, this doesn't guarantee that the "mother" found is the best. 
+DnoisE can return three different types of output files. When a "daughter" sequence is found, different joining criteria can be applied if more than one possible "mother" meets Edgar’s equation requirement. As comparisons are done sequentially from higher to lower abundances, when a sequence meets a "mother", comparisons will stop if r criteria (*-j* 2) is chosen (i.e., the lesser ratio value between "daughter" abundance and "mother" abundance). However, this doesn't guarantee that the "mother" found is the best. 
 
-If d criteria (*-j* 3 , lesser d value), r_d criteria (*-j* 1, lesser value of the skew abundance ratio divided by beta(d)), or all criteria (*-j* 4), are chosen, comparisons continue and all potential “mothers” are stored. The program will choose afterwards the best “mother” according to the preferred criterion.
+If d criteria (*-j* 3 , lesser d value), r_d criteria (*-j* 1, lesser value of the skew abundance ratio divided by beta(d)), or all criteria (*-j* 4), are chosen, comparisons continue and all potential “mothers” are stored. The program will choose afterwards the best “mother” according to the preferred criterion.
 Therefore, when r criteria is chosen, computation time is lower because less comparisons are performed. However, we recommend the r_d criteria which is set as default value.
 
 In order to return different types of output for both criteria (*-j*) and format (*-F*; T set as default for .fasta files and F for .csv files) even after DnoisE is finished, DnoisE creates a database in output directory which contains information of how to join all incorrect sequences. Output can be re-analysed again by running DnoisE with the parameter *-P* set as 2 and resetting both *-j* and *-F* parameters as desired. Note that if *-j* 2 has been initially chosen, it is not possible to obtain the other joining criteria without re-running DnoisE, because comparisons are halted when the first “mother” is encountered.
@@ -151,7 +152,7 @@ Note that, in Edgar’s formula, the d used is the Levenshtein distance. This is
 
 The use of Levenshtein distance allowed us to compare sequences of inequal length, both in the complete dataset or within MOTUs (depending on whether DnoisE is performed before or after clustering, see below). However, with the entropy correction length should be constant. If denoise is performed before clustering with the Leray fragment, only 313 bp-long sequences will be compared. If done after clustering, only sequences of the modal length within each MOTU will be compared.
 
-Entropy values are given as E_1, E_2, E_3, where 1, 2, and 3 are the codon positions (default as -e 0.473,0.227,0.1.021). Any user-derived value of variability of each codon position can be used instead of entropy.
+Entropy values are given as E_1, E_2, E_3, where 1, 2, and 3 are the codon positions (default as *-e* 0.47,0.23,0.1.02). Any user-derived value of variability of each codon position can be used instead of entropy.
 
 The correction is applied as follows:
 
@@ -177,13 +178,10 @@ Usage: entrpy.R [options]
 
 Options:
         -i CHARACTER, --input=CHARACTER
-                dataset file name
+                dataset file name of format .fa/.fasta/.csv with just id, size and sequence. If .csv, only ',' accepted
 
         -x NUMERIC, --first_nt_position=NUMERIC
                 first nucleotide position, 3 by default
-
-        -f LOGICAL, --fasta_input=LOGICAL
-                input file is a .fasta file (TRUE) or .csv (FALSE, default)
 
         -o CHARACTER, --output_name=CHARACTER
                 output file name
@@ -205,21 +203,21 @@ MOTUs_from_Swarm.sh will return a directory were all MOTUs will be stored as sep
 ```console
 > bash DnoisE/src/MOTUs_from_Swarm.sh -h
 
-Generating a .csv file for each MOTU sequences using the output of SWARM
+Generating a .csv file of each MOTU sequences using output of SWARM
 
 Syntax: bash MOTUs_from_SWARM.sh [-h] [-i] [motu_list_file] [-o] [output_file_from_SWARM] [-r] [-t] [sample_abundances] [-d] [output_directory] [-l] [output_file_from_lulu]
 options:
 h     Print this Help.
-i     .txt containing MOTU ids for which to create a .csv file
+i     .txt containing MOTU ids for which to create a .csv file will be created
       example: cat motus_to_denoise.txt
-      		seq1_id
-      		seq2_id
-      		seq3_id
+                seq1_id
+                seq2_id
+                seq3_id
 o     output swarm
-r     remove databases that will be created during process in the output directory
+r     remove databases that will be created during process on the output directory
 t     .tab file containing sample information of original sequences
 d     output directory
-l     lulu corrected_sequences file, an output file from lulu (opcional) 
+l     lulu corrected_sequences file, an output file from lulu (opcional)
 
 ```
 __*MANDATORY INPUTS*__

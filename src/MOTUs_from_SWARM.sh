@@ -7,10 +7,10 @@ Help()
    # Display Help
    echo "Generating a .csv file of each MOTU sequences using output of SWARM"
    echo
-   echo "Syntax: bash MOTUs_from_SWARM.sh [-h] [-i] [motu_list_file] [-o] [output_file_from_SWARM] [-r] [-t] [sample_abundances] [-d] [output_directory] [-l] [lulu_deleted_seqs]"
+   echo "Syntax: bash MOTUs_from_SWARM.sh [-h] [-i] [motu_list_file] [-o] [output_file_from_SWARM] [-r] [-t] [sample_abundances] [-d] [output_directory] [-l] [output_file_from_lulu]"
    echo "options:"
    echo "h     Print this Help."
-   echo "i     .txt containing MOTU ids for which to create a .csv file"
+   echo "i     .txt containing MOTU ids for which to create a .csv file will be created"
    echo "      example: cat motus_to_denoise.txt"
    echo "      		seq1_id"
    echo "      		seq2_id"
@@ -19,7 +19,7 @@ Help()
    echo "r     remove databases that will be created during process on the output directory"
    echo "t     .tab file containing sample information of original sequences"
    echo "d     output directory"
-   echo "l     lulu delated sequences (opcional) "
+   echo "l     lulu corrected_sequences file, an output file from lulu (opcional) "
    echo
 }
 
