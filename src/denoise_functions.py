@@ -57,6 +57,7 @@ class denoise_functions:
     part = 1
     good_mothers = []
     new_output_part_2 = False
+    new_fasta_output_part_2 = False
 
     def __init__(self):
         print("starting to denoise")
@@ -270,6 +271,10 @@ class denoise_functions:
                 self.new_output_part_2 = False
             else:
                 self.new_output_part_2 = True
+            if 'arg_F' not in locals():
+                self.new_fasta_output_part_2 = False
+            else:
+                self.new_fasta_output_part_2 = True
 
 
     def quartiles_runned(self):
@@ -1387,7 +1392,8 @@ class denoise_functions:
         self.first_col_names = variables['first_col_names']
         self.seq = variables['seq']
         self.count = variables['count']
-        self.fasta_output = variables['fasta_output']
+        if not self.new_fasta_output_part_2:
+            self.fasta_output = variables['fasta_output']
         if not self.new_output_part_2:
             self.output_type = variables['output_type']
 
