@@ -2,12 +2,12 @@
 ## __An open source parallelizable alternative to Unoise__
 by Adrià Antich (CEAB-CSIC, Center of Advanced Studies of Blanes)
 
-Here we present a new program to denoise sequence data sets from Illumina using parameter d (distance) corrected (optionally) according to the entropy of each codon position. DnoisE is a denoising software that uses the Unoise algorithm (Edgar 2016) to detect incorrect sequences from PCR and sequencing errors. The incorrect (“daughter”) sequences are merged with the correct “mother” sequence. For coding sequences where the entropy of each codon position is highly variable, a correction is advisable to avoid merging correct sequences that have changes in position 3 of the codons (highly variable in nature). DnoisE has been tested with the Leray fragment of the COI barcode region in Antich et al. (2021). For sequence comparision, Levenshtein distance is calculated as d value. However, when entropy correction is aplied Levenshtein distance is not valid as far as difference position is needed. Only sequences with modal sequence lenght are used when performing this correction.
+Here we present a new program to denoise sequence data sets from Illumina using parameter d (distance) corrected (optionally) according to the entropy of each codon position. DnoisE is a denoising software that uses the Unoise algorithm (Edgar 2016) to detect incorrect sequences from PCR and sequencing errors. The incorrect (“daughter”) sequences are merged with the correct “mother” sequence. For coding sequences where the entropy of each codon position is highly variable, a correction is advisable to avoid merging correct sequences that have changes in position 3 of the codons (highly variable in nature). DnoisE has been tested with the Leray fragment of the COI barcode region in Antich et al. (2021).
 
 
 Pros of DnoisE versus Unoise:
 
-1 - DnoisE can weight distances depending on the codon position of nucleotides where changes occur, based on entropy values of each codon position.
+1 - DnoisE can weight distances depending on the codon position of nucleotides where changes occur, based on entropy values of each codon position or any other user-settable measure of variability.
 
 2 - DnoisE algorithm is parallelizable leading to high computational speed depending on computational hardware. It is a very good option if a multicore computer is available.
 
@@ -109,23 +109,24 @@ Input files can be in both .csv and .fasta format. This can be specified using *
 
 Different pipelines use different names to number of reads (size/count/reads...). This can be specified using parameter *-n* followed by string name (for instance: -n size, default).  Sequence name can also be specified using *-q* parameter (sequence/seq...)(*-q* sequence, default)
 
-If input is a fasta file, the sequence must be in a single line and both id and size must end by ";".
+If input is a fasta file, the sequence must be in a single line and both id (first qualifier) and size must end by ";". Any other qualifier will be ignored.
 
 
       >Seq_000000012;size=433081;
       TTTGAGTTCAATACAAAGTCATTCAGGAGCTGCTATTGACTTAGCTATCTTCAGTTTACATCTTTCAGGAGCTTCTTCGATTCTAGGAGCAATTAATTTTATTTCTACCATTATAAATATGCGAAATCCTGGACAAACATTTTATCGCATTCCTTTATTTGTTTGATCGATTTTCGTAACTGCTTTACTACTATTATTAGCAGTACCAGTTTTAGCAGGAGCTATTACCATGTTACTAACTGATCGTAATTTTAATACAGCCTTTTTTGACCCTTCTGGAGGTGGTGATCCTGTACTTTATCAACATTTATTT
 
-If input file is a .csv (*-f* F), separator between columns can be specified using the *-p* parameter (see help).
+If input file is a .csv (*-f* F), the separator between columns can be specified using the *-p* parameter (see help).
 
 
 __*OUTPUT FILES (-j|-F|-P)*__
 
-DnoisE can return three different types of output files. When a "daughter" sequence is found, different joining criteria can be performed if Edgar equation meets more than one possible "mothers". As comparisions are done sequencially from higher to lower abundances, when a sequence meets its "mother", comparisions will break if r criteria (*-j* 2) is choosed, this is the lesser ratio value between "daughter" abundance and "mother" abundance. However, this doesn't mean that the "mother" found is the best. If d criteria (*-j* 3), lesser d value, or r_d criteria (*-j* 1), lesser value of the skew abundance ratio divided by beta(d), are choosed more comparisions will be performed still the lesser d value is found (there can be equal d distance but higher abundance ratio).
+DnoisE can return three different types of output files. When a "daughter" sequence is found, different joining criteria can be applied if more than one possible "mother" meets Edgar’s equation requirement. As comparisons are done sequentially from higher to lower abundances, when a sequence meets a "mother", comparisons will stop if r criteria (*-j* 2) is chosen (i.e., the lesser ratio value between "daughter" abundance and "mother" abundance). However, this doesn't guarantee that the "mother" found is the best. 
 
-Therefore, when r criteria is choosed, computation time became lower as far as less comparisions are performed. However we recomend r_d criteria which is set as default value. 
+If d criteria (*-j* 3 , lesser d value), r_d criteria (*-j* 1, lesser value of the skew abundance ratio divided by beta(d)), or all criteria (*-j* 4), are chosen, comparisons continue and all potential “mothers” are stored. The program will choose afterwards the best “mother” according to the preferred criterion.
+Therefore, when r criteria is chosen, computation time is lower because less comparisons are performed. However, we recommend the r_d criteria which is set as default value.
 
-In order to return different types of output for both criteria (*-j*) and format (*-F*; T set as default for .fasta files and F for .csv files) even after DnoisE is finished, DnoisE creates a database in output directory which contains information of how to join all incorrect sequences. Output can be difined again by running DnoisE with the parameter *-P* set as 2 and reseting again both *-j* and *-F* parameters. However, when DnoisE originally has been runned with -j 2, none but ratio joining criteria is returned as joining sequences output. 
-Finally we have added an option returning the three different outputs: *-j* 4.
+In order to return different types of output for both criteria (*-j*) and format (*-F*; T set as default for .fasta files and F for .csv files) even after DnoisE is finished, DnoisE creates a database in output directory which contains information of how to join all incorrect sequences. Output can be re-analysed again by running DnoisE with the parameter *-P* set as 2 and resetting both *-j* and *-F* parameters as desired. Note that if *-j* 2 has been initially chosen, it is not possible to obtain the other joining criteria without re-running DnoisE, because comparisons are halted when the first “mother” is encountered.
+
 
 
 __*INPUT AND OUTPUT PATHS (-i|-o)*__
@@ -146,9 +147,11 @@ position  --> 3-1-2-3-1-2-3-1-2-3-1-2-...
 ```
 *-x/--first_nt_position* is set as 3 by default.
 
-When entropy correction is performed, comparision of nucleotides one by one is used to calculate distance value instead of Levenshtein distance and thus all sequences must have the same length (modal length)
+Note that, in Edgar’s formula, the d used is the Levenshtein distance. This is the one used by DnoisE if no correction is applied. However, when entropy correction is selected, the Levenshtein distance is not applicable as the codon position needs to be considered, and a d based simply on the number of nucleotide differences is used instead. With sequences of equal length and aligned, both distances are practically equivalent.
 
-Entropy values are given as E_1, E_2, E_3, where 1, 2, and 3 are the codon positions (default as *-e* 0.4298,0.1833,0.9256).
+The use of Levenshtein distance allowed us to compare sequences of inequal length, both in the complete dataset or within MOTUs (depending on whether DnoisE is performed before or after clustering, see below). However, with the entropy correction length should be constant. If denoise is performed before clustering with the Leray fragment, only 313 bp-long sequences will be compared. If done after clustering, only sequences of the modal length within each MOTU will be compared.
+
+Entropy values are given as E_1, E_2, E_3, where 1, 2, and 3 are the codon positions (default as -e 0.473,0.227,0.1.021). Any user-derived value of variability of each codon position can be used instead of entropy.
 
 The correction is applied as follows:
 
@@ -156,7 +159,7 @@ The original Edgar’s formula is:
 
 <a href="https://www.codecogs.com/eqnedit.php?latex=\beta&space;(d)=(1/2)^{\alpha&space;*&space;d&plus;1}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\beta&space;(d)=(1/2)^{\alpha&space;*&space;d&plus;1}" title="\beta (d)=(1/2)^{\alpha * d+1}" /></a>
 
-We correct the d value as follows:
+We correct the d value as:
 
 <a href="https://www.codecogs.com/eqnedit.php?latex=d&space;=&space;\sum\limits_{i=1}^{3}&space;d_i&space;*&space;\frac{E_i&space;*&space;3}{E_1&space;&plus;&space;E_2&space;&plus;&space;E_3}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?d&space;=&space;\sum\limits_{i=1}^{3}&space;d_i&space;*&space;\frac{E_i&space;*&space;3}{E_1&space;&plus;&space;E_2&space;&plus;&space;E_3}" title="d = \sum\limits_{i=1}^{3} d_i * \frac{E_i * 3}{E_1 + E_2 + E_3}" /></a>
 
@@ -192,7 +195,7 @@ Options:
 
 __*SAMPLE INFORMATION (-s|-z)*__
 
-Sample information is only allowed when input file is in .csv format. When sample information is given, first column (*-s*) and last column (*-z*) position of sample information must be specified.
+Sample information cannot be processed if the input is a fasta file. When this information is relevant, the input should be a .csv file, and the first and last sample columns should be indicated with parameters *-s* and *-z*.
 
 #### __Running DnoisE after SWARM within MOTU__
 
@@ -234,5 +237,4 @@ __*LULU FILE*__
 
 * output file from lulu with deleted/corrected sequences
 
-Some pipelines (e.g. [MJOLNIR](https://github.com/uit-metabarcoding/MJOLNIR)) use [LULU](https://github.com/tobiasgf/lulu) to merge incorrect MOTUs to correct ones. This script retrieves motu sequence composition from original motus. -l [output_file_from_lulu] gives information of which MOTUs sequences (deleted by lulu) have to be merged to the original MOTU
-
+Some pipelines (e.g. [MJOLNIR](https://github.com/uit-metabarcoding/MJOLNIR)) use [LULU](https://github.com/tobiasgf/lulu) to merge incorrect MOTUs to correct ones. This script retrieves MOTU sequence composition from original MOTUs generated by SWARM. Therefore, a *-l* [output_file_from_lulu] file us mandatory if LULU is used, as it gives information on which MOTUs have to be merged according to LULU results.
