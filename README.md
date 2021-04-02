@@ -56,6 +56,7 @@ bash required_modules.sh
 R
 > install.packages("optparse")
 > install.packages("entropy")
+> install.packages("stringr")
 ```
 
 We also recomend to use pyenv to create an environment to run DnoisE (see pyenv [documentation](https://github.com/pyenv/pyenv))
