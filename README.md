@@ -119,17 +119,17 @@ If input file is a .csv (*-f* F), separator between columns can be specified usi
 
 __*OUTPUT FILES (-j|-F|-P)*__
 
-DnoisE can return three different types of output files. When a "daughter" sequence is found, different joining criteria can be performed if Edgar equation meets different possible "mothers". As comparisions are done sequencially from higher to lower abundances when a sequence meets its "mother" comparisions will break if r criteria (*-j* 2) is choosed, this is the lesser ratio value between "daughter" abundance and "mother" abundance. However, this doesn't mean that the "mother" found is the best. If d criteria (*-j* 3), lesser d value, or r_d criteria (*-j* 1), lesser value of the skew abundance ratio divided by beta(d), is choosed more comparisions are performed still the lesser d value is found (there can be equal d distance but higher abundance ratio).
+DnoisE can return three different types of output files. When a "daughter" sequence is found, different joining criteria can be performed if Edgar equation meets more than one possible "mothers". As comparisions are done sequencially from higher to lower abundances, when a sequence meets its "mother", comparisions will break if r criteria (*-j* 2) is choosed, this is the lesser ratio value between "daughter" abundance and "mother" abundance. However, this doesn't mean that the "mother" found is the best. If d criteria (*-j* 3), lesser d value, or r_d criteria (*-j* 1), lesser value of the skew abundance ratio divided by beta(d), are choosed more comparisions will be performed still the lesser d value is found (there can be equal d distance but higher abundance ratio).
 
-Therefore, when r criteria is choosed, computation time became lower as far as less comparisions are performed. However we recomend r_d criteria and that is why is set as default value. 
+Therefore, when r criteria is choosed, computation time became lower as far as less comparisions are performed. However we recomend r_d criteria which is set as default value. 
 
-To have different types of output for both criteria (*-j*) and format (*-F*; T set as default for .fasta files and F for .csv files) even after DnoisE is finished, DnoisE creates a database in output directory which contains information of how to join all incorrect sequences. Output can be difined again by running with the parameter *-P* set as 2 and set again both *-j* and *-F* parameters. However, when DnoisE originally has been runned with -j 2, none but ratio joining criteria is returned as joining sequences output. 
-Finally we have added an option of returnin the three different outputs when *-j* 4.
+In order to return different types of output for both criteria (*-j*) and format (*-F*; T set as default for .fasta files and F for .csv files) even after DnoisE is finished, DnoisE creates a database in output directory which contains information of how to join all incorrect sequences. Output can be difined again by running DnoisE with the parameter *-P* set as 2 and reseting again both *-j* and *-F* parameters. However, when DnoisE originally has been runned with -j 2, none but ratio joining criteria is returned as joining sequences output. 
+Finally we have added an option returning the three different outputs: *-j* 4.
 
 
 __*INPUT AND OUTPUT PATHS (-i|-o)*__
 
-Path before file name is required but can be in form of ./ to avoid larger strings.
+Path before file name is required but can be in form of ./ to avoid large strings.
 Output path is also required as far as it can be used to specify output name.
 For instance, the output path './file_to_denoise will' will return a file './file_to_denoise_denoising_info.csv' among others.
 
@@ -137,7 +137,7 @@ For instance, the output path './file_to_denoise will' will return a file './fil
 __*ENTROPY CORRECTION (-e|-y|-x)*__
 
 As described in Antich et al. (2021) a correction of the distance value (d) in Edgar's algorithm (2016) can be performed using the entropy values of each codon position in coding barcodes.
-We performed DnoisE for COI Leray/Leray-XT primers (Leray et al. 2013; Wangensteen et al. 2018) and therefore sequences start with a codon position 3 and the first codon position is in the second sequence position as follow
+We performed DnoisE for COI Leray/Leray-XT primers (Leray et al. 2013; Wangensteen et al. 2018) and consequently sequences start with a codon position 3 and the first codon position is in the second sequence position as follow
 
 ```console
 seq       --> T-T-T-G-A-G-T-T-C-A-A-T-...
@@ -145,7 +145,7 @@ position  --> 3-1-2-3-1-2-3-1-2-3-1-2-...
 ```
 *-x/--first_nt_position* is set as 3 by default.
 
-When entropy correction is performed, comparision of nucleotides one by one is used to calculate distance value instead of Levenshtein distance, and therefore, all sequences must have the same length (modal length)
+When entropy correction is performed, comparision of nucleotides one by one is used to calculate distance value instead of Levenshtein distance and thus all sequences must have the same length (modal length)
 
 Entropy values are given as E_1, E_2, E_3, where 1, 2, and 3 are the codon positions (default as *-e* 0.4298,0.1833,0.9256).
 
@@ -159,7 +159,7 @@ We correct the d value as follows:
 
 <a href="https://www.codecogs.com/eqnedit.php?latex=d&space;=&space;\sum\limits_{i=1}^{3}&space;d_i&space;*&space;\frac{E_i&space;*&space;3}{E_1&space;&plus;&space;E_2&space;&plus;&space;E_3}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?d&space;=&space;\sum\limits_{i=1}^{3}&space;d_i&space;*&space;\frac{E_i&space;*&space;3}{E_1&space;&plus;&space;E_2&space;&plus;&space;E_3}" title="d = \sum\limits_{i=1}^{3} d_i * \frac{E_i * 3}{E_1 + E_2 + E_3}" /></a>
 
-Entropy values can be input manually. They can be calculated using the entrpy.R script as follows:
+Entropy can be calculated using the entrpy.R script as follows:
 
 ```console
 Rscript --vanilla entrpy.R -i [input_file] -o [output_file] -f [TRUE|FALSE] 
@@ -233,5 +233,5 @@ __*LULU FILE*__
 
 * output file from lulu with deleted/corrected sequences
 
-Some pipelines use LULU to merge incorrect MOTUs to correct ones. This script retrieves motu sequence composition from original motus. -l [output_file_from_lulu] gives information of which MOTUs sequences (deleted by lulu) have to be merged to the original MOTU
+Some pipelines (e.g. [MJOLNIR](https://github.com/uit-metabarcoding/MJOLNIR)) use [LULU](https://github.com/tobiasgf/lulu) to merge incorrect MOTUs to correct ones. This script retrieves motu sequence composition from original motus. -l [output_file_from_lulu] gives information of which MOTUs sequences (deleted by lulu) have to be merged to the original MOTU
 
