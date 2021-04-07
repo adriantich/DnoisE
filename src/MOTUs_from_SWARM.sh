@@ -5,21 +5,21 @@
 Help()
 {
    # Display Help
-   echo "Generating a .csv file of each MOTU sequences using output of SWARM"
+   echo "Generating a .csv file of all sequences included in each MOTU from the output of SWARM"
    echo
    echo "Syntax: bash MOTUs_from_SWARM.sh [-h] [-i] [motu_list_file] [-o] [output_file_from_SWARM] [-r] [-t] [sample_abundances] [-d] [output_directory] [-l] [output_file_from_lulu]"
    echo "options:"
    echo "h     Print this Help."
-   echo "i     .txt containing MOTU ids for which to create a .csv file will be created"
+   echo "i     .txt containing MOTU ids for which to create .csv files"
    echo "      example: cat motus_to_denoise.txt"
    echo "      		seq1_id"
    echo "      		seq2_id"
    echo "      		seq3_id"
-   echo "o     output swarm"
-   echo "r     remove databases that will be created during process on the output directory"
-   echo "t     .tab file containing sample information of original sequences"
+   echo "o     swarm output file"
+   echo "r     remove databases that will be created during the process in the output directory"
+   echo "t     .tab file containing sample information of original sequences (from obitab)"
    echo "d     output directory"
-   echo "l     lulu corrected_sequences file, an output file from lulu (opcional) "
+   echo "l     lulu corrected_sequences file, an output file from lulu (optional) "
    echo
 }
 
@@ -47,7 +47,7 @@ if [ -z "${motu_list}" ]
  fi
 if [ -z "${output_SWARM}" ]
  then
- echo 'ERROR! output_SWARM (-o) needed'
+ echo 'ERROR! SWARM_output_file (-o) needed'
  Help
  exit
  fi
