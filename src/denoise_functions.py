@@ -6,6 +6,7 @@ from ast import literal_eval
 import os
 import getopt
 import sys
+import itertools
 
 
 class denoise_functions:
@@ -58,6 +59,7 @@ class denoise_functions:
     good_mothers = []
     new_output_part_2 = False
     new_fasta_output_part_2 = False
+    modal_length_value = []
 
     def __init__(self):
         print("starting to denoise")
@@ -104,7 +106,8 @@ class denoise_functions:
                       " -y --entropy_correction logical, if T, a distance correction based on entropy is performed "
                       "(see ENTROPY CORRECTION below). If set to F, no correction for entropy is performed "
                       "(corresponding to the standard Unoise formulation)\n"
-                      " -x --first_nt_codon_position as DnoisE has been developed for COI sequences amplified with Leray-XT primers, default value is 3")
+                      " -x --first_nt_codon_position as DnoisE has been developed for COI sequences amplified with Leray-XT primers, default value is 3"
+                      " -m --modal_length when running DnoisE with entropy correction, sequence length accepted can be set, if not, modal_length is used")
                 exit()
             elif current_argument in ("-i", "--input"):
                 print("Denoising %s file" % current_value)
@@ -195,6 +198,9 @@ class denoise_functions:
                 self.initial_pos = int(current_argument)
                 arg_x = True
                 print("first nt is a position %s" % current_value)
+            elif current_argument in ("-m", "--modal_length"):
+                self.modal_length_value = int(current_argument)
+                print("modal_length set as %s" % current_value)
             
 
         if 'arg_i' not in locals():
@@ -1320,6 +1326,13 @@ class denoise_functions:
 
     def mother_id(self, test, M):
         return test == M
+
+    def modal_length(self, array):
+        pdarray = pd.Series(array, dtype="category")
+        uniques = list(pdarray.unique())
+        counts = pd.Series(list(map(array.count, uniques)))
+        most = max(counts)
+        return list(itertools.compress(uniques, [list(counts == most)]))
 
     def write_variables(self):
         variables = {"entropy": self.entropy,

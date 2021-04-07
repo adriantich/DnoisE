@@ -2,10 +2,8 @@
 import pandas as pd
 import numpy as np
 import multiprocessing as mp
-import csv
 import sys
 from tqdm import tqdm
-import stats
 import itertools
 from denoise_functions import denoise_functions
 
@@ -15,15 +13,17 @@ de = denoise_functions()
 full_cmd_arguments = sys.argv
 
 # Keep all but the first
-# argument_list = ['-i', '/home/adriantich/Nextcloud/1_tesi_Adrià/Denoise/PHY1bis_final_subset.csv', '-o', '/home/adriantich/Nextcloud/1_tesi_Adrià/Denoise/PHY1bis_final_subset.csv_Adcorr_nou',
-#                  '-P', '3', '-f', 'F', '-F', 'F', '-c', '2', '-n', 'reads', '-a', '5', '-q', 'seq', '-p', '2', '-e', '0.4727,0.2266,1.0212', '-y', 'T']
+argument_list = ['-i', '/home/adriantich/Nextcloud/1_tesi_Adrià/Denoise/motus_csv/PHY1_000000095',
+                 '-o', '/home/adriantich/Nextcloud/1_tesi_Adrià/Denoise/motus_csv/PHY1_000000095_Adcorr_nou',
+                 # '-P', '3',
+                 '-f', 'F', '-F', 'F', '-s', '4', '-z', '79', '-c', '2', '-n', 'count', '-a', '5', '-q', 'sequence', '-p', '1', '-e', '0.4727,0.2266,1.0212', '-y', 'T']
 # argument_list = ['-i', '/home/adriantich/Nextcloud/1_tesi_Adrià/test_DnoisE/PHY1bis_final.fa',
 #                  '-o', '/home/adriantich/Nextcloud/1_tesi_Adrià/test_DnoisE/D/PHY1bis_final.fa_D',
 #                  '-P', '3']
 
 # argument_list = ['-i', '/home/adriantich/Nextcloud/1_tesi_Adrià/test_DnoisE/PHY1bis_final.fa', '-o', '/home/adriantich/Nextcloud/1_tesi_Adrià/test_DnoisE/PHY1bis_final.fa_Adcorr_nou',
 #                  '-f', 'T', '-F', 'T', '-c', '2', '-n', 'size', '-a', '5', '-y', 'F']
-argument_list = full_cmd_arguments[1:]
+# argument_list = full_cmd_arguments[1:]
 
 print(argument_list)
 de.read_parameters(argument_list)
@@ -55,8 +55,8 @@ if de.part != 2:
         # de.min_mother = min(de.data_initial.loc[:, de.count]) / (1 / 2) ** (de.alpha * 1 + 1 + (min(de.Ad1, de.Ad2, de.Ad3)-1) * 1) # for sum version
         # de.min_mother = min(de.data_initial.loc[:, de.count]) / (1 / 2) ** (de.alpha * 1 * min(de.Ad1, de.Ad2, de.Ad3) + 1)
         # print('min_mother equals to %s' % de.min_mother)
-        print('and Ad corr:')
-        print(de.Ad1, de.Ad2, de.Ad3)
+        # print('and Ad corr:')
+        # print(de.Ad1, de.Ad2, de.Ad3)
         de.max_ratio = (1 / 2) ** (de.alpha * 1 * min(de.Ad1, de.Ad2, de.Ad3) + 1)
         # the program should work with different seq_length, if not, filter and get de mode
 
@@ -84,12 +84,17 @@ if de.part != 2:
                 seq_length.append(len(i_seq))
                 seq_length_per_read.append([len(i_seq)]*i_count)
             seq_length_per_read = list(itertools.chain.from_iterable(seq_length_per_read))
-            try:
-                de.data_initial = de.data_initial.loc[(np.asarray(seq_length) == stats.mode(seq_length_per_read))]
-            except:
-                print('MOTU no available to run with Entropy. Equal number of seqs with different seq length')
+
+            if len(de.modal_length_value) == 0:
+                de.modal_length_value = de.modal_length(seq_length_per_read)
+
+            if len(de.modal_length_value) == 1:
+                de.data_initial = de.data_initial.loc[(np.asarray(seq_length) == de.modal_length_value)]
+            else:
+                print('%s no available to run with Entropy. Equal number of seqs with different seq length' % de.MOTUfile)
+                print('set -m as one value of the following: %s ' % de.modal_length_value)
                 exit()
-            del seq_length, seq_length_per_read
+            del seq_length, seq_length_per_read, de.modal_length_value
 
         # reorder index
         de.data_initial.index = list(range(de.data_initial.shape[0]))
