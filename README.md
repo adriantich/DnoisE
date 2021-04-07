@@ -137,7 +137,7 @@ Output path is also required as far as it can be used to specify output name.
 For instance, the output path './file_to_denoise will' will return a file './file_to_denoise_denoising_info.csv' among others.
 
 
-__*ENTROPY CORRECTION (-e|-y|-x)*__
+__*ENTROPY CORRECTION (-e|-y|-x|-m)*__
 
 As described in Antich et al. (2021) a correction of the distance value (d) in Edgar's algorithm (2016) can be performed using the entropy values of each codon position in coding barcodes.
 We performed DnoisE for COI Leray/Leray-XT primers (Leray et al. 2013; Wangensteen et al. 2018) and consequently sequences start with a codon position 3 and the first codon position is in the second sequence position as follow
@@ -150,7 +150,7 @@ position  --> 3-1-2-3-1-2-3-1-2-3-1-2-...
 
 Note that, in Edgar’s formula, the d used is the Levenshtein distance. This is the one used by DnoisE if no correction is applied. However, when entropy correction is selected, the Levenshtein distance is not applicable as the codon position needs to be considered, and a d based simply on the number of nucleotide differences is used instead. With sequences of equal length and aligned, both distances are practically equivalent.
 
-The use of Levenshtein distance allowed us to compare sequences of inequal length, both in the complete dataset or within MOTUs (depending on whether DnoisE is performed before or after clustering, see below). However, with the entropy correction length should be constant. If denoise is performed before clustering with the Leray fragment, only 313 bp-long sequences will be compared. If done after clustering, only sequences of the modal length within each MOTU will be compared.
+The use of Levenshtein distance allowed us to compare sequences of inequal length, both in the complete dataset or within MOTUs (depending on whether DnoisE is performed before or after clustering, see below). However, with the entropy correction length should be constant. If denoise is performed before clustering with the Leray fragment, only 313 bp-long sequences will be compared. If done after clustering, only sequences of the modal length within each MOTU will be compared. Notwithstanding, prefered sequence length can be set using *-m* parameter 
 
 Entropy values are given as E_1, E_2, E_3, where 1, 2, and 3 are the codon positions (default as *-e* 0.47,0.23,0.1.02). Any user-derived value of variability of each codon position can be used instead of entropy.
 
