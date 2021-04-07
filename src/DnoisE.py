@@ -1,4 +1,4 @@
-#import all the modules that will be used
+# import all the modules that will be used
 import pandas as pd
 import numpy as np
 import multiprocessing as mp
@@ -13,17 +13,17 @@ de = denoise_functions()
 full_cmd_arguments = sys.argv
 
 # Keep all but the first
-argument_list = ['-i', '/home/adriantich/Nextcloud/1_tesi_Adrià/Denoise/motus_csv/PHY1_000000095',
-                 '-o', '/home/adriantich/Nextcloud/1_tesi_Adrià/Denoise/motus_csv/PHY1_000000095_Adcorr_nou',
-                 # '-P', '3',
-                 '-f', 'F', '-F', 'F', '-s', '4', '-z', '79', '-c', '2', '-n', 'count', '-a', '5', '-q', 'sequence', '-p', '1', '-e', '0.4727,0.2266,1.0212', '-y', 'T']
+# argument_list = ['-i', '/home/adriantich/Nextcloud/1_tesi_Adrià/Denoise/motus_csv/PHY1_000000095',
+#                  '-o', '/home/adriantich/Nextcloud/1_tesi_Adrià/Denoise/motus_csv/PHY1_000000095_Adcorr_nou',
+#                  # '-P', '3',
+#                  '-f', 'F', '-F', 'F', '-s', '4', '-z', '79', '-c', '2', '-n', 'count', '-a', '5', '-q', 'sequence', '-p', '1', '-e', '0.4727,0.2266,1.0212', '-y', 'T']
 # argument_list = ['-i', '/home/adriantich/Nextcloud/1_tesi_Adrià/test_DnoisE/PHY1bis_final.fa',
 #                  '-o', '/home/adriantich/Nextcloud/1_tesi_Adrià/test_DnoisE/D/PHY1bis_final.fa_D',
 #                  '-P', '3']
 
 # argument_list = ['-i', '/home/adriantich/Nextcloud/1_tesi_Adrià/test_DnoisE/PHY1bis_final.fa', '-o', '/home/adriantich/Nextcloud/1_tesi_Adrià/test_DnoisE/PHY1bis_final.fa_Adcorr_nou',
 #                  '-f', 'T', '-F', 'T', '-c', '2', '-n', 'size', '-a', '5', '-y', 'F']
-# argument_list = full_cmd_arguments[1:]
+argument_list = full_cmd_arguments[1:]
 
 print(argument_list)
 de.read_parameters(argument_list)
@@ -91,9 +91,11 @@ if de.part != 2:
             if len(de.modal_length_value) == 1:
                 de.data_initial = de.data_initial.loc[(np.asarray(seq_length) == de.modal_length_value)]
             else:
-                print('%s no available to run with Entropy. Equal number of seqs with different seq length' % de.MOTUfile)
+                print('WARNING!! %s no available to run with Entropy. Equal number of seqs with different seq length' % de.MOTUfile)
                 print('set -m as one value of the following: %s ' % de.modal_length_value)
-                exit()
+                print('DnoisE will run with sequence length %s' % de.modal_length_value[0])
+                de.data_initial = de.data_initial.loc[(np.asarray(seq_length) == de.modal_length_value[0])]
+
             del seq_length, seq_length_per_read, de.modal_length_value
 
         # reorder index
