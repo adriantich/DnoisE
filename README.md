@@ -101,7 +101,7 @@ Displaying help
  -e --entropy entropy (or any user-settable measure of variability) of the different codon positions [0.47,0.23,1.02] by default
  -y --entropy_correction logical, if T, a distance correction based on entropy is performed (see ENTROPY CORRECTION below). If set to F, no correction for entropy is performed (corresponding to the standard Unoise formulation)
  -x --first_nt_codon_position as DnoisE has been developed for COI sequences amplified with Leray-XT primers, default value is 3
-
+ -m --modal_length when running DnoisE with entropy correction, sequence length accepted can be set, if not, modal_length is used
 ```
 
 __*INPUT FILES (-i|-f|-n|-q|-p)*__
