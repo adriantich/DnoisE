@@ -208,14 +208,14 @@ Generating a .csv file of each MOTU sequences using output of SWARM
 Syntax: bash MOTUs_from_SWARM.sh [-h] [-i] [motu_list_file] [-o] [output_file_from_SWARM] [-r] [-t] [sample_abundances] [-d] [output_directory] [-l] [output_file_from_lulu]
 options:
 h     Print this Help.
-i     .txt containing MOTU ids for which to create a .csv file will be created
+i     .txt containing MOTU ids for which to create .csv files
       example: cat motus_to_denoise.txt
                 seq1_id
                 seq2_id
                 seq3_id
-o     output swarm
-r     remove databases that will be created during process on the output directory
-t     .tab file containing sample information of original sequences
+o     swarm output file
+r     remove databases that will be created during process in the output directory
+t     .tab file containing sample information of original sequences (from obitab)
 d     output directory
 l     lulu corrected_sequences file, an output file from lulu (opcional)
 
