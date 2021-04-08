@@ -65,11 +65,11 @@ class denoise_functions:
         print("starting to denoise")
 
     def read_parameters(self, argument_list):
-        short_options = "hi:o:P:f:F:j:c:s:z:n:a:q:p:e:y:x:"
+        short_options = "hi:o:P:f:F:j:c:s:z:n:a:q:p:e:y:x:m:"
         long_options = ["help", "input=", "output=", "part=", "fasta_input=", "fasta_output=", "joining_criteria", "cores=",
                         "start_sample_cols=",
                         "end_sample_cols=", "count_name=", "alpha=", "sequence=", "separation=", "entropy=",
-                        "entropy_correction=", "first_nt_codon_position=" ]
+                        "entropy_correction=", "first_nt_codon_position=","modal_length=" ]
         try:
             arguments, values = getopt.getopt(argument_list, short_options, long_options)
         except getopt.error as err:
