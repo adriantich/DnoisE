@@ -91,10 +91,19 @@ if de.part != 2:
             if len(de.modal_length_value) == 1:
                 de.data_initial = de.data_initial.loc[(np.asarray(seq_length) == de.modal_length_value)]
             else:
+                for e in range(0, len(de.modal_length_value)):
+                    if ((de.modal_length_value[e]-1)%3) == 0:
+                        good_modal_length_value = de.modal_length_value[e]
+                        break
+                if 'good_modal_length_value' not in locals():
+                    good_modal_length_value = de.modal_length_value[0]
+
                 print('WARNING!! %s no available to run with Entropy. Equal number of seqs with different seq length' % de.MOTUfile)
                 print('set -m as one value of the following: %s ' % de.modal_length_value)
-                print('DnoisE will run with sequence length %s' % de.modal_length_value[0])
-                de.data_initial = de.data_initial.loc[(np.asarray(seq_length) == de.modal_length_value[0])]
+                print('DnoisE will run with sequence length %s' % good_modal_length_value)
+                de.data_initial = de.data_initial.loc[(np.asarray(seq_length) == good_modal_length_value)]
+
+                del good_modal_length_value
 
             del seq_length, seq_length_per_read, de.modal_length_value
 
