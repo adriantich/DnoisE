@@ -21,9 +21,9 @@ full_cmd_arguments = sys.argv
 #                  '-o', '/home/adriantich/Nextcloud/1_tesi_Adrià/test_DnoisE/D/PHY1bis_final.fa_D',
 #                  '-P', '3']
 
-# argument_list = ['-i', '/home/adriantich/Nextcloud/1_tesi_Adrià/test_DnoisE/PHY1bis_final.fa', '-o', '/home/adriantich/Nextcloud/1_tesi_Adrià/test_DnoisE/PHY1bis_final.fa_Adcorr_nou',
-#                  '-f', 'T', '-F', 'T', '-c', '2', '-n', 'size', '-a', '5', '-y', 'F']
-argument_list = full_cmd_arguments[1:]
+argument_list = ['-i', '/home/adriantich/Nextcloud/1_tesi_Adrià/test_DnoisE/PHY1subset_final.fa', '-o', '/home/adriantich/Nextcloud/1_tesi_Adrià/test_DnoisE/PHY1subset_final.fa_Adcorr_nou',
+                 '-f', 'T', '-F', 'T', '-c', '2', '-a', '5', '-y', 'F']
+# argument_list = full_cmd_arguments[1:]
 
 print(argument_list)
 de.read_parameters(argument_list)
@@ -47,6 +47,8 @@ if de.part != 2:
 
         else:
             de.data_initial = pd.read_csv(de.MOTUfile, sep=de.sep)
+
+        de.data_initial[de.seq] = de.data_initial[de.seq].str.upper()
 
         print('input file read')
 
@@ -369,15 +371,16 @@ if (de.output_type == 'ratio') or (de.output_type == 'all'):
             de.good_mothers = de.good_mothers.drop(index=mother)
         denoised_ratio = denoised_ratio.append(de.good_mothers, ignore_index=True)
         denoised_ratio = denoised_ratio.sort_values([de.count], axis=0, ascending=False)
-
-    del row, de.good_mothers, mothers_ratio, de.denoised_ratio_output
+    if 'row' in locals():
+        del row
+    del de.good_mothers, mothers_ratio, de.denoised_ratio_output
 
     if de.fasta_output:
         denoised_ratio = denoised_ratio.to_dict(orient='index')
         ofile = open(str(de.MOTUoutfile + '_denoised_ratio.fasta'), "w")
         for i in tqdm(range(len(denoised_ratio))):
-            ofile.write(">" + denoised_ratio[i]['id'] + ';size=' + str(denoised_ratio[i]['count']) +
-                        ";\n" + denoised_ratio[i]['sequence'].upper() + "\n")
+            ofile.write(">" + denoised_ratio[i]['id'] + ';size=' + str(denoised_ratio[i][de.count]) +
+                        ";\n" + denoised_ratio[i][de.seq].upper() + "\n")
         # do not forget to close it
         ofile.close()
     else:
@@ -411,15 +414,16 @@ if (de.output_type == 'd') or (de.output_type == 'all'):
             de.good_mothers = de.good_mothers.drop(index=mother)
         denoised_d = denoised_d.append(de.good_mothers, ignore_index=True)
         denoised_d = denoised_d.sort_values([de.count], axis=0, ascending=False)
-
-    del row, de.good_mothers, mothers_d, de.denoised_d_output
+    if 'row' in locals():
+        del row
+    del de.good_mothers, mothers_d, de.denoised_d_output
 
     if de.fasta_output:
         denoised_d = denoised_d.to_dict(orient='index')
         ofile = open(str(de.MOTUoutfile + '_denoised_d.fasta'), "w")
         for i in tqdm(range(len(denoised_d))):
-            ofile.write(">" + denoised_d[i]['id'] + ';size=' + str(denoised_d[i]['count']) + ";\n" +
-                        denoised_d[i]['sequence'].upper() + "\n")
+            ofile.write(">" + denoised_d[i]['id'] + ';size=' + str(denoised_d[i][de.count]) + ";\n" +
+                        denoised_d[i][de.seq].upper() + "\n")
         # do not forget to close it
         ofile.close()
     else:
@@ -456,15 +460,16 @@ if (de.output_type == 'ratio_d') or (de.output_type == 'all'):
             de.good_mothers = de.good_mothers.drop(index=mother)
         denoised_ratio_d = denoised_ratio_d.append(de.good_mothers, ignore_index=True)
         denoised_ratio_d = denoised_ratio_d.sort_values([de.count], axis=0, ascending=False)
-
-    del row, de.good_mothers, mothers_ratio_d, de.denoised_ratio_d_output
+    if 'row' in locals():
+        del row
+    del de.good_mothers, mothers_ratio_d, de.denoised_ratio_d_output
 
     if de.fasta_output:
         denoised_ratio_d = denoised_ratio_d.to_dict(orient='index')
         ofile = open(str(de.MOTUoutfile + '_denoised_ratio_d.fasta'), "w")
         for i in tqdm(range(len(denoised_ratio_d))):
-            ofile.write(">" + denoised_ratio_d[i]['id'] + ';size=' + str(denoised_ratio_d[i]['count']) + ";\n" +
-                        denoised_ratio_d[i]['sequence'].upper() + "\n")
+            ofile.write(">" + denoised_ratio_d[i]['id'] + ';size=' + str(denoised_ratio_d[i][de.count]) + ";\n" +
+                        denoised_ratio_d[i][de.seq].upper() + "\n")
         # do not forget to close it
         ofile.close()
     else:
