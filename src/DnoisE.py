@@ -23,6 +23,8 @@ full_cmd_arguments = sys.argv
 
 # argument_list = ['-i', '/home/adriantich/Nextcloud/1_tesi_Adrià/test_DnoisE/PHY1subset_final.fa', '-o', '/home/adriantich/Nextcloud/1_tesi_Adrià/test_DnoisE/PHY1subset_final.fa_Adcorr_nou',
 #                  '-f', 'T', '-F', 'T', '-c', '2', '-a', '5', '-y', 'F']
+
+# argument_list = ['-i', '/home/adriantich/Nextcloud/1_tesi_Adrià/test_DnoisE/key_error_id/UTILA_DnoisE_table.csv', '-o', '/home/adriantich/Nextcloud/1_tesi_Adrià/test_DnoisE/key_error_id/Utila', '-c', '2', '-f', 'F', '-F', 'F', '-p', '2', '-s', '4', '-z', '55']
 argument_list = full_cmd_arguments[1:]
 
 print(argument_list)
@@ -66,6 +68,8 @@ if de.part != 2:
         if not de.justcount:
             de.abund_col_names = list(de.data_initial.columns)[(de.start - 1):de.end]
             de.first_col_names = list(de.data_initial.columns)[0:(de.start - 2)]
+            if de.count in de.first_col_names:
+                de.first_col_names.remove(de.count)
             de.data_initial.loc[:, de.count] = de.data_initial.loc[:, de.abund_col_names].sum(axis=1)
         else:
             de.first_col_names = ['id']
@@ -243,8 +247,8 @@ if de.part != 2:
                      de.output_info_2,
                      de.denoised_ratio_output_2,
                      de.runned_list_2] = zip(*pool.map(de.denoising_parallel_ratio, [pos for pos in
-                                                                                       range(len(de.runned_list),
-                                                                                             run_to)]))
+                                                                                     range(len(de.runned_list),
+                                                                                           run_to)]))
                     pool.close()
                     del pool
                     de.good_seq.extend(list(de.good_seq_2))
