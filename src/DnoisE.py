@@ -70,6 +70,8 @@ if de.part != 2:
             de.first_col_names = list(de.data_initial.columns)[0:(de.start - 2)]
             if de.count in de.first_col_names:
                 de.first_col_names.remove(de.count)
+            if de.seq in de.first_col_names:
+                de.first_col_names.remove(de.seq)
             de.data_initial.loc[:, de.count] = de.data_initial.loc[:, de.abund_col_names].sum(axis=1)
         else:
             de.first_col_names = ['id']
