@@ -118,6 +118,20 @@ If input is a fasta file, the sequence must be in a single line and both id (fir
 
 If input file is a .csv (*-f* F), the separator between columns can be specified using the *-p* parameter (see help).
 
+If .fasta file has the sequence in more than one line, "to_uniq_line_fasta.sh" can be used to change format.
+```console
+bash to_uniq_line_fasta.sh -h
+
+Converting multiple line sequence fasta to unique line
+
+Syntax: bash to_uniq_line_fasta.sh [-h] [-i] [input_file] [-o] [output_file] 
+options:
+h     Print this Help.
+i     .fasta containing all sequences
+o     output file
+
+```
+
 
 __*OUTPUT FILES (-j|-F|-P)*__
 
