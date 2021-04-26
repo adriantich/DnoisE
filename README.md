@@ -167,7 +167,7 @@ We correct the d value as:
 Entropy can be calculated using the entrpy.R script as follows:
 
 ```console
-Rscript --vanilla entrpy.R -i [input_file] -o [output_file] -f [TRUE|FALSE] 
+Rscript --vanilla entrpy.R -i [input_file] -o [output_file] -x [1|2|3] 
 
 # display help
 
