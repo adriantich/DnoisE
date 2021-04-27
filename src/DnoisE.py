@@ -214,7 +214,9 @@ if de.part != 2:
                     print(len(de.runned_list) / de.data_initial.shape[0] * 100, '%')
                     del (de.good_seq_2, de.output_info_2, de.denoised_d_output_2, de.denoised_ratio_output_2,
                          de.denoised_ratio_d_output_2, de.runned_list_2)
-            del (de.cores, de.alpha, de.min_mother)
+            if 'de.min_mother' in locals():
+                del de.min_mother
+            del (de.cores, de.alpha)
         else:
             if de.output_type == 'ratio':
                 for pos in tqdm(range(1, de.data_initial.shape[0])):
@@ -292,7 +294,9 @@ if de.part != 2:
                     print(len(de.runned_list) / de.data_initial.shape[0] * 100, '%')
                     del (de.good_seq_2, de.output_info_2, de.denoised_d_output_2, de.denoised_ratio_output_2,
                          de.denoised_ratio_d_output_2, de.runned_list_2)
-            del (de.cores, de.alpha, de.min_mother)
+            if 'de.min_mother' in locals():
+                del de.min_mother
+            del (de.cores, de.alpha)
         else:
             if de.output_type == 'ratio':
                 for pos in tqdm(range(1, de.data_initial.shape[0])):
