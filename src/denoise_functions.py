@@ -108,7 +108,7 @@ class denoise_functions:
                       "(corresponding to the standard Unoise formulation)\n"
                       " -x --first_nt_codon_position as DnoisE has been developed for COI sequences amplified with Leray-XT primers, default value is 3"
                       " -m --modal_length when running DnoisE with entropy correction, sequence length accepted can be set, if not, modal_length is used")
-                exit()
+                sys.exit()
             elif current_argument in ("-i", "--input"):
                 print("Denoising %s file" % current_value)
                 self.MOTUfile = current_value
@@ -205,10 +205,10 @@ class denoise_functions:
 
         if 'arg_i' not in locals():
             print("Err: input file needed")
-            exit()
+            sys.exit()
         if 'arg_o' not in locals():
             print("Err: output path needed")
-            exit()
+            sys.exit()
         if 'arg_P' not in locals():
             self.part = 1
         if 'arg_j' not in locals():
@@ -241,10 +241,10 @@ class denoise_functions:
                         self.justcount = True
                     else:
                         print("Err: end given but no start")
-                        exit()
+                        sys.exit()
                 elif "arg_z" not in locals():
                     print("Err: start given but no end")
-                    exit()
+                    sys.exit()
                 else:
                     self.justcount = False
                     if self.fasta_output:
