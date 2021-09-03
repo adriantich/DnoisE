@@ -195,11 +195,11 @@ class denoise_functions:
                 else:
                     print("Is entropy taken into account: False")
             elif current_argument in ("-x", "--first_nt_codon_position"):
-                self.initial_pos = int(current_argument)
+                self.initial_pos = int(current_value)
                 arg_x = True
                 print("first nt is a position %s" % current_value)
             elif current_argument in ("-m", "--modal_length"):
-                self.modal_length_value = int(current_argument)
+                self.modal_length_value = int(current_value)
                 print("modal_length set as %s" % current_value)
             
 
