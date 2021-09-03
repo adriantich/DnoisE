@@ -26,7 +26,7 @@ if (is.null(opt$output_name)){
   stop("output_file needed", call.=FALSE)
 }
 
-if (grepl('.fasta$',opt$input) | grepl('.fa$',opt$input)) {
+if (grepl('.fasta$',opt$input) | grepl('.fa$',opt$input) | grepl('.fas$',opt$input)) {
   
   inicial <- read.csv(opt$input, sep=';', header = F, stringsAsFactors = F)
   # inicial <- read.csv('~/Nextcloud/1_tesi_Adrià/test_DnoisE/PHY1subset_final.fa',sep=';', header = F,stringsAsFactors = F)
