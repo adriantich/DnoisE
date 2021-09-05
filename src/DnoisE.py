@@ -6,140 +6,25 @@ import sys
 from tqdm import tqdm
 import itertools
 from denoise_functions import denoise_functions
+from transform_data import *
 
 de = denoise_functions()
 
 # Get full command-line arguments
-full_cmd_arguments = sys.argv
+argument_list = sys.argv
 
 # Keep all but the first
-# argument_list = ['-i', '/home/adriantich/Nextcloud/1_tesi_Adrià/Denoise/motus_csv/PHY1_000000095',
-#                  '-o', '/home/adriantich/Nextcloud/1_tesi_Adrià/Denoise/motus_csv/PHY1_000000095_Adcorr_nou',
-#                  # '-P', '3',
-#                  '-f', 'F', '-F', 'F', '-s', '4', '-z', '79', '-c', '2', '-n', 'count', '-a', '5', '-q', 'sequence', '-p', '1', '-e', '0.4727,0.2266,1.0212', '-y', 'T']
-# argument_list = ['-i', '/home/adriantich/Nextcloud/1_tesi_Adrià/test_DnoisE/PHY1bis_final.fa',
-#                  '-o', '/home/adriantich/Nextcloud/1_tesi_Adrià/test_DnoisE/D/PHY1bis_final.fa_D',
-#                  '-P', '3']
-
-# argument_list = ['-i', '/home/adriantich/Nextcloud/1_tesi_Adrià/test_DnoisE/PHY1subset_final.fa', '-o', '/home/adriantich/Nextcloud/1_tesi_Adrià/test_DnoisE/PHY1subset_final.fa_Adcorr_nou',
-#                  '-f', 'T', '-F', 'T', '-c', '2', '-a', '5', '-y', 'F']
-
-# argument_list = ['-i', '/home/adriantich/Nextcloud/1_tesi_Adrià/test_DnoisE/key_error_id/UTILA_DnoisE_table.csv', '-o', '/home/adriantich/Nextcloud/1_tesi_Adrià/test_DnoisE/key_error_id/Utila', '-c', '2', '-f', 'F', '-F', 'F', '-p', '2', '-s', '4', '-z', '55']
-argument_list = full_cmd_arguments[1:]
+argument_list = argument_list[1:]
 
 print(argument_list)
 de.read_parameters(argument_list)
+import_data(de)
+transform_data(de)
 
 if de.part != 2:
     # preparing data
 
     if de.part == 1:
-        print('reading input file')
-        if de.fasta:
-            # data_initial = pd.DataFrame()
-            input_file = pd.read_csv(de.MOTUfile, sep=';', header=None)
-            seqs = list(input_file.loc[list(range(1, input_file.shape[0], 2)), 0])
-            ids = list(input_file.loc[list(range(0, input_file.shape[0], 2)), 0])
-            size = list(input_file.loc[list(range(0, input_file.shape[0], 2)), 1])
-            de.data_initial = pd.DataFrame({'id': ids, de.count: size, de.seq: seqs})
-            de.data_initial = de.data_initial.replace(to_replace='>', value='', regex=True)
-            de.data_initial = de.data_initial.replace(to_replace=(de.count+'='), value='', regex=True)
-            de.data_initial[de.count] = pd.to_numeric(de.data_initial[de.count])
-            del input_file, seqs, ids, size
-
-        else:
-            de.data_initial = pd.read_csv(de.MOTUfile, sep=de.sep)
-
-        de.data_initial[de.seq] = de.data_initial[de.seq].str.upper()
-
-        print('input file read')
-
-        # define alpha and minimum min_mother reads
-
-        # de.min_mother = min(de.data_initial.loc[:, de.count]) / (1 / 2) ** (de.alpha * 1 + 1 + (min(de.Ad1, de.Ad2, de.Ad3)-1) * 1) # for sum version
-        # de.min_mother = min(de.data_initial.loc[:, de.count]) / (1 / 2) ** (de.alpha * 1 * min(de.Ad1, de.Ad2, de.Ad3) + 1)
-        # print('min_mother equals to %s' % de.min_mother)
-        # print('and Ad corr:')
-        # print(de.Ad1, de.Ad2, de.Ad3)
-        de.max_ratio = (1 / 2) ** (de.alpha * 1 * min(de.Ad1, de.Ad2, de.Ad3) + 1)
-        # the program should work with different seq_length, if not, filter and get de mode
-
-        # obtain a column with total reads per seq.
-        if not de.justcount:
-            de.abund_col_names = list(de.data_initial.columns)[(de.start - 1):de.end]
-            de.first_col_names = list(de.data_initial.columns)[0:(de.start - 2)]
-            if de.count in de.first_col_names:
-                de.first_col_names.remove(de.count)
-            if de.seq in de.first_col_names:
-                de.first_col_names.remove(de.seq)
-            de.data_initial.loc[:, de.count] = de.data_initial.loc[:, de.abund_col_names].sum(axis=1)
-        else:
-            de.first_col_names = ['id']
-
-        # sort by total reads
-        de.data_initial = de.data_initial.sort_values([de.count], axis=0, ascending=False)
-
-        # delete seqs with 0 reads
-        de.data_initial = de.data_initial.loc[(de.data_initial.loc[:, de.count] != 0)]
-        if de.entropy:
-            # remove seq out of mode length
-            de.data_initial.index = list(range(de.data_initial.shape[0]))
-            seq_length = []
-            seq_length_per_read = []
-            for i in list(range(de.data_initial.shape[0])):
-                i_seq = de.data_initial.loc[i, de.seq]
-                i_count = de.data_initial.loc[i, de.count]
-                seq_length.append(len(i_seq))
-                seq_length_per_read.append([len(i_seq)]*i_count)
-            seq_length_per_read = list(itertools.chain.from_iterable(seq_length_per_read))
-
-            if len(de.modal_length_value) == 0:
-                de.modal_length_value = de.modal_length(seq_length_per_read)
-
-            if len(de.modal_length_value) == 1:
-                de.data_initial = de.data_initial.loc[(np.asarray(seq_length) == de.modal_length_value)]
-            else:
-                for e in range(0, len(de.modal_length_value)):
-                    if ((de.modal_length_value[e]-1)%3) == 0:
-                        good_modal_length_value = de.modal_length_value[e]
-                        break
-                if 'good_modal_length_value' not in locals():
-                    good_modal_length_value = de.modal_length_value[0]
-
-                print('WARNING!! %s no available to run with Entropy. Equal number of seqs with different seq length' % de.MOTUfile)
-                print('set -m as one value of the following: %s ' % de.modal_length_value)
-                print('DnoisE will run with sequence length %s' % good_modal_length_value)
-                de.data_initial = de.data_initial.loc[(np.asarray(seq_length) == good_modal_length_value)]
-
-                del good_modal_length_value
-
-            del seq_length, seq_length_per_read, de.modal_length_value
-
-            if de.entropy:
-                def entropy(x):
-                    freqs = pd.Series(x).value_counts()
-                    freqs = freqs/sum(freqs)
-                    shannon_entropy = -sum(freqs[freqs>0]*np.log(freqs[freqs>0]))
-                    return shannon_entropy
-                def mean_entropy(x):
-                    entropy_values = x.apply(entropy, axis=0)
-                    first = np.mean(entropy_values.loc[range(1, len(entropy_values), 3)])
-                    second = np.mean(entropy_values.loc[range(2, len(entropy_values), 3)])
-                    third = np.mean(entropy_values.loc[range(3, len(entropy_values), 3)])
-                    return first, second, third
-
-
-
-                de.data_initial.sequence.str.split('', expand=True, )
-
-        # reorder index
-        de.data_initial.index = list(range(de.data_initial.shape[0]))
-
-        # analising each seq. two main groups.
-        # A. possible mothers
-        # B. less than min_mother reads. cannot be mothers
-
-
 
         ###
         ###

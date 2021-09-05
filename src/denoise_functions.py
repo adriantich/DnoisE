@@ -60,6 +60,8 @@ class denoise_functions:
     new_output_part_2 = False
     new_fasta_output_part_2 = False
     modal_length_value = []
+    compute_entropy = False
+
 
     def __init__(self):
         print("starting to denoise")
@@ -266,8 +268,8 @@ class denoise_functions:
                 self.Ad1, self.Ad2, self.Ad3 = (1, 1, 1)
             else:
                 if "arg_e" not in locals():
-                    E1, E2, E3 = (0.47, 0.23, 1.02)
-                    print("Entropy set as 0.47, 0.23 and 1.02 by default")
+                    self.compute_entropy = True
+                    print("Entropy will be computed from data")
                 # defining Ad correction factor taking into account Entropy
                 self.Ad1 = E1 / (E1 + E2 + E3) * 3
                 self.Ad2 = E2 / (E1 + E2 + E3) * 3
