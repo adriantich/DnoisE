@@ -61,17 +61,19 @@ class denoise_functions:
     new_fasta_output_part_2 = False
     modal_length_value = []
     compute_entropy = False
+    json_database = False
+
 
 
     def __init__(self):
         print("starting to denoise")
 
     def read_parameters(self, argument_list):
-        short_options = "hi:o:P:f:F:j:c:s:z:n:a:q:p:e:y:x:m:"
-        long_options = ["help", "input=", "output=", "part=", "fasta_input=", "fasta_output=", "joining_criteria", "cores=",
+        short_options = "hi:o:P:f:F:j:c:s:z:n:a:q:p:e:y:x:m:d:"
+        long_options = ["help", "input=", "output=", "part=", "fasta_input=", "fasta_output=", "joining_criteria=", "cores=",
                         "start_sample_cols=",
                         "end_sample_cols=", "count_name=", "alpha=", "sequence=", "separation=", "entropy=",
-                        "entropy_correction=", "first_nt_codon_position=","modal_length=" ]
+                        "entropy_correction=", "first_nt_codon_position=", "modal_length=", "json_database="]
         try:
             arguments, values = getopt.getopt(argument_list, short_options, long_options)
         except getopt.error as err:
@@ -81,35 +83,36 @@ class denoise_functions:
         for current_argument, current_value in arguments:
             if current_argument in ("-h", "--help"):
                 print("Displaying help\n"
-                      " -h --help display help\n"
-                      " -i --input input file path\n"
-                      " -o --output common output files path\n"
-                      " -P --part DnoisE can be run by parts, part 1 runs the main program and returns the specified output and a database where results are stored\n"
-                      "                 part 2 can re-analyse this database and return further outputs without running again the program (see README.md)\n"
-                      "                     - If part = 1 (default) runs normally and a directory and database is named as --output\n"
-                      "                     - If part = 2 returns outputs from database\n"
-                      "                         Part 2 requires --input, --output and --cores if necessary\n"
+                      " -a --alpha alpha value, 5 by default\n"
+                      " -c --cores number of cores, 1 by default\n"
+                      " -d --json_database returns a json_database with all information of the process\n"
+                      " -e --entropy entropy (or any user-settable measure of variability) of the different codon positions [0.47,0.23,1.02] by default\n"
                       " -f --fasta_input logical, if T (default), fasta file as input, if F, .csv as input\n"
                       " -F --fasta_output logical, if T (default), fasta file as output, if F, .csv as output\n"
+                      " -h --help display help\n"
+                      " -i --input input file path\n"
                       " -j --joining_criteria   1-> will join by the lesser [abundance ratio / beta(d)] (r_d criterion) (default)\n"
                       "                         2-> will join by the lesser abundance ratio (r criterion)\n"
                       "                         3-> will join by the lesser d value (d criterion)\n"
                       "                         4-> will provide all joining criteria in three different outputs\n"
-                      " -c --cores number of cores, 1 by default\n"
-                      " -s --start_sample_cols first sample column (1 == 1st col) if not given, just one column with total read count expected (see README.md)\n"
-                      " -z --end_sample_cols last sample column (n == nst col) if not given, just one column with total read count expected (see README.md)\n"
+                      " -m --modal_length when running DnoisE with entropy correction, sequence length accepted can be set, if not, modal_length is used\n"
                       " -n --count_name count name column (size/reads/count...) 'size' by default\n"
-                      " -a --alpha alpha value, 5 by default\n"
-                      " -q --sequence sequence column name (sequence/seq...), 'sequence' by default\n"
+                      " -o --output common output files path\n"
                       " -p --sep separation 1='\t' (tab)\n"
                       "                     2=','\n"
                       "                     3=';'\n"
-                      " -e --entropy entropy (or any user-settable measure of variability) of the different codon positions [0.47,0.23,1.02] by default\n"
+                      " -P --part if set as 2, DnoisE can re-analyse a json database produced if -d T and return "
+                      "further outputs without running again the program (see README.md) "
+                      "Database is named as --output\n"
+                      "           Part 2 requires --input, --output and --cores if necessary "
+                      "and previus running with -d T\n"
+                      " -q --sequence sequence column name (sequence/seq...), 'sequence' by default\n"
+                      " -s --start_sample_cols first sample column (1 == 1st col) if not given, just one column with total read count expected (see README.md)\n"
+                      " -x --first_nt_codon_position as DnoisE has been developed for COI sequences amplified with Leray-XT primers, default value is 3\n"
                       " -y --entropy_correction logical, if T, a distance correction based on entropy is performed "
                       "(see ENTROPY CORRECTION below). If set to F, no correction for entropy is performed "
                       "(corresponding to the standard Unoise formulation)\n"
-                      " -x --first_nt_codon_position as DnoisE has been developed for COI sequences amplified with Leray-XT primers, default value is 3"
-                      " -m --modal_length when running DnoisE with entropy correction, sequence length accepted can be set, if not, modal_length is used")
+                      " -z --end_sample_cols last sample column (n == nst col) if not given, just one column with total read count expected (see README.md)\n")
                 sys.exit()
             elif current_argument in ("-i", "--input"):
                 print("Denoising %s file" % current_value)
@@ -203,7 +206,13 @@ class denoise_functions:
             elif current_argument in ("-m", "--modal_length"):
                 self.modal_length_value = int(current_value)
                 print("modal_length set as %s" % current_value)
-            
+            elif current_argument in ("-d", "--json_database"):
+                if current_value == "T":
+                    self.json_database = True
+                    print('json_database will be printed')
+                elif current_value == "F":
+                    self.json_database = True
+
 
         if 'arg_i' not in locals():
             print("Err: input file needed")
