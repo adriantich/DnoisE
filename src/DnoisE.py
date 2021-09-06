@@ -1,6 +1,7 @@
 import sys
 from denoise_functions import denoise_functions
-from transform_data import *
+from import_data import import_data
+from transform_data import transform_data
 from running_denoise import run_denoise
 from write_output import write_ouput
 
