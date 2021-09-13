@@ -1,5 +1,16 @@
-import pandas as pd
+#!/usr/bin/env python3
 
+"""
+.. codeauthor:: Adrià Antich <adriantich@gmail.com>
+
+This programme is called by the DnoisE.
+
+import_data.py is designed to import fasta, fastq and csv files to be processed by DnoisE
+Data is imported to pandas.DataFrame
+
+"""
+
+import pandas as pd
 
 
 def import_data(de):
@@ -21,3 +32,5 @@ def import_data(de):
             de.data_initial = pd.read_csv(de.MOTUfile, sep=de.sep)
     else:
         de.read_variables2()
+
+    print('input file read')

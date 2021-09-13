@@ -22,7 +22,7 @@ do
 		exit;;
 	i) input_file="$( cd -P "$( dirname "${OPTARG}" )" >/dev/null 2>&1 && pwd )/${OPTARG}";;
 	o) output_file="$( cd -P "$( dirname "${OPTARG}" )" >/dev/null 2>&1 && pwd )/${OPTARG}";;
-	\?) echo "usage: bash MOTUs_from_SWARM.sh [-h|i|o|r|t|d|l]"
+	\?) echo "usage: bash to_uniq_line_fasta.sh [-h|i|o|r|t|d|l]"
 		exit;;
     esac
 done

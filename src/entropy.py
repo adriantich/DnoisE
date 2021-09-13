@@ -1,3 +1,13 @@
+#!/usr/bin/env python3
+
+"""
+.. codeauthor:: Adrià Antich <adriantich@gmail.com>
+
+This programme is called by transform_data.py script.
+
+entropy.py computes the shannon entropy of sequence datasets for each codon position of the sequence.
+
+"""
 
 import numpy as np
 import pandas as pd
