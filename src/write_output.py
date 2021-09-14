@@ -21,7 +21,7 @@ def write_output(de):
 
     if (de.output_type == 'ratio') or (de.output_type == 'all'):
 
-        if de.fasta_output:
+        if de.output_file_type == 'fasta':
             de.denoised_ratio = de.denoised_ratio.to_dict(orient='index')
             ofile = open(str(de.MOTUoutfile + '_denoised_ratio.fasta'), "w")
             for i in tqdm(range(len(de.denoised_ratio))):
@@ -29,14 +29,14 @@ def write_output(de):
                             ";\n" + de.denoised_ratio[i][de.seq].upper() + "\n")
             # do not forget to close it
             ofile.close()
-        else:
+        elif de.output_file_type == 'csv':
             de.denoised_ratio.to_csv(str(de.MOTUoutfile + '_denoised_ratio.csv'), index=False)
 
         del de.denoised_ratio
 
     if (de.output_type == 'd') or (de.output_type == 'all'):
 
-        if de.fasta_output:
+        if de.output_file_type == 'fasta':
             de.denoised_d = de.denoised_d.to_dict(orient='index')
             ofile = open(str(de.MOTUoutfile + '_denoised_d.fasta'), "w")
             for i in tqdm(range(len(de.denoised_d))):
@@ -44,14 +44,14 @@ def write_output(de):
                             de.denoised_d[i][de.seq].upper() + "\n")
             # do not forget to close it
             ofile.close()
-        else:
+        elif de.output_file_type == 'csv':
             de.denoised_d.to_csv(str(de.MOTUoutfile + '_denoised_d.csv'), index=False)
 
         del de.denoised_d
 
     if (de.output_type == 'ratio_d') or (de.output_type == 'all'):
 
-        if de.fasta_output:
+        if de.output_file_type == 'fasta':
             de.denoised_ratio_d = de.denoised_ratio_d.to_dict(orient='index')
             ofile = open(str(de.MOTUoutfile + '_denoised_ratio_d.fasta'), "w")
             for i in tqdm(range(len(de.denoised_ratio_d))):
@@ -59,7 +59,7 @@ def write_output(de):
                             de.denoised_ratio_d[i][de.seq].upper() + "\n")
             # do not forget to close it
             ofile.close()
-        else:
+        elif de.output_file_type == 'csv':
             de.denoised_ratio_d.to_csv(str(de.MOTUoutfile + '_denoised_ratio_d.csv'), index=False)
 
         del de.denoised_ratio_d

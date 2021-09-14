@@ -28,10 +28,11 @@ if __name__ == '__main__':
     de.read_parameters(argument_list)
     import_data(de)
     transform_data(de)
-    if de.entropy:
-        run_denoise_entropy(de)
-    else:
-        run_denoise(de)
+    if not de.merge_from_info:
+        if de.entropy:
+            run_denoise_entropy(de)
+        else:
+            run_denoise(de)
 
     write_output(de)
 
