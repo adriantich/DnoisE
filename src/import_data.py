@@ -13,6 +13,7 @@ Data is imported to pandas.DataFrame
 import sys
 import pandas as pd
 import io
+import numpy as np
 
 
 def import_data(de):
@@ -35,17 +36,25 @@ def import_data(de):
             if str(input_file.loc[0]).find(de.count) < 0:
                 print('ERROR! --count_name not found in FASTQ')
                 sys.exit()
+        except:
+            print("ERROR! incorrect FASTQ header format")
+            sys.exit()
+        try:
             seqs = list(input_file.loc[list(range(1, input_file.shape[0], 4)), 0])
             ids = list(input_file.loc[list(range(0, input_file.shape[0], 4)), 0])
-            size = list(input_file.values[list(range(0, input_file.shape[0], 4)),
-                                          list(input_file.loc[0].str.contains(str(de.count + '=')))])
+            if np.isnan(list(input_file.loc[0].str.contains(str(de.count + '=')))).sum() > 0:
+                print("ERROR! incorrect FASTQ header format. No space allowed at the end of header")
+                sys.exit()
+            else:
+                size = list(input_file.values[list(range(0, input_file.shape[0], 4)),
+                                              list(input_file.loc[0].str.contains(str(de.count + '=')))])
             de.data_initial = pd.DataFrame({'id': ids, de.count: size, de.seq: seqs})
             de.data_initial = de.data_initial.replace(to_replace='@', value='', regex=True)
             de.data_initial = de.data_initial.replace(to_replace=(de.count + '='), value='', regex=True)
             de.data_initial[de.count] = pd.to_numeric(de.data_initial[de.count])
             del input_file, seqs, ids, size
         except:
-            print("ERROR! incorrect FASTQ format file")
+            print("ERROR! incorrect FASTQ format file. ")
             sys.exit()
     elif de.input_type == 'fasta':
         try:
