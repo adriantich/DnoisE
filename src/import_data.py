@@ -24,7 +24,7 @@ def import_data(de):
         try:
             input_file = pd.read_csv(de.MOTUfile, sep=' ', header=None)
         except:
-            print("ERROR! incorrect FASTQ format file")
+            print("ERROR! incorrect FASTQ format file. FASTQ files must have space between header tags")
             sys.exit()
         try:
             if str(input_file.loc[0, 0]).find('@') != 0:
