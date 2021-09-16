@@ -33,6 +33,8 @@ if __name__ == '__main__':
             run_denoise_entropy(de)
         else:
             run_denoise(de)
+    else:
+        run_from_info(de)
 
     write_output(de)
 
