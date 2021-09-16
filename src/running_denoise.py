@@ -28,7 +28,7 @@ def run_denoise(de):
 
     de.output_info = [{'daughter': de.data_initial.loc[0, 'id'], 'mother_d': None, 'd': None,
                        'mother_ratio': None, 'ratio': None,
-                       'mother_xavier_criteria': None, 'xavier_criteria': None}]
+                       'mother_ratio_d': None, 'xavier_criteria': None}]
 
     de.good_seq = [True]
     de.abund_col_names.insert(0, de.count)
@@ -45,7 +45,7 @@ def run_denoise(de):
     if (de.output_type == 'd') or (de.output_type == 'all'):
         mothers_d = de.output_info.mother_d.unique()[1:]
     if (de.output_type == 'ratio_d') or (de.output_type == 'all'):
-        mothers_ratio_d = de.output_info.mother_xavier_criteria.unique()[1:]
+        mothers_ratio_d = de.output_info.mother_ratio_d.unique()[1:]
 
     del de.output_info
 
@@ -225,7 +225,7 @@ def run_denoise_entropy(de):
 
         desub.output_info = [{'daughter': desub.data_initial.loc[0, 'id'], 'mother_d': None, 'd': None,
                               'mother_ratio': None, 'ratio': None,
-                              'mother_xavier_criteria': None, 'xavier_criteria': None,
+                              'mother_ratio_d': None, 'xavier_criteria': None,
                               'difpos1': None, 'difpos2': None, 'difpos3': None}]
         desub.good_seq = [True]
         desub.abund_col_names.insert(0, de.count)
@@ -241,7 +241,7 @@ def run_denoise_entropy(de):
         if (desub.output_type == 'd') or (desub.output_type == 'all'):
             mothers_d = desub.output_info.mother_d.unique()[1:]
         if (desub.output_type == 'ratio_d') or (desub.output_type == 'all'):
-            mothers_ratio_d = desub.output_info.mother_xavier_criteria.unique()[1:]
+            mothers_ratio_d = desub.output_info.mother_ratio_d.unique()[1:]
 
         de.output_info = pd.concat([de.output_info, desub.output_info], ignore_index=True)
 

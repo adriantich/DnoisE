@@ -374,7 +374,7 @@ class DnoisEFunctions:
         if Ml.empty:  # means that is not a daughter
             info = {'daughter': pD, 'mother_d': None, 'd': None,
                     'mother_ratio': None, 'ratio': None,
-                    'mother_xavier_criteria': None, 'xavier_criteria': None}
+                    'mother_ratio_d': None, 'xavier_criteria': None}
             run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': False}
             return [True], [info], [pD], [pD], [pD], [run_list]
         else:  # it is a daughter
@@ -389,7 +389,7 @@ class DnoisEFunctions:
                 pM_ratio_d = pM_ratio_d.values[-1]
             info = {'daughter': pD, 'mother_d': pM_d, 'd': min(Ml.loc[:, 'd']),
                     'mother_ratio': pM_ratio, 'ratio': min(Ml.loc[:, 'ratio']),
-                    'mother_xavier_criteria': pM_ratio_d, 'xavier_criteria': min(Ml.loc[:, 'xavier_criteria'])}
+                    'mother_ratio_d': pM_ratio_d, 'xavier_criteria': min(Ml.loc[:, 'xavier_criteria'])}
             run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': True}
             return [False], [info], [pM_d], [pM_ratio], [pM_ratio_d], [run_list]
 
@@ -475,7 +475,7 @@ class DnoisEFunctions:
         if Ml.empty:  # means that is not a daughter
             info = {'daughter': pD, 'mother_d': None, 'd': None,
                     'mother_ratio': None, 'ratio': None,
-                    'mother_xavier_criteria': None, 'xavier_criteria': None}
+                    'mother_ratio_d': None, 'xavier_criteria': None}
             run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': False}
             return True, info, pD, pD, pD, run_list
             # exist
@@ -491,7 +491,7 @@ class DnoisEFunctions:
                 pM_ratio_d = pM_ratio_d.values[-1]
             info = {'daughter': pD, 'mother_d': pM_d, 'd': min(Ml.loc[:, 'd']),
                     'mother_ratio': pM_ratio, 'ratio': min(Ml.loc[:, 'ratio']),
-                    'mother_xavier_criteria': pM_ratio_d, 'xavier_criteria': min(Ml.loc[:, 'xavier_criteria'])}
+                    'mother_ratio_d': pM_ratio_d, 'xavier_criteria': min(Ml.loc[:, 'xavier_criteria'])}
             run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': True}
             return False, info, pM_d, pM_ratio, pM_ratio_d, run_list
 
@@ -558,7 +558,7 @@ class DnoisEFunctions:
         if Ml.empty:  # means that is not a daughter
             info = {'daughter': pD, 'mother_d': None, 'd': None,
                     'mother_ratio': None, 'ratio': None,
-                    'mother_xavier_criteria': None, 'xavier_criteria': None}
+                    'mother_ratio_d': None, 'xavier_criteria': None}
             run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': False}
             return [True], [info], [pD], [run_list]
         else:  # it is a daughter
@@ -573,7 +573,7 @@ class DnoisEFunctions:
                 pM_ratio_d = pM_ratio_d.values[-1]
             info = {'daughter': pD, 'mother_d': pM_d, 'd': min(Ml.loc[:, 'd']),
                     'mother_ratio': pM_ratio, 'ratio': min(Ml.loc[:, 'ratio']),
-                    'mother_xavier_criteria': pM_ratio_d, 'xavier_criteria': min(Ml.loc[:, 'xavier_criteria'])}
+                    'mother_ratio_d': pM_ratio_d, 'xavier_criteria': min(Ml.loc[:, 'xavier_criteria'])}
             run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': True}
             return [False], [info], [pM_ratio], [run_list]
 
@@ -661,7 +661,7 @@ class DnoisEFunctions:
         if Ml.empty:  # means that is not a daughter
             info = {'daughter': pD, 'mother_d': None, 'd': None,
                     'mother_ratio': None, 'ratio': None,
-                    'mother_xavier_criteria': None, 'xavier_criteria': None}
+                    'mother_ratio_d': None, 'xavier_criteria': None}
             run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': False}
             return True, info, pD, run_list
             # exist
@@ -677,7 +677,7 @@ class DnoisEFunctions:
                 pM_ratio_d = pM_ratio_d.values[-1]
             info = {'daughter': pD, 'mother_d': pM_d, 'd': min(Ml.loc[:, 'd']),
                     'mother_ratio': pM_ratio, 'ratio': min(Ml.loc[:, 'ratio']),
-                    'mother_xavier_criteria': pM_ratio_d, 'xavier_criteria': min(Ml.loc[:, 'xavier_criteria'])}
+                    'mother_ratio_d': pM_ratio_d, 'xavier_criteria': min(Ml.loc[:, 'xavier_criteria'])}
             run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': True}
             return False, info, pM_ratio, run_list
 
@@ -747,7 +747,7 @@ class DnoisEFunctions:
         if Ml.empty:  # means that is not a daughter
             info = {'daughter': pD, 'mother_d': None, 'd': None,
                     'mother_ratio': None, 'ratio': None,
-                    'mother_xavier_criteria': None, 'xavier_criteria': None,
+                    'mother_ratio_d': None, 'xavier_criteria': None,
                     'difpos1': None, 'difpos2': None, 'difpos3': None}
             run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': False}
             return [True], [info], [pD], [pD], [pD], [run_list]
@@ -766,7 +766,7 @@ class DnoisEFunctions:
                 pM_ratio_d = pM_ratio_d.values[-1]
             info = {'daughter': pD, 'mother_d': pM_d, 'd': min(Ml.loc[:, 'd']),
                     'mother_ratio': pM_ratio, 'ratio': min(Ml.loc[:, 'ratio']),
-                    'mother_xavier_criteria': pM_ratio_d, 'xavier_criteria': min(Ml.loc[:, 'xavier_criteria']),
+                    'mother_ratio_d': pM_ratio_d, 'xavier_criteria': min(Ml.loc[:, 'xavier_criteria']),
                     'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3}
             run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': True}
             return [False], [info], [pM_d], [pM_ratio], [pM_ratio_d], [run_list]
@@ -857,7 +857,7 @@ class DnoisEFunctions:
         if Ml.empty:  # means that is not a daughter
             info = {'daughter': pD, 'mother_d': None, 'd': None,
                     'mother_ratio': None, 'ratio': None,
-                    'mother_xavier_criteria': None, 'xavier_criteria': None,
+                    'mother_ratio_d': None, 'xavier_criteria': None,
                     'difpos1': None, 'difpos2': None, 'difpos3': None}
             run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': False}
             return True, info, pD, pD, pD, run_list
@@ -877,7 +877,7 @@ class DnoisEFunctions:
                 pM_ratio_d = pM_ratio_d.values[-1]
             info = {'daughter': pD, 'mother_d': pM_d, 'd': min(Ml.loc[:, 'd']),
                     'mother_ratio': pM_ratio, 'ratio': min(Ml.loc[:, 'ratio']),
-                    'mother_xavier_criteria': pM_ratio_d, 'xavier_criteria': min(Ml.loc[:, 'xavier_criteria']),
+                    'mother_ratio_d': pM_ratio_d, 'xavier_criteria': min(Ml.loc[:, 'xavier_criteria']),
                     'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3}
             run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': True}
             return False, info, pM_d, pM_ratio, pM_ratio_d, run_list
@@ -949,7 +949,7 @@ class DnoisEFunctions:
         if Ml.empty:  # means that is not a daughter
             info = {'daughter': pD, 'mother_d': None, 'd': None,
                     'mother_ratio': None, 'ratio': None,
-                    'mother_xavier_criteria': None, 'xavier_criteria': None,
+                    'mother_ratio_d': None, 'xavier_criteria': None,
                     'difpos1': None, 'difpos2': None, 'difpos3': None}
             run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': False}
             return [True], [info], [pD], [run_list]
@@ -968,7 +968,7 @@ class DnoisEFunctions:
                 pM_ratio_d = pM_ratio_d.values[-1]
             info = {'daughter': pD, 'mother_d': pM_d, 'd': min(Ml.loc[:, 'd']),
                     'mother_ratio': pM_ratio, 'ratio': min(Ml.loc[:, 'ratio']),
-                    'mother_xavier_criteria': pM_ratio_d, 'xavier_criteria': min(Ml.loc[:, 'xavier_criteria']),
+                    'mother_ratio_d': pM_ratio_d, 'xavier_criteria': min(Ml.loc[:, 'xavier_criteria']),
                     'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3}
             run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': True}
             return [False], [info], [pM_ratio], [run_list]
@@ -1060,7 +1060,7 @@ class DnoisEFunctions:
         if Ml.empty:  # means that is not a daughter
             info = {'daughter': pD, 'mother_d': None, 'd': None,
                     'mother_ratio': None, 'ratio': None,
-                    'mother_xavier_criteria': None, 'xavier_criteria': None,
+                    'mother_ratio_d': None, 'xavier_criteria': None,
                     'difpos1': None, 'difpos2': None, 'difpos3': None}
             run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': False}
             return True, info, pD, run_list
@@ -1080,7 +1080,7 @@ class DnoisEFunctions:
                 pM_ratio_d = pM_ratio_d.values[-1]
             info = {'daughter': pD, 'mother_d': pM_d, 'd': min(Ml.loc[:, 'd']),
                     'mother_ratio': pM_ratio, 'ratio': min(Ml.loc[:, 'ratio']),
-                    'mother_xavier_criteria': pM_ratio_d, 'xavier_criteria': min(Ml.loc[:, 'xavier_criteria']),
+                    'mother_ratio_d': pM_ratio_d, 'xavier_criteria': min(Ml.loc[:, 'xavier_criteria']),
                     'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3}
             run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': True}
             return False, info, pM_ratio, run_list
