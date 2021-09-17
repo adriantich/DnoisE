@@ -13,7 +13,7 @@ Pros of DnoisE versus Unoise:
 
 3 - DnoisE is written in Python3 and open access which makes it user customizable.
 
-4 - It accepts both .csv and .fasta input files and can return both file-types too.
+4 - It accepts both .csv, .fasta and .fastq input files and can return .csv and .fasta file-types too.
 
 5 - DnoisE allows the user to choose among three joining method. Following Edgar's equation (beta(d)=.5^(alpha\*d+1)), the Unoise algorithm joins incorrect “daughter” sequences to the most abundant “mother” sequence with which they have an abundance ratio below beta(d). From our point of view this can lead to over-joining of sequences to the most abundant ones. Our algorithm returns two extra types of joining criteria outputs. For a given sequence, all potential “mothers” that satisfy the condition abundance skew ratio<beta(d) are stored. We then choose the correct “mother” as (1) the one having the lowest skew ratio with the potential “daughter” (ratio criterion, corresponding to the original Unoise formulation); (2) the “mother” with which it has the lowest d (distance criterion), or (3) the “mother” for which the skew abundance ratio divided by beta(d) is the lowest (ratio_distance criterion). These criteria are short-named r, d, and r_d criteria.
 
@@ -93,51 +93,42 @@ Displaying help
 		-y --entropy_correction compute a distance correction based on entropy is performed (see ENTROPY CORRECTION below). If set to F, no correction for entropy is performed (corresponding to the standard Unoise formulation)
 ```
 
-__*INPUT FILES (-i|-f|-n|-q|-p)*__
 
-Input files can be in both .csv and .fasta format. This can be specified using *-f* parameter set as T as default meaning that input file is in .fasta format.
+__*INPUT FILES (--csv_input|--fasta_input|--fastq_input|-n|-q|-p)*__
+
+Input files can be in both .csv, .fasta and .fastq format. This can be specified using *-f* parameter set as T as default meaning that input file is in .fasta format.
 
 Different pipelines use different names to number of reads (size/count/reads...). This can be specified using parameter *-n* followed by string name (for instance: -n size, default).  Sequence name can also be specified using *-q* parameter (sequence/seq...)(*-q* sequence, default)
 
-If input is a fasta file, the sequence must be in a single line and both id (first qualifier) and size must end by ";". Any other qualifier will be ignored.
+If input is a fasta file both id (first qualifier) and size must end by ";". Any other qualifier will be ignored.
+
+If input file is a .csv, the separator between columns can be specified using the *-p* parameter (see help).
+
+Examples of *how to run* and input files are available in the test-DnoisE subdirectory.
 
 
-      >Seq_000000012;size=433081;
-      TTTGAGTTCAATACAAAGTCATTCAGGAGCTGCTATTGACTTAGCTATCTTCAGTTTACATCTTTCAGGAGCTTCTTCGATTCTAGGAGCAATTAATTTTATTTCTACCATTATAAATATGCGAAATCCTGGACAAACATTTTATCGCATTCCTTTATTTGTTTGATCGATTTTCGTAACTGCTTTACTACTATTATTAGCAGTACCAGTTTTAGCAGGAGCTATTACCATGTTACTAACTGATCGTAATTTTAATACAGCCTTTTTTGACCCTTCTGGAGGTGGTGATCCTGTACTTTATCAACATTTATTT
+__*OUTPUT FILES (--csv_output/--fasta_output/-j)*__
 
-If input file is a .csv (*-f* F), the separator between columns can be specified using the *-p* parameter (see help).
-
-If .fasta file has the sequence in more than one line, "to_uniq_line_fasta.sh" can be used to change format.
-```console
-bash to_uniq_line_fasta.sh -h
-
-Converting multiple line sequence fasta to unique line
-
-Syntax: bash to_uniq_line_fasta.sh [-h] [-i] [input_file] [-o] [output_file] 
-options:
-h     Print this Help.
-i     .fasta containing all sequences
-o     output file
-
-```
-
-
-__*OUTPUT FILES (-j|-F|-P)*__
+Outoput files can be both in .csv and .fasta files but the common pattern must be specified. However, writing output is faster if .csv specially in case of large files.
 
 DnoisE can return three different types of output files. When a "daughter" sequence is found, different joining criteria can be applied if more than one possible "mother" meets Edgar’s equation requirement. As comparisons are done sequentially from higher to lower abundances, when a sequence meets a "mother", comparisons will stop if r criteria (*-j* 2) is chosen (i.e., the lesser ratio value between "daughter" abundance and "mother" abundance). However, this doesn't guarantee that the "mother" found is the best. 
 
 If d criteria (*-j* 3 , lesser d value), r_d criteria (*-j* 1, lesser value of the skew abundance ratio divided by beta(d)), or all criteria (*-j* 4), are chosen, comparisons continue and all potential “mothers” are stored. The program will choose afterwards the best “mother” according to the preferred criterion.
 Therefore, when r criteria is chosen, computation time is lower because less comparisons are performed. However, we recommend the r_d criteria which is set as default value.
 
-In order to return different types of output for both criteria (*-j*) and format (*-F*; T set as default for .fasta files and F for .csv files) even after DnoisE is finished, DnoisE creates a database in output directory which contains information of how to join all incorrect sequences. Output can be re-analysed again by running DnoisE with the parameter *-P* set as 2 and resetting both *-j* and *-F* parameters as desired. Note that if *-j* 2 has been initially chosen, it is not possible to obtain the other joining criteria without re-running DnoisE, because comparisons are halted when the first “mother” is encountered.
+
+__*MERGING FROM INFO FILE (--joining_file)*__
+
+In order to return different types of output criteria (*-j*), even after DnoisE is finished, DnoisE creates a info file which contains information whether a sequence is correct or if not, how each sequence is merged to a mother with the proper distance value. Output can be re-analysed again by running DnoisE if the info file is specified with *--joining_file* and *-j* as desired. Note that if *-j* 2 has been initially chosen, it is not possible to obtain the other joining criteria without re-running DnoisE, because comparisons are halted when the first “mother” is encountered.
 
 
-
-__*INPUT AND OUTPUT PATHS (-i|-o)*__
+__*I/O PATHS AND SAMPLE SPECIFICATIONS (-s|-z)*__
 
 Path before file name is required but can be in form of ./ to avoid large strings.
 Output path is also required as far as it can be used to specify output name.
 For instance, the output path './file_to_denoise will' will return a file './file_to_denoise_denoising_info.csv' among others.
+
+Sample information cannot be processed if the input is a fasta or a fastq file. When this information is relevant, the input should be a .csv file, and the first and last sample columns should be indicated with parameters *-s* and *-z*.
 
 
 __*ENTROPY CORRECTION (-e|-y|-x|-m)*__
@@ -153,7 +144,7 @@ position  --> 3-1-2-3-1-2-3-1-2-3-1-2-...
 
 Note that, in Edgar’s formula, the d used is the Levenshtein distance. This is the one used by DnoisE if no correction is applied. However, when entropy correction is selected, the Levenshtein distance is not applicable as the codon position needs to be considered, and a d based simply on the number of nucleotide differences is used instead. With sequences of equal length and aligned, both distances are practically equivalent.
 
-The use of Levenshtein distance allowed us to compare sequences of inequal length, both in the complete dataset or within MOTUs (depending on whether DnoisE is performed before or after clustering, see below). However, with the entropy correction length should be constant. If denoise is performed before clustering with the Leray fragment, only 313 bp-long sequences will be compared. If done after clustering, only sequences of the modal length within each MOTU will be compared. Notwithstanding, prefered sequence length can be set using *-m* parameter 
+The use of Levenshtein distance allowed us to compare sequences of inequal length, both in the complete dataset or within MOTUs (depending on whether DnoisE is performed before or after clustering). However, with the entropy correction length should be constant when comparing two sequences. Dataset is thus analysed by separate sequence length sets. Theese sets must differ from the modal length of all dataset by *n* number of codons (3 nuclotides). Notwithstanding, prefered sequence length can be set using *-m* parameter (i.e. in case of sequence lengths of 304, 310, 311, 313, 314 and 316 nucleotides, if the modal is 313, lengths of 311 and 314 will be considered as incorrect and will be eliminated).
 
 Entropy values are given as E_1, E_2, E_3, where 1, 2, and 3 are the codon positions (default as *-e* 0.47,0.23,0.1.02). Any user-derived value of variability of each codon position can be used instead of entropy.
 
@@ -167,12 +158,8 @@ We correct the d value as:
 
 <a href="https://www.codecogs.com/eqnedit.php?latex=d&space;=&space;\sum\limits_{i=1}^{3}&space;d_i&space;*&space;\frac{E_i&space;*&space;3}{E_1&space;&plus;&space;E_2&space;&plus;&space;E_3}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?d&space;=&space;\sum\limits_{i=1}^{3}&space;d_i&space;*&space;\frac{E_i&space;*&space;3}{E_1&space;&plus;&space;E_2&space;&plus;&space;E_3}" title="d = \sum\limits_{i=1}^{3} d_i * \frac{E_i * 3}{E_1 + E_2 + E_3}" /></a>
 
-Entropy is computed by DnoisE if no entropy values are given when *-y*.
+Entropy is computed by DnoisE if no entropy values are given when *-y*. In practice, when entropy is computed, *-x* is not mandatory so the programm will compute three independent entropy values associated with certain positions of the current dataset.
 
-
-__*SAMPLE INFORMATION (-s|-z)*__
-
-Sample information cannot be processed if the input is a fasta file. When this information is relevant, the input should be a .csv file, and the first and last sample columns should be indicated with parameters *-s* and *-z*.
 
 #### __Running DnoisE after SWARM within MOTU__
 
@@ -199,6 +186,7 @@ d     output directory
 l     lulu corrected_sequences file, an output file from lulu (opcional)
 
 ```
+
 __*MANDATORY INPUTS*__
 
 * a file containing a list of MOTUs do denoise
