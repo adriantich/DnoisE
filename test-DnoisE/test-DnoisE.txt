@@ -41,6 +41,6 @@ python3 ./src/DnoisE.py --fastq_input ./test-DnoisE/DnoisE_example.fastq --fasta
 python3 ./src/DnoisE.py --fastq_input ./test-DnoisE/DnoisE_example.fastq --fasta_output ./test-DnoisE/output -c 2
 
 
+## merging from info
 
-
-python3 ./src/DnoisE.py --fasta_input ./test-DnoisE/DnoisE_example.fasta --fasta_output ./test-DnoisE/output
+python3 ./src/DnoisE.py --fasta_input ./test-DnoisE/DnoisE_example.fasta --fasta_output ./test-DnoisE/output --joining_file ./test-DnoisE/DnoisE_output_example_info.csv -j 4
