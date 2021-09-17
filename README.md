@@ -46,19 +46,6 @@ cd DnoisE/
 bash required_modules.sh
 ```
 
-3. Install required packages (R)
-
-   + [optparse](https://cran.r-project.org/web/packages/optparse/index.html)
-   + [entropy](https://cran.r-project.org/web/packages/entropy/) 
-   
-```console
-# R session:
-R
-> install.packages("optparse")
-> install.packages("entropy")
-> install.packages("stringr")
-```
-
 We also recomend to use pyenv to create an environment to run DnoisE (see pyenv [documentation](https://github.com/pyenv/pyenv))
 
 ### __WORKFLOW__
@@ -75,33 +62,35 @@ Parameters of DnoisE are described in help but some are explained in more detail
 
 *HELP*
 Displaying help
- -h --help display help
- -i --input input file path
- -o --output common output files path
- -P --part DnoisE can be run by parts, part 1 runs the main program and returns the specified output and a database where results are stored
-                 part 2 can re-analyse this database and return further outputs without running again the program (see README.md)
-                     - If part = 1 (default) runs normally and a directory and database is named as --output
-                     - If part = 2 returns outputs from database
-                         Part 2 requires --input, --output and --cores if necessary
- -f --fasta_input logical, if T (default), fasta file as input, if F, .csv as input
- -F --fasta_output logical, if T (default), fasta file as output, if F, .csv as output
- -j --joining_criteria   1-> will join by the lesser [abundance ratio / beta(d)] (r_d criterion) (default)
-                         2-> will join by the lesser abundance ratio (r criterion)
-                         3-> will join by the lesser d value (d criterion)
-                         4-> will provide all joining criteria in three different outputs
- -c --cores number of cores, 1 by default
- -s --start_sample_cols first sample column (1 == 1st col) if not given, just one column with total read count expected (see README.md)
- -z --end_sample_cols last sample column (n == nst col) if not given, just one column with total read count expected (see README.md)
- -n --count_name count name column (size/reads/count...) 'size' by default
- -a --alpha alpha value, 5 by default
- -q --sequence sequence column name (sequence/seq...), 'sequence' by default
- -p --sep separation 1='        ' (tab)
-                     2=','
-                     3=';'
- -e --entropy entropy (or any user-settable measure of variability) of the different codon positions [0.47,0.23,1.02] by default
- -y --entropy_correction logical, if T, a distance correction based on entropy is performed (see ENTROPY CORRECTION below). If set to F, no correction for entropy is performed (corresponding to the standard Unoise formulation)
- -x --first_nt_codon_position as DnoisE has been developed for COI sequences amplified with Leray-XT primers, default value is 3
- -m --modal_length when running DnoisE with entropy correction, sequence length accepted can be set, if not, modal_length is used
+		-h --help display help
+	Input file options:
+		--csv_input [path] input file path in csv format
+		--fasta_input [path] input file path in fasta format
+		--fastq_input [path] input file path in fastq format
+		--joining_file [path] file path of an info output from DnoisE. This option allows to use the information of previous runs of DnoisE to return different joining criteriaoutputs without running all the programm again
+		-n --count_name [size/reads/count...] count name column 'size' by default
+		-p --sep [1/2/3] separation in case of csv input file
+				1='	' (tab)
+				2=','
+				3=';'
+		-q --sequence [sequence/seq...] sequence column name, 'sequence' by default
+		-s --start_sample_cols [number] first sample column (1 == 1st col) if not given, just one column with total read count expected (see README.md)
+		-z --end_sample_cols [number] last sample column (n == nst col) if not given, just one column with total read count expected (see README.md)
+	Output file options:
+		--csv_output [path] common path for csv format
+		--fasta_output [path] common path for fasta format
+		-j --joining_criteria [1/2/3]
+				1-> will join by the lesser [abundance ratio / beta(d)]
+				2-> will join by the lesser abundance ratio (r criterion)
+				3-> will join by the lesser d value (d criterion)
+				4-> will provide all joining criteria in three different outputs (r_d criterion) (default)
+	Other options:
+		-a --alpha [number] alpha value, 5 by default
+		-c --cores [number] number of cores, 1 by default
+		-e --entropy [number,number,number] entropy values (or any user-settable measure of variability) of the different codon positions [0.47,0.23,1.02] by default
+		-m --modal_length [number] when running DnoisE with entropy correction, sequence length expected can be set, if not, modal_length is used and sequences with modal_length + or - 3*n are accepted
+		-x --first_nt_codon_position [number] as DnoisE has been developed for COI sequences amplified with Leray-XT primers, default value is 3
+		-y --entropy_correction compute a distance correction based on entropy is performed (see ENTROPY CORRECTION below). If set to F, no correction for entropy is performed (corresponding to the standard Unoise formulation)
 ```
 
 __*INPUT FILES (-i|-f|-n|-q|-p)*__
@@ -178,32 +167,8 @@ We correct the d value as:
 
 <a href="https://www.codecogs.com/eqnedit.php?latex=d&space;=&space;\sum\limits_{i=1}^{3}&space;d_i&space;*&space;\frac{E_i&space;*&space;3}{E_1&space;&plus;&space;E_2&space;&plus;&space;E_3}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?d&space;=&space;\sum\limits_{i=1}^{3}&space;d_i&space;*&space;\frac{E_i&space;*&space;3}{E_1&space;&plus;&space;E_2&space;&plus;&space;E_3}" title="d = \sum\limits_{i=1}^{3} d_i * \frac{E_i * 3}{E_1 + E_2 + E_3}" /></a>
 
-Entropy can be calculated using the entrpy.R script as follows:
+Entropy is computed by DnoisE if no entropy values are given when *-y*.
 
-```console
-Rscript --vanilla entrpy.R -i [input_file] -o [output_file] -x [1|2|3] 
-
-# display help
-
-Rscript --vanilla entrpy.R --help
-
-Usage: entrpy.R [options]
-
-
-Options:
-        -i CHARACTER, --input=CHARACTER
-                dataset file name of format .fa/.fasta/.csv with just id, size and sequence. If .csv, only ',' accepted
-
-        -x NUMERIC, --first_nt_position=NUMERIC
-                first nucleotide position, 3 by default
-
-        -o CHARACTER, --output_name=CHARACTER
-                output file name
-
-        -h, --help
-                Show this help message and exit
-
-```
 
 __*SAMPLE INFORMATION (-s|-z)*__
 
