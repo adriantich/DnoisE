@@ -53,7 +53,7 @@ We also recomend to use pyenv to create an environment to run DnoisE (see pyenv 
 #### __Running DnoisE__
 
 DnoisE has been created to run both after and before clustering as described in Antich et al. (2021).
-Therefore, it accepts and returns both .fasta and .csv files. However, writing output is faster if .csv.
+Therefore, it accepts and returns both .fasta and .csv files. However, writing output is faster if .csv. It also accepts .fastq	input files.
 
 Parameters of DnoisE are described in help but some are explained in more detail below.
 
