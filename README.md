@@ -107,7 +107,7 @@ If input file is a .csv, the separator between columns can be specified using th
 Examples of *how to run* and input files are available in the test-DnoisE subdirectory.
 
 
-__*OUTPUT FILES (--csv_output/--fasta_output/-j)*__
+__*OUTPUT FILES (--csv_output|--fasta_output|-j)*__
 
 Outoput files can be both in .csv and .fasta files but the common pattern must be specified. However, writing output is faster if .csv specially in case of large files.
 
