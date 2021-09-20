@@ -21,32 +21,55 @@ Pros of DnoisE versus Unoise:
 
 DnoisE depends on the following software:
 
-* Python3
+* Python3.6
 * C (for Levenshtein module)
 * R
 * bash
 
-DnoisE is easy to install from terminal. 
+DnoisE is easy to install from terminal.
 
-1. First clone the github repository
+#### __1. First clone the github repository__
 
 ```console
 git clone https://github.com/adriantich/DnoisE.git
 ```
 
-2. Install the required modules (python3)
-
-   + [Pandas](https://pandas.pydata.org/)
-   + [tqdm](https://pypi.org/project/tqdm/)
-   + [python-Levenshtein](https://pypi.org/project/python-Levenshtein/)
-   + [stats](https://pypi.org/project/stats/)
+#### __2a. INSTALL WITH install.sh__
+install.sh is a bash script that creates a virtualenvironment with pyenv and creates an executable of DnoisE 
+in a "./bin" directory. install.sh requires pyenv (see pyenv [documentation](https://github.com/pyenv/pyenv)).
 
 ```console
 cd DnoisE/
 bash required_modules.sh
 ```
 
-We also recomend to use pyenv to create an environment to run DnoisE (see pyenv [documentation](https://github.com/pyenv/pyenv))
+#### __2b. INSTALL MANUALLY__
+The manual installation requires the following modules
+
+   + [Pandas](https://pandas.pydata.org/)
+   + [pyinstaller](https://www.pyinstaller.org/)
+   + [python-Levenshtein](https://pypi.org/project/python-Levenshtein/)
+   + [stats](https://pypi.org/project/stats/)
+   + [tqdm](https://pypi.org/project/tqdm/)
+
+ To make an stand-alone application, pyinstaller creates an executable in a bin directory running as follow.
+
+```console
+cd ./DnoisE/
+
+pip3 install pandas
+pip3 install pyinstaller
+pip3 install python-Levenshtein
+pip3 install stats
+pip3 install tqdm
+
+cd ./src
+
+pyinstaller DnoisE.py --onefile --distpath ../bin
+```
+
+
+We also recommend to use pyenv to create an environment to run DnoisE (see pyenv [documentation](https://github.com/pyenv/pyenv))
 
 ### __WORKFLOW__
 
@@ -58,7 +81,7 @@ Therefore, it accepts and returns both .fasta and .csv files. However, writing o
 Parameters of DnoisE are described in help but some are explained in more detail below.
 
 ```console
-> python3 DnoisE/src/DnoisE.py -h
+> ./bin/DnoisE -h
 
 *HELP*
 Displaying help
