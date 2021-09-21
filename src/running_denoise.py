@@ -18,6 +18,12 @@ from denoise_functions import *
 import entropy as en
 
 
+if platform.system() == 'Linux':
+    mp.set_start_method('fork')
+else:
+    mp.set_start_method('spawn')
+
+
 def run_denoise(de):
     if de.output_type == 'ratio':
         de.denoised_ratio_output = [de.data_initial.loc[0, 'id']]

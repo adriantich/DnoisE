@@ -16,8 +16,15 @@ import Levenshtein as lv
 import multiprocessing as mp
 import numpy as np
 import pandas as pd
+import platform
 import sys
 from tqdm import tqdm
+
+
+if platform.system() == 'Linux':
+    mp.set_start_method('fork')
+else:
+    mp.set_start_method('spawn')
 
 
 class DnoisEFunctions:
