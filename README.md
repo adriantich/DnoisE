@@ -22,7 +22,7 @@ Pros of DnoisE versus Unoise:
 DnoisE depends on the following software:
 
 * Python3.6
-* C (for Levenshtein module)
+* C++ (for Levenshtein module)
 * R
 * bash
 
