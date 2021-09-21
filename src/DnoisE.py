@@ -8,6 +8,7 @@ according to the entropy of each codon position.
 """
 
 import sys
+import multiprocessing as mp
 from denoise_functions import *
 from import_data import *
 from running_denoise import *
@@ -16,6 +17,12 @@ from write_output import *
 
 
 if __name__ == '__main__':
+
+    if platform.system() == 'Linux':
+        mp.set_start_method('fork')
+    else:
+        mp.set_start_method('spawn')
+
     de = DnoisEFunctions()
 
     # Get full command-line arguments

@@ -21,12 +21,6 @@ import sys
 from tqdm import tqdm
 
 
-if platform.system() == 'Linux':
-    mp.set_start_method('fork')
-else:
-    mp.set_start_method('spawn')
-
-
 class DnoisEFunctions:
     data_initial = pd.DataFrame()
     run_list = []
