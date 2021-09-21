@@ -11,10 +11,6 @@ This script also computes the entropy if specified.
 
 """
 
-import itertools
-import numpy as np
-import entropy as en
-
 
 def transform_data(de):
     print('transforming data')

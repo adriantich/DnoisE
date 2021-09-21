@@ -2,30 +2,40 @@
 
 cd ./DnoisE
 
+# './bin/DnoisE' can be used if installation with pyinstaller has been performed
+# 'python3 ./src/DnoisE.py' can be used to run from python script
+
 # here we test different inputfile formats with and without entropy correction and with and without parallization
 
 ## csv input file
 
 # 1. with entropy correction
 ./bin/DnoisE --csv_input ./test-DnoisE/DnoisE_example.csv --csv_output ./test-DnoisE/output -n count -s 4 -z 79 -y
+python3 ./src/DnoisE.py --csv_input ./test-DnoisE/DnoisE_example.csv --csv_output ./test-DnoisE/output -n count -s 4 -z 79 -y
+
 
 # 2. without entropy correction
 ./bin/DnoisE --csv_input ./test-DnoisE/DnoisE_example.csv --csv_output ./test-DnoisE/output -n count -s 4 -z 79
+python3 ./src/DnoisE.py --csv_input ./test-DnoisE/DnoisE_example.csv --csv_output ./test-DnoisE/output -n count -s 4 -z 79
 
 # 3. parallel
 ./bin/DnoisE --csv_input ./test-DnoisE/DnoisE_example.csv --csv_output ./test-DnoisE/output -n count -s 4 -z 79 -c 2
+python3 ./src/DnoisE.py --csv_input ./test-DnoisE/DnoisE_example.csv --csv_output ./test-DnoisE/output -n count -s 4 -z 79 -c 2
 
 
 ## fasta input file
 
 # 1. with entropy correction
 ./bin/DnoisE --fasta_input ./test-DnoisE/DnoisE_example.fasta --fasta_output ./test-DnoisE/output -y
+python3 ./src/DnoisE.py --fasta_input ./test-DnoisE/DnoisE_example.fasta --fasta_output ./test-DnoisE/output -y
 
 # 2. without entropy correction
 ./bin/DnoisE --fasta_input ./test-DnoisE/DnoisE_example.fasta --fasta_output ./test-DnoisE/output
+python3 ./src/DnoisE.py --fasta_input ./test-DnoisE/DnoisE_example.fasta --fasta_output ./test-DnoisE/output
 
 # 3. parallel
 ./bin/DnoisE --fasta_input ./test-DnoisE/DnoisE_example.fasta --fasta_output ./test-DnoisE/output -c 2
+python3 ./src/DnoisE.py --fasta_input ./test-DnoisE/DnoisE_example.fasta --fasta_output ./test-DnoisE/output -c 2
 
 
 
@@ -33,14 +43,22 @@ cd ./DnoisE
 
 # 1. with entropy correction
 ./bin/DnoisE --fastq_input ./test-DnoisE/DnoisE_example.fastq --fasta_output ./test-DnoisE/output -y
+python3 ./src/DnoisE.py --fastq_input ./test-DnoisE/DnoisE_example.fastq --fasta_output ./test-DnoisE/output -y
 
 # 2. without entropy correction
 ./bin/DnoisE --fastq_input ./test-DnoisE/DnoisE_example.fastq --fasta_output ./test-DnoisE/output
+python3 ./src/DnoisE.py --fastq_input ./test-DnoisE/DnoisE_example.fastq --fasta_output ./test-DnoisE/output
 
 # 3. parallel
 ./bin/DnoisE --fastq_input ./test-DnoisE/DnoisE_example.fastq --fasta_output ./test-DnoisE/output -c 2
+python3 ./src/DnoisE.py --fastq_input ./test-DnoisE/DnoisE_example.fastq --fasta_output ./test-DnoisE/output -c 2
 
 
 ## merging from info
 
 ./bin/DnoisE --fasta_input ./test-DnoisE/DnoisE_example.fasta --fasta_output ./test-DnoisE/output --joining_file ./test-DnoisE/DnoisE_output_example_info.csv -j 4
+python3 ./src/DnoisE.py --fasta_input ./test-DnoisE/DnoisE_example.fasta --fasta_output ./test-DnoisE/output --joining_file ./test-DnoisE/DnoisE_output_example_info.csv -j 4
+
+# using modal_length and unique_length
+./bin/DnoisE --fasta_input ./test-DnoisE/DnoisE_example.fasta --fasta_output ./test-DnoisE/output -y -c 3 -m 313 -u
+python3 ./src/DnoisE.py --fasta_input ./test-DnoisE/DnoisE_example.fasta --fasta_output ./test-DnoisE/output -y -c 3 -m 313 -u

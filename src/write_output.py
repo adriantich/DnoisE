@@ -9,9 +9,7 @@ write_ouput.py is designed to export denoised data from DnoisE to fasta or csv f
 
 """
 
-import multiprocessing as mp
 from tqdm import tqdm
-import pandas as pd
 
 
 def write_output(de):

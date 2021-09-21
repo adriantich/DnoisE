@@ -10,8 +10,8 @@ according to the entropy of each codon position.
 import sys
 from denoise_functions import *
 from import_data import *
-from transform_data import *
 from running_denoise import *
+from transform_data import *
 from write_output import *
 
 

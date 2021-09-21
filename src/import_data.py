@@ -10,10 +10,10 @@ Data is imported to pandas.DataFrame
 
 """
 
-import sys
-import pandas as pd
 import io
 import numpy as np
+import pandas as pd
+import sys
 
 
 def import_data(de):

@@ -9,13 +9,13 @@ runnin_denoise.py runs the algorithm of denoising sequences using Levenshtein di
 
 """
 
-import multiprocessing as mp
-from tqdm import tqdm
 import itertools
+import multiprocessing as mp
 import numpy as np
-import entropy as en
 import pandas as pd
+from tqdm import tqdm
 from denoise_functions import *
+import entropy as en
 
 
 def run_denoise(de):
@@ -179,9 +179,12 @@ def run_denoise_entropy(de):
     else:
         good_modal_length_value = de.modal_length_value
 
-    allowed_lengths = np.array(uniq_seq_lengths) - good_modal_length_value
-    allowed_lengths = list(allowed_lengths % 3 == 0)
-    allowed_lengths = list(itertools.compress(uniq_seq_lengths, allowed_lengths))
+    if de.unique_length:
+        allowed_lengths = good_modal_length_value
+    else:
+        allowed_lengths = np.array(uniq_seq_lengths) - good_modal_length_value
+        allowed_lengths = list(allowed_lengths % 3 == 0)
+        allowed_lengths = list(itertools.compress(uniq_seq_lengths, allowed_lengths))
 
     del good_modal_length_value, seq_length_per_read, de.modal_length_value
 

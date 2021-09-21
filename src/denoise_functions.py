@@ -10,17 +10,14 @@ programm.
 
 """
 
-import pandas as pd
-import Levenshtein as lv
-import numpy as np
-import json
-from ast import literal_eval
-import os
 import getopt
-import sys
 import itertools
-from tqdm import tqdm
+import Levenshtein as lv
 import multiprocessing as mp
+import numpy as np
+import pandas as pd
+import sys
+from tqdm import tqdm
 
 
 class DnoisEFunctions:
@@ -77,17 +74,19 @@ class DnoisEFunctions:
     compute_entropy = False
     infofile = []
     merge_from_info = False
+    unique_length = False
 
     def __init__(self):
         print("starting to denoise")
 
     def read_parameters(self, argument_list):
-        short_options = "hP:f:F:j:c:s:z:n:a:q:p:e:yx:m:"
+        short_options = "hP:f:F:j:c:s:z:n:a:q:p:e:yx:m:u"
         long_options = ["help", "fasta_input=", "csv_input=", "fastq_input=",
                         "fasta_output=", "csv_output=", "part=", "joining_criteria=",
                         "cores=", "start_sample_cols=",
                         "end_sample_cols=", "count_name=", "alpha=", "sequence=", "separation=", "entropy=",
-                        "entropy_correction", "first_nt_codon_position=", "modal_length=", "joining_file="]
+                        "entropy_correction", "first_nt_codon_position=", "modal_length=", "joining_file=",
+                        "unique_length"]
         try:
             arguments, values = getopt.getopt(argument_list, short_options, long_options)
         except getopt.error as err:
@@ -133,6 +132,8 @@ class DnoisEFunctions:
                       "\t\t-m --modal_length [number] when running DnoisE with entropy correction, "
                       "sequence length expected can be set, if not, modal_length is used and sequences"
                       " with modal_length + or - 3*n are accepted\n"
+                      "\t\t-u --unique_length only modal length is accepted as sequence length when running with "
+                      "entropy correction\n"
                       "\t\t-x --first_nt_codon_position [number] as DnoisE has been developed for COI "
                       "sequences amplified with Leray-XT primers, default value is 3\n"
                       "\t\t-y --entropy_correction compute a distance correction "
@@ -226,8 +227,12 @@ class DnoisEFunctions:
                 self.entropy = True
                 arg_e = True
             elif current_argument in ("-m", "--modal_length"):
-                self.modal_length_value = int(current_value)
+                self.modal_length_value = [int(current_value)]
                 print("modal_length set as %s" % current_value)
+            elif current_argument in ("-u", "--unique_length"):
+                self.unique_length = True
+                arg_u = True
+                print("Is entropy taken into account: %s" % self.entropy)
             elif current_argument in ("-x", "--first_nt_codon_position"):
                 self.initial_pos = int(current_value)
                 arg_x = True
@@ -298,6 +303,8 @@ class DnoisEFunctions:
                 self.Ad3 = e3 / (e1 + e2 + e3) * 3
             if 'arg_x' not in locals():
                 self.initial_pos = 3
+            if 'arg_u' not in locals():
+                self.unique_length = False
 
     def quartiles_run(self, data_initial):
         q = data_initial.shape[0]
