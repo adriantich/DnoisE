@@ -18,13 +18,13 @@ from denoise_functions import *
 import entropy as en
 
 
-if platform.system() == 'Linux':
-    mp.set_start_method('fork')
-else:
-    mp.set_start_method('spawn')
-
-
 def run_denoise(de):
+
+    if platform.system() == 'Linux':
+        mp.set_start_method('fork')
+    else:
+        mp.set_start_method('spawn')
+
     if de.output_type == 'ratio':
         de.denoised_ratio_output = [de.data_initial.loc[0, 'id']]
     else:
@@ -153,6 +153,12 @@ def run_denoise(de):
 
 
 def run_denoise_entropy(de):
+
+    if platform.system() == 'Linux':
+        mp.set_start_method('fork')
+    else:
+        mp.set_start_method('spawn')
+
     seq_length = []
     seq_length_per_read = []
     for i in list(range(de.data_initial.shape[0])):
@@ -372,6 +378,12 @@ def run_denoise_entropy(de):
 
 
 def run_from_info(de):
+    
+    if platform.system() == 'Linux':
+        mp.set_start_method('fork')
+    else:
+        mp.set_start_method('spawn')
+
     de.data_initial.index = de.data_initial.id
     de.abund_col_names.insert(0, de.count)
     if (de.output_type == 'ratio') or (de.output_type == 'all'):
