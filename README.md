@@ -59,7 +59,6 @@ cd ./DnoisE/
 pip3 install pandas
 pip3 install pyinstaller
 pip3 install python-Levenshtein
-pip3 install stats
 pip3 install tqdm
 
 cd ./src
