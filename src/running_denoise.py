@@ -378,7 +378,7 @@ def run_denoise_entropy(de):
 
 
 def run_from_info(de):
-    
+
     if platform.system() == 'Linux':
         mp.set_start_method('fork')
     else:
