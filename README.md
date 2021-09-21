@@ -76,7 +76,16 @@ We also recommend to use pyenv to create an environment to run DnoisE (see pyenv
 #### __Running DnoisE__
 
 DnoisE has been created to run both after and before clustering as described in Antich et al. (2021).
-Therefore, it accepts and returns both .fasta and .csv files. However, writing output is faster if .csv. It also accepts .fastq	input files.
+Therefore, it accepts and returns both .fasta and .csv files. However, writing output is faster if .csv. 
+It also accepts .fastq	input files.
+
+DnoisE can be called from the executable created by *pyinstaller* or directly from
+the python script. See example below:
+
+```console
+> ./bin/DnoisE -h
+> python3 ./src/DnoisE.py -h
+```
 
 Parameters of DnoisE are described in help but some are explained in more detail below.
 
@@ -112,6 +121,7 @@ Displaying help
 		-c --cores [number] number of cores, 1 by default
 		-e --entropy [number,number,number] entropy values (or any user-settable measure of variability) of the different codon positions [0.47,0.23,1.02] by default
 		-m --modal_length [number] when running DnoisE with entropy correction, sequence length expected can be set, if not, modal_length is used and sequences with modal_length + or - 3*n are accepted
+		-u --unique_length only modal length is accepted as sequence length when running with entropy correction
 		-x --first_nt_codon_position [number] as DnoisE has been developed for COI sequences amplified with Leray-XT primers, default value is 3
 		-y --entropy_correction compute a distance correction based on entropy is performed (see ENTROPY CORRECTION below). If set to F, no correction for entropy is performed (corresponding to the standard Unoise formulation)
 ```
@@ -154,7 +164,7 @@ For instance, the output path './file_to_denoise will' will return a file './fil
 Sample information cannot be processed if the input is a fasta or a fastq file. When this information is relevant, the input should be a .csv file, and the first and last sample columns should be indicated with parameters *-s* and *-z*.
 
 
-__*ENTROPY CORRECTION (-e|-y|-x|-m)*__
+__*ENTROPY CORRECTION (-e|-y|-x|-m|-u)*__
 
 As described in Antich et al. (2021) a correction of the distance value (d) in Edgar's algorithm (2016) can be performed using the entropy values of each codon position in coding barcodes.
 We performed DnoisE for COI Leray/Leray-XT primers (Leray et al. 2013; Wangensteen et al. 2018) and consequently sequences start with a codon position 3 and the first codon position is in the second sequence position as follow
@@ -167,7 +177,13 @@ position  --> 3-1-2-3-1-2-3-1-2-3-1-2-...
 
 Note that, in Edgar’s formula, the d used is the Levenshtein distance. This is the one used by DnoisE if no correction is applied. However, when entropy correction is selected, the Levenshtein distance is not applicable as the codon position needs to be considered, and a d based simply on the number of nucleotide differences is used instead. With sequences of equal length and aligned, both distances are practically equivalent.
 
-The use of Levenshtein distance allowed us to compare sequences of inequal length, both in the complete dataset or within MOTUs (depending on whether DnoisE is performed before or after clustering). However, with the entropy correction length should be constant when comparing two sequences. Dataset is thus analysed by separate sequence length sets. Theese sets must differ from the modal length of all dataset by *n* number of codons (3 nuclotides). Notwithstanding, prefered sequence length can be set using *-m* parameter (i.e. in case of sequence lengths of 304, 310, 311, 313, 314 and 316 nucleotides, if the modal is 313, lengths of 311 and 314 will be considered as incorrect and will be eliminated).
+The use of Levenshtein distance allowed us to compare sequences of inequal length, both in the complete dataset or within 
+MOTUs (depending on whether DnoisE is performed before or after clustering). However, with the entropy correction length 
+should be constant when comparing two sequences. Dataset is thus analysed by separate sequence length sets. Theese sets 
+must differ from the modal length of all dataset by *n* number of codons (3 nuclotides). Notwithstanding, prefered 
+sequence length can be set using *-m* parameter (i.e. in case of sequence lengths of 304, 310, 311, 313, 314 and 316 
+nucleotides, if the modal is 313, lengths of 311 and 314 will be considered as incorrect and will be eliminated). If *-u*,
+only modal length is used.
 
 Entropy values are given as E_1, E_2, E_3, where 1, 2, and 3 are the codon positions (default as *-e* 0.47,0.23,0.1.02). Any user-derived value of variability of each codon position can be used instead of entropy.
 
