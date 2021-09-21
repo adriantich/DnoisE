@@ -49,7 +49,6 @@ The manual installation requires the following modules
    + [Pandas](https://pandas.pydata.org/)
    + [pyinstaller](https://www.pyinstaller.org/)
    + [python-Levenshtein](https://pypi.org/project/python-Levenshtein/)
-   + [stats](https://pypi.org/project/stats/)
    + [tqdm](https://pypi.org/project/tqdm/)
 
  To make an stand-alone application, pyinstaller creates an executable in a bin directory running as follow.
