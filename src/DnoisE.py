@@ -21,6 +21,7 @@ if __name__ == '__main__':
     if platform.system() == 'Linux':
         mp.set_start_method('fork')
     else:
+        print('not Linux system detected')
         mp.set_start_method('spawn')
 
     de = DnoisEFunctions()
