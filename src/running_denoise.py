@@ -19,6 +19,9 @@ import entropy as en
 
 
 def run_denoise(de):
+    if not platform.system() == 'Linux'
+        print('not Linux system detected')
+        mp.set_start_method('spawn')
 
     if de.output_type == 'ratio':
         de.denoised_ratio_output = [de.data_initial.loc[0, 'id']]
@@ -148,6 +151,9 @@ def run_denoise(de):
 
 
 def run_denoise_entropy(de):
+    if not platform.system() == 'Linux'
+        print('not Linux system detected')
+        mp.set_start_method('spawn')
 
     seq_length = []
     seq_length_per_read = []
@@ -368,6 +374,9 @@ def run_denoise_entropy(de):
 
 
 def run_from_info(de):
+    if not platform.system() == 'Linux'
+        print('not Linux system detected')
+        mp.set_start_method('spawn')
 
     de.data_initial.index = de.data_initial.id
     de.abund_col_names.insert(0, de.count)
