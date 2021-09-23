@@ -19,7 +19,7 @@ import entropy as en
 
 
 def run_denoise(de):
-    if not platform.system() == 'Linux'
+    if not platform.system() == 'Linux':
         print('not Linux system detected')
         mp.set_start_method('spawn')
 
@@ -151,7 +151,7 @@ def run_denoise(de):
 
 
 def run_denoise_entropy(de):
-    if not platform.system() == 'Linux'
+    if not platform.system() == 'Linux':
         print('not Linux system detected')
         mp.set_start_method('spawn')
 
@@ -374,7 +374,7 @@ def run_denoise_entropy(de):
 
 
 def run_from_info(de):
-    if not platform.system() == 'Linux'
+    if not platform.system() == 'Linux':
         print('not Linux system detected')
         mp.set_start_method('spawn')
 
