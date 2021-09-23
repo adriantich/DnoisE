@@ -4,8 +4,8 @@
 export PATH="$HOME/.pyenv/bin:$PATH"
 eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
-pyenv shell 3.6-dev
-pyenv virtualenv 3.6-dev DnoisE
+pyenv shell 3.8.2
+pyenv virtualenv 3.8.2 DnoisE
 pyenv shell DnoisE
 
 pip3 install pandas
