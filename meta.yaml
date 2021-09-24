@@ -1,5 +1,5 @@
 package:
-  name: "DnoisE"
+  name: "dnoise"
   version: "1.0"
 
 source:
@@ -18,8 +18,6 @@ requirements:
     - python-Levenshtein
     - cython
     - pandas
-    - multiprocessing
-    - itertools
     - numpy
     - tqdm
 
@@ -29,4 +27,8 @@ about:
   license_familY: GNU
   license_file: LICENSE
   summary: "Denoise sequence data sets from Illumina using distance corrected according to the entropy of each codon position"
+
+extra:
+  recipe-maintainers:
+    - adriantich
 
