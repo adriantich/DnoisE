@@ -5,6 +5,7 @@ package:
 source:
   git_rev: v1.0
   git_url: https://github.com/adriantich/DnoisE.git
+  path: ..
 
 requirements:
   host:
