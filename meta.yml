@@ -1,0 +1,32 @@
+package:
+  name: "DnoisE"
+  version: "1.0"
+
+source:
+  git_rev: v1.0
+  git_url: https://github.com/adriantich/DnoisE.git
+
+requirements:
+  host:
+    - python
+    - setuptools
+  build:
+    - python
+  run:
+    - python
+    - pyinstaller
+    - python-Levenshtein
+    - cython
+    - pandas
+    - multiprocessing
+    - itertools
+    - numpy
+    - tqdm
+
+about:
+  home: https://github.com/adriantich/DnoisE
+  license: GNU GENERAL PUBLIC LICENSE
+  license_familY: GNU
+  license_file: LICENSE
+  summary: "Denoise sequence data sets from Illumina using distance corrected according to the entropy of each codon position"
+
