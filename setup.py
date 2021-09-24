@@ -1,7 +1,6 @@
 from setuptools import setup
 
 setup(
-
     name="DnoisE",
     version="1.0",
     description="Denoise sequence data sets from Illumina using distance corrected according to the entropy"
