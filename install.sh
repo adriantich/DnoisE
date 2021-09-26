@@ -13,6 +13,8 @@ pip3 install pyinstaller
 pip3 install python-Levenshtein
 pip3 install tqdm
 
+pip3 setup.py install
+
 cd ./src
 
 pyinstaller DnoisE.py --onefile --distpath ../bin
