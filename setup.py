@@ -8,6 +8,7 @@ setup(
     author="Adrià Antich",
     author_email="adriantich@gmail.com",
     url="https://github.com/adriantich/DnoisE",
-    packages=["src"]
+    packages=["src"],
+    install_requires=["pandas","pyinstaller","python-Levenshtein", "tqdm"]
 )
 
