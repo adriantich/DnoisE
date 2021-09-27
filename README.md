@@ -127,7 +127,7 @@ Displaying help
 
 __*INPUT FILES (--csv_input|--fasta_input|--fastq_input|-n|-q|-p)*__
 
-Input files can be in both .csv, .fasta and .fastq format. This can be specified using *-f* parameter set as T as default meaning that input file is in .fasta format.
+Input files can be in both .csv, .fasta and .fastq format. This can be specified using *-f* parameter set as T as default meaning that input file is in .fasta format. All sequences are suposed to be aliniated specially when aplying entropy correction.
 
 Different pipelines use different names to number of reads (size/count/reads...). This can be specified using parameter *-n* followed by string name (for instance: -n size, default).  Sequence name can also be specified using *-q* parameter (sequence/seq...)(*-q* sequence, default)
 
