@@ -1,9 +1,10 @@
 package:
-  name: "src"
+  name: "dnoise"
   version: "1.0"
 
 source:
-  git_url: https://github.com/adriantich/DnoisE.git
+  path: ../DnoisE
+  #git_url: https://github.com/adriantich/DnoisE.git
 
 requirements:
   host:
