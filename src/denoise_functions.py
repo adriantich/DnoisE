@@ -3,10 +3,10 @@
 """
 .. codeauthor:: Adrià Antich <adriantich@gmail.com>
 
-This programme is called by the DnoisE.
+This programme is called by DnoisE.
 
 denoise_functions.py creates a class object which contains many of the functions used by DnoisE and objects used by the
-programm.
+program.
 
 """
 
@@ -138,7 +138,7 @@ class DnoisEFunctions:
                       "\t\t-x --first_nt_codon_position [number] as DnoisE has been developed for COI "
                       "sequences amplified with Leray-XT primers, default value is 3 (i.e., the reading frame starts "
                       "in the third nucleotide).\n"
-                      "\t\t-y --entropy_correction compute a distance correction "
+                      "\t\t-y --entropy_correction a distance correction "
                       "based on entropy is performed (see ENTROPY CORRECTION below). If set to F, "
                       "no correction for entropy is performed (corresponding to the standard Unoise formulation)\n")
                 sys.exit()
@@ -184,11 +184,11 @@ class DnoisEFunctions:
             elif current_argument in ("-s", "--start_sample_cols"):
                 self.start = int(current_value)
                 arg_s = True
-                print("Abundant cols starts in: %s" % current_value)
+                print("Abundance cols start in: %s" % current_value)
             elif current_argument in ("-z", "--end_sample_cols"):
                 self.end = int(current_value)
                 arg_z = True
-                print("Abundant cols ends in: %s" % current_value)
+                print("Abundance cols end in: %s" % current_value)
             # output args
             elif current_argument == "--csv_output":
                 print("Output files will be named %s*" % current_value)
@@ -234,22 +234,22 @@ class DnoisEFunctions:
             elif current_argument in ("-u", "--unique_length"):
                 self.unique_length = True
                 arg_u = True
-                print("Is entropy taken into account: %s" % self.entropy)
+                print("Is entropy taken into account?: %s" % self.entropy)
             elif current_argument in ("-x", "--first_nt_codon_position"):
                 self.initial_pos = int(current_value)
                 arg_x = True
-                print("first nt is a position %s" % current_value)
+                print("first nt is in position %s" % current_value)
             elif current_argument in ("-y", "--entropy_correction"):
                 self.entropy = True
                 arg_y = True
-                print("Is entropy taken into account: %s" % self.entropy)
+                print("Is entropy taken into account?: %s" % self.entropy)
             elif current_argument in ("-P", "--Part"):
                 print("Part %s running" % current_value)
                 self.part = int(current_value)
                 arg_pp = True
 
         if 'arg_ci' not in locals() and 'arg_fi' not in locals() and 'arg_fqi' not in locals():  # no input file
-            print("Err: input file needed")
+            print("Error: input file needed")
             sys.exit()
         if 'arg_ii' not in locals():
             self.merge_from_info = False
@@ -258,13 +258,13 @@ class DnoisEFunctions:
             self.count = "size"
         if self.input_type == 'csv':  # input file as csv
             if 'arg_p' not in locals():  # no sep specified
-                print("Separation not given, '\t' by default")
+                print("Separator not given, '\t' by default")
                 self.sep = '\t'
             if "arg_q" not in locals():  # no sequence tag name
                 print("sequence tag name not given, 'sequence' by default")
                 self.seq = 'sequence'
-            if "arg_s" not in locals():  # no start of sample cols specified
-                if "arg_z" not in locals():  # no end of sample cols specified
+            if "arg_s" not in locals():  # no start of abundance cols specified
+                if "arg_z" not in locals():  # no end of abundance cols specified
                     print("start and end not given, no samples in file")
                     self.abund_col_names = [self.count]
                     self.justcount = True
@@ -272,14 +272,14 @@ class DnoisEFunctions:
                     print("Err: end given but no start")
                     sys.exit()
             elif "arg_z" not in locals():  # no end of sample cols specified
-                print("Err: start given but no end")
+                print("Error: start given but no end")
                 sys.exit()
             else:  # sample cols specified
                 self.justcount = False
         if 'arg_co' not in locals() and 'arg_fo' not in locals():  # no output file
-            print("Err: output path needed")
+            print("Error: output path needed")
             sys.exit()
-        if 'arg_j' not in locals():  # no joining criteria specified
+        if 'arg_j' not in locals():  # no joining criterion specified
             self.output_type = 'ratio_d'
         if "arg_a" not in locals():  # alpha not specified
             if not self.merge_from_info:
@@ -291,7 +291,7 @@ class DnoisEFunctions:
         if "arg_y" not in locals() and "arg_e" not in locals():  # no entropy correction
             self.entropy = False
             if not self.merge_from_info:
-                print("Ad correction not applied")
+                print("Entropy correction not applied")
             self.Ad1, self.Ad2, self.Ad3 = (1, 1, 1)
         else:  # entropy correction
             if "arg_e" not in locals():
@@ -329,9 +329,9 @@ class DnoisEFunctions:
         position = len(self.run_list)
 
         Ml = pd.DataFrame(columns=['pM', 'pMpos', 'pD', 'ratio', 'd', 'xavier_criteria'])
-        # compare with each bigger seq possible Mother (pM).
+        # compare with each possible Mother sequence (pM).
         for a in range(position):
-            # if the pM is daughter break to the next pM
+            # if the pM is a daughter sequence, move to the next pM
             if self.run_list[a].get('daughter'):
                 continue
             pM = self.run_list[a].get('id')
@@ -341,7 +341,7 @@ class DnoisEFunctions:
             # obtain ratio ---> total_reads pD / total_reads pM
             b_ratio = pDabund / pMabund
             # if ratio is less than minimum (1/64)
-            # break comparing with more pM
+            # stop comparing with pM
             if b_ratio > self.max_ratio:
                 break
                 # obtain d ---> external function:
@@ -350,7 +350,7 @@ class DnoisEFunctions:
             d = lv.distance(pDseq, pMseq)
             # if d:
             # if dd exist & d is higher than dd:
-            # break go to next pM
+            # stop moving to next pM
             if 'dd' in locals():
                 if dd == 1:
                     break
@@ -374,13 +374,13 @@ class DnoisEFunctions:
                 # ratio
                 # d
                 # Xavier's criteria ---> ratio/((1/2)^(alpha*d + 1))
-                # (the less value the best pM)
-                # FALSE ---> break this pM
+                # (the lower the value the better the pM)
+                # FALSE ---> stop considering this pM
             else:
                 continue
 
             # editing variables and files
-        if Ml.empty:  # means that is not a daughter
+        if Ml.empty:  # means that it is not a daughter
             info = {'daughter': pD, 'mother_d': None, 'd': None,
                     'mother_ratio': None, 'ratio': None,
                     'mother_ratio_d': None, 'xavier_criteria': None}
@@ -430,10 +430,10 @@ class DnoisEFunctions:
         position = len(self.run_list)
         # create void list for pM info ---> Motherslist (Ml)
         Ml = pd.DataFrame(columns=['pM', 'pMpos', 'pD', 'ratio', 'd', 'xavier_criteria'])
-        # compare with each bigger seq possible Mother (pM).
+        # compare with each possible Mother (pM).
         for a in range(position):
-            # if the pM is running wait (this should be done with a while loop)
-            # if the pM is daughter break to the next pM
+            # if the pM is running wait
+            # if the pM is daughter move to the next pM
             if self.run_list[a].get('daughter'):
                 continue
             pM = self.run_list[a].get('id')
@@ -443,7 +443,7 @@ class DnoisEFunctions:
             # obtain ratio ---> total_reads pD / total_reads pM
             b_ratio = pDabund / pMabund
             # if ratio is less than minimum (1/64)
-            # break comparing with more pM
+            # stop comparing with more pM
             if b_ratio > self.max_ratio:
                 break
                 # obtain d ---> external function:
@@ -476,12 +476,12 @@ class DnoisEFunctions:
                 # ratio
                 # d
                 # Xavier's criteria ---> ratio/((1/2)^(alpha*d + 1))
-                # (the less value the best pM)
-                # FALSE ---> break this pM
+                # (the lower the value the better the pM)
+                # FALSE ---> stop considering this pM
             else:
                 continue
             # editing variables and files
-        if Ml.empty:  # means that is not a daughter
+        if Ml.empty:  # means that it is not a daughter
             info = {'daughter': pD, 'mother_d': None, 'd': None,
                     'mother_ratio': None, 'ratio': None,
                     'mother_ratio_d': None, 'xavier_criteria': None}
@@ -511,10 +511,10 @@ class DnoisEFunctions:
         position = len(self.run_list)
             # create void list for pM info ---> Motherslist (Ml)
         Ml = pd.DataFrame(columns=['pM', 'pMpos', 'pD', 'ratio', 'd', 'xavier_criteria'])
-        # compare with each bigger seq possible Mother (pM).
+        # compare with each possible Mother (pM).
         for a in range(position):
-            # if the pM is running wait (this should be done with a while loop)
-            # if the pM is daughter break to the next pM
+            # if the pM is running wait
+            # if the pM is daughter move to the next pM
             if self.run_list[a].get('daughter'):
                 continue
             pM = self.run_list[a].get('id')
@@ -533,7 +533,7 @@ class DnoisEFunctions:
             d = lv.distance(pDseq, pMseq)
             # if d:
             # if dd exist & d is higher than dd:
-            # break go to next pM
+            # stop go to next pM
             if 'dd' in locals():
                 if dd == 1:
                     break
@@ -557,14 +557,14 @@ class DnoisEFunctions:
                 # ratio
                 # d
                 # Xavier's criteria ---> ratio/((1/2)^(alpha*d + 1))
-                # (the less value the best pM)
-                # FALSE ---> break this pM
+                # (the lower the value the better the pM)
+                # FALSE ---> stop this pM
                 break
             else:
                 continue
 
             # editing variables and files
-        if Ml.empty:  # means that is not a daughter
+        if Ml.empty:  # means that it is not a daughter
             info = {'daughter': pD, 'mother_d': None, 'd': None,
                     'mother_ratio': None, 'ratio': None,
                     'mother_ratio_d': None, 'xavier_criteria': None}
@@ -615,10 +615,10 @@ class DnoisEFunctions:
         position = len(self.run_list)
         # create void list for pM info ---> Motherslist (Ml)
         Ml = pd.DataFrame(columns=['pM', 'pMpos', 'pD', 'ratio', 'd', 'xavier_criteria'])
-        # compare with each bigger seq possible Mother (pM).
+        # compare with each possible Mother (pM).
         for a in range(position):
-            # if the pM is running wait (this should be done with a while loop)
-            # if the pM is daughter break to the next pM
+            # if the pM is running wait
+            # if the pM is daughter move to the next pM
             if self.run_list[a].get('daughter'):
                 continue
             pM = self.run_list[a].get('id')
@@ -628,7 +628,7 @@ class DnoisEFunctions:
             # obtain ratio ---> total_reads pD / total_reads pM
             b_ratio = pDabund / pMabund
             # if ratio is less than minimum (1/64)
-            # break comparing with more pM
+            # stop comparing with more pM
             if b_ratio > self.max_ratio:
                 break
                 # obtain d ---> external function:
@@ -637,7 +637,7 @@ class DnoisEFunctions:
             d = lv.distance(pDseq, pMseq)
             # if d:
             # if dd exist & d is higher than dd:
-            # break go to next pM
+            # stop moving to next pM
             if 'dd' in locals():
                 if dd == 1:
                     break
@@ -661,13 +661,13 @@ class DnoisEFunctions:
                 # ratio
                 # d
                 # Xavier's criteria ---> ratio/((1/2)^(alpha*d + 1))
-                # (the less value the best pM)
-                # FALSE ---> break this pM
+                # (the lower the value the better the pM)
+                # FALSE ---> stop considering this pM
                 break
             else:
                 continue
             # editing variables and files
-        if Ml.empty:  # means that is not a daughter
+        if Ml.empty:  # means that it is not a daughter
             info = {'daughter': pD, 'mother_d': None, 'd': None,
                     'mother_ratio': None, 'ratio': None,
                     'mother_ratio_d': None, 'xavier_criteria': None}
@@ -698,10 +698,10 @@ class DnoisEFunctions:
         # create void list for pM info ---> Motherslist (Ml)
         Ml = pd.DataFrame(columns=['pM', 'pMpos', 'pD', 'ratio', 'd', 'xavier_criteria',
                                    'difpos1', 'difpos2', 'difpos3'])
-        # compare with each bigger seq possible Mother (pM).
+        # compare with each possible Mother (pM).
         for a in range(position):
-            # if the pM is running wait (this should be done with a while loop)
-            # if the pM is daughter break to the next pM
+            # if the pM is running wait
+            # if the pM is daughter move to the next pM
             if self.run_list[a].get('daughter'):
                 continue
             pM = self.run_list[a].get('id')
@@ -711,7 +711,7 @@ class DnoisEFunctions:
             # obtain ratio ---> total_reads pD / total_reads pM
             b_ratio = pDabund / pMabund
             # if ratio is less than minimum (1/64)
-            # break comparing with more pM
+            # stop comparing with more pM
             if b_ratio > self.max_ratio:
                 break
                 # obtain d ---> external function:
@@ -722,7 +722,7 @@ class DnoisEFunctions:
                                                            Ad1=self.Ad1, Ad2=self.Ad2, Ad3=self.Ad3)
             # if d:
             # if dd exist & d is higher than dd:
-            # break go to next pM
+            # stop moving to next pM
             if 'dd' in locals():
                 if dd == min(self.Ad1, self.Ad2, self.Ad3):
                     break
@@ -747,13 +747,13 @@ class DnoisEFunctions:
                 # ratio
                 # d
                 # Xavier's criteria ---> ratio/((1/2)^(alpha*d + 1))
-                # (the less value the best pM)
-                # FALSE ---> break this pM
+                # (the lower the value the better the pM)
+                # FALSE ---> stop considering this pM
             else:
                 continue
 
             # editing variables and files
-        if Ml.empty:  # means that is not a daughter
+        if Ml.empty:  # means that it is not a daughter
             info = {'daughter': pD, 'mother_d': None, 'd': None,
                     'mother_ratio': None, 'ratio': None,
                     'mother_ratio_d': None, 'xavier_criteria': None,
@@ -809,10 +809,10 @@ class DnoisEFunctions:
         # create void list for pM info ---> Motherslist (Ml)
         Ml = pd.DataFrame(columns=['pM', 'pMpos', 'pD', 'ratio', 'd', 'xavier_criteria',
                                    'difpos1', 'difpos2', 'difpos3'])
-        # compare with each bigger seq possible Mother (pM).
+        # compare with each possible Mother (pM).
         for a in range(position):
-            # if the pM is running wait (this should be done with a while loop)
-            # if the pM is daughter break to the next pM
+            # if the pM is running wait
+            # if the pM is daughter move to the next pM
             if self.run_list[a].get('daughter'):
                 continue
             pM = self.run_list[a].get('id')
@@ -822,7 +822,7 @@ class DnoisEFunctions:
             # obtain ratio ---> total_reads pD / total_reads pM
             b_ratio = pDabund / pMabund
             # if ratio is less than minimum (1/64)
-            # break comparing with more pM
+            # stop comparing with more pM
             if b_ratio > self.max_ratio:
                 break
                 # obtain d ---> external function:
@@ -833,7 +833,7 @@ class DnoisEFunctions:
                                                            Ad1=self.Ad1, Ad2=self.Ad2, Ad3=self.Ad3)
             # if d:
             # if dd exist & d is higher than dd:
-            # break go to next pM
+            # stop moving next pM
             if 'dd' in locals():
                 if dd == min(self.Ad1, self.Ad2, self.Ad3):
                     break
@@ -858,12 +858,12 @@ class DnoisEFunctions:
                 # ratio
                 # d
                 # Xavier's criteria ---> ratio/((1/2)^(alpha*d + 1))
-                # (the less value the best pM)
-                # FALSE ---> break this pM
+                # (the lower the value the better the pM)
+                # FALSE ---> stop considering this pM
             else:
                 continue
             # editing variables and files
-        if Ml.empty:  # means that is not a daughter
+        if Ml.empty:  # means that it is not a daughter
             info = {'daughter': pD, 'mother_d': None, 'd': None,
                     'mother_ratio': None, 'ratio': None,
                     'mother_ratio_d': None, 'xavier_criteria': None,
@@ -901,8 +901,8 @@ class DnoisEFunctions:
                                    'difpos1', 'difpos2', 'difpos3'])
         # compare with each bigger seq possible Mother (pM).
         for a in range(position):
-            # if the pM is running wait (this should be done with a while loop)
-            # if the pM is daughter break to the next pM
+            # if the pM is running wait
+            # if the pM is daughter move to the next pM
             if self.run_list[a].get('daughter'):
                 continue
             pM = self.run_list[a].get('id')
@@ -912,7 +912,7 @@ class DnoisEFunctions:
             # obtain ratio ---> total_reads pD / total_reads pM
             b_ratio = pDabund / pMabund
             # if ratio is less than minimum (1/64)
-            # break comparing with more pM
+            # stop comparing with more pM
             if b_ratio > self.max_ratio:
                 break
                 # obtain d ---> external function:
@@ -923,7 +923,7 @@ class DnoisEFunctions:
                                                            Ad1=self.Ad1, Ad2=self.Ad2, Ad3=self.Ad3)
             # if d:
             # if dd exist & d is higher than dd:
-            # break go to next pM
+            # stop moving to next pM
             if 'dd' in locals():
                 if dd == min(self.Ad1, self.Ad2, self.Ad3):
                     break
@@ -948,8 +948,8 @@ class DnoisEFunctions:
                 # ratio
                 # d
                 # Xavier's criteria ---> ratio/((1/2)^(alpha*d + 1))
-                # (the less value the best pM)
-                # FALSE ---> break this pM
+                # (the lower the value the better the pM)
+                # FALSE ---> stop considering this pM
                 break
             else:
                 continue
@@ -1011,10 +1011,10 @@ class DnoisEFunctions:
         # create void list for pM info ---> Motherslist (Ml)
         Ml = pd.DataFrame(columns=['pM', 'pMpos', 'pD', 'ratio', 'd', 'xavier_criteria',
                                    'difpos1', 'difpos2', 'difpos3'])
-        # compare with each bigger seq possible Mother (pM).
+        # compare with each possible Mother (pM).
         for a in range(position):
-            # if the pM is running wait (this should be done with a while loop)
-            # if the pM is daughter break to the next pM
+            # if the pM is running wait
+            # if the pM is daughter move to the next pM
             if self.run_list[a].get('daughter'):
                 continue
             pM = self.run_list[a].get('id')
@@ -1024,7 +1024,7 @@ class DnoisEFunctions:
             # obtain ratio ---> total_reads pD / total_reads pM
             b_ratio = pDabund / pMabund
             # if ratio is less than minimum (1/64)
-            # break comparing with more pM
+            # stop comparing with more pM
             if b_ratio > self.max_ratio:
                 break
                 # obtain d ---> external function:
@@ -1035,7 +1035,7 @@ class DnoisEFunctions:
                                                            Ad1=self.Ad1, Ad2=self.Ad2, Ad3=self.Ad3)
             # if d:
             # if dd exist & d is higher than dd:
-            # break go to next pM
+            # stop moving to next pM
             if 'dd' in locals():
                 if dd == min(self.Ad1, self.Ad2, self.Ad3):
                     break
@@ -1060,13 +1060,13 @@ class DnoisEFunctions:
                 # ratio
                 # d
                 # Xavier's criteria ---> ratio/((1/2)^(alpha*d + 1))
-                # (the less value the best pM)
-                # FALSE ---> break this pM
+                # (the lower the value the better the pM)
+                # FALSE ---> stop considering this pM
                 break
             else:
                 continue
             # editing variables and files
-        if Ml.empty:  # means that is not a daughter
+        if Ml.empty:  # means that it is not a daughter
             info = {'daughter': pD, 'mother_d': None, 'd': None,
                     'mother_ratio': None, 'ratio': None,
                     'mother_ratio_d': None, 'xavier_criteria': None,

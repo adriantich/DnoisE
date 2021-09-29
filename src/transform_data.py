@@ -3,10 +3,10 @@
 """
 .. codeauthor:: Adrià Antich <adriantich@gmail.com>
 
-This programme is called by the DnoisE.
+This program is called by DnoisE.
 
-transform_data.py transforms data imported by import_data.py script as pandas.DataFrame. Data is filtered and sorted by
-read abundance. Also other variables necessary for following steps od DnoisE are defined.
+transform_data.py transforms data imported by import_data.py script to a pandas.DataFrame. Data is filtered and sorted
+by read abundance. Other variables necessary for following steps of DnoisE are also defined.
 This script also computes the entropy if specified.
 
 """

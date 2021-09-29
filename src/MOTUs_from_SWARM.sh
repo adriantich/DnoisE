@@ -99,9 +99,9 @@ motus_csv_dir=${output_dir}motus_csv/
  
 linies=$(wc -l ${motu_list} | cut -f1 -d ' ')
 
-# creating a version of output_swarm with just wanted MOTUs
+# creating a version of output_swarm with just the wanted MOTUs
 
-motus_pipeline=$(sed -e ':a;N;$!ba;s/\n/\\|/g' ${motu_list}) #converteix els canvis de linies en "\|"
+motus_pipeline=$(sed -e ':a;N;$!ba;s/\n/\\|/g' ${motu_list}) #converts line feeds to "\|"
 grep ${motus_pipeline} ${output_SWARM} >${db_dir}output_swarm
 
 # for i in $(seq 1 ${linies}) 
@@ -155,7 +155,7 @@ for i in $(seq 1 ${linies})
  split -l200 -d ${motus_dir}${var}
  for z in *
   do
-  liniesmotu=$(sed -e ':a;N;$!ba;s/\n/\\|/g' ${rasputin}${z}) #converteix els canvis de linies en "\|"
+  liniesmotu=$(sed -e ':a;N;$!ba;s/\n/\\|/g' ${rasputin}${z}) #converts line feeds to "\|"
   grep ${liniesmotu} ${tab_file} >${rasputin}${z}_grep&
   done
  wait

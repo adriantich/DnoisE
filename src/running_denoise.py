@@ -5,7 +5,7 @@
 
 This programme is called by the DnoisE.
 
-runnin_denoise.py runs the algorithm of denoising sequences using Levenshtein distance or entropy correction.
+running_denoise.py runs the algorithm of denoising sequences using Levenshtein distance or entropy correction.
 
 """
 
@@ -39,7 +39,7 @@ def run_denoise(de):
     de.run_list = [{'id': de.data_initial.loc[0, 'id'], de.count: de.data_initial.loc[0, de.count],
                     'run': True, 'daughter': False}]
 
-    run_dnoise_testing(de)  # function in denoise_funtions.py
+    run_dnoise_testing(de)  # function in denoise_functions.py
 
     de.output_info = pd.DataFrame.from_dict(de.output_info)
     de.output_info.to_csv(str(de.MOTUoutfile + '_denoising_info.csv'), index=False)
@@ -180,10 +180,11 @@ def run_denoise_entropy(de):
         if 'good_modal_length_value' not in locals():
             good_modal_length_value = de.modal_length_value[0]
 
-        print('WARNING!! %s not available to run with Entropy. '
+        print('WARNING!! %s not available to run with entropy correction. '
               'Equal number of seqs with different seq length' % de.MOTUfile)
         print('set -m as one value of the following: %s ' % de.modal_length_value)
-        print('DnoisE will run with sequence length %s and its multiples' % good_modal_length_value)
+        print('DnoisE will run with sequence length %s and its accepted variations (multiples of 3 '
+              'nucleotides)' % good_modal_length_value)
     else:
         good_modal_length_value = de.modal_length_value
 

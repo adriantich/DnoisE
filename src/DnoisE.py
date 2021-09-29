@@ -3,8 +3,8 @@
 """
 .. codeauthor:: Adrià Antich <adriantich@gmail.com>
 
-DnoisE is designed to denoise data sets from illumina using parameter d (distance) corrected (optionally)
-according to the entropy of each codon position.
+DnoisE is designed to denoise data sets from illumina sequencing using (optionally) a correction of the distance
+measure (parameter d) according to the entropy of each codon position.
 """
 
 import sys
