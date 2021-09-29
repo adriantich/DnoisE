@@ -136,8 +136,8 @@ class DnoisEFunctions:
                       "\t\t-u --unique_length only modal length is accepted as sequence length when running with "
                       "entropy correction\n"
                       "\t\t-x --first_nt_codon_position [number] as DnoisE has been developed for COI "
-                      "sequences amplified with Leray-XT primers, default value is 3 (i.e., the reading frame starts "
-                      "in the third nucleotide).\n"
+                      "sequences amplified with Leray-XT primers, default value is 3 (i.e., the first nucleotide "
+                      "in the sequences is a third codon position).\n"
                       "\t\t-y --entropy_correction a distance correction "
                       "based on entropy is performed (see ENTROPY CORRECTION below). If set to F, "
                       "no correction for entropy is performed (corresponding to the standard Unoise formulation)\n")
