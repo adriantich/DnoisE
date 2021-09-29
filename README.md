@@ -37,13 +37,14 @@ d, and r_d criteria.
 
 DnoisE depends on the following software:
 
-* Python3.6
+* Python>=3.6
 * C (for Levenshtein module)
 * R
 * bash
 
-DnoisE is easy to install from terminal.
+DnoisE is easy to install from terminal. Presently it runs on UNIX/Linux systems. An executable file can be optionally created (see below), otherwise the program can be run directly from the python script DnoisE.py.
 
+#### __A. INSTALLATION FROM GITHUB__
 #### __1. First clone the github repository__
 
 ```console
@@ -51,12 +52,12 @@ git clone https://github.com/adriantich/DnoisE.git
 ```
 
 #### __2a. INSTALL WITH install.sh__
-install.sh is a bash script that creates a virtualenvironment with pyenv and creates an executable of DnoisE 
-in a "./bin" directory. install.sh requires pyenv (see pyenv [documentation](https://github.com/pyenv/pyenv)).
+install.sh is a bash script that installs DnoisE and the required modules and creates a "./bin" directory with an executable file (DnoisE). It is recommended
+to use a pyenv environment to avoid potential issues with python versions (see pyenv [documentation](https://github.com/pyenv/pyenv)).
 
 ```console
 cd DnoisE/
-bash required_modules.sh
+bash install.sh
 ```
 
 #### __2b. INSTALL MANUALLY__
@@ -67,7 +68,7 @@ The manual installation requires the following modules
    + [python-Levenshtein](https://pypi.org/project/python-Levenshtein/)
    + [tqdm](https://pypi.org/project/tqdm/)
 
- To make a stand-alone application, pyinstaller creates an executable in a bin directory as follows.
+ To make a stand-alone application (optional), pyinstaller creates an executable file (DnoisE) in a "./bin" directory as follows:
 
 ```console
 cd ./DnoisE/
@@ -81,9 +82,22 @@ cd ./src
 
 pyinstaller DnoisE.py --onefile --distpath ../bin
 ```
+#### __B. INSTALLATION FROM CONDA__
+#### __1. Install package__
 
+```console
+conda install -c adriantich dnoise
+```
+Different python versions (3.6, 3.7 and 3.8) are available at the [conda repository](https://anaconda.org/adriantich/dnoise/files)
 
-We also recommend to use pyenv to create an environment to run DnoisE (see pyenv [documentation](https://github.com/pyenv/pyenv))
+#### __2. Create an executable file (optional)__
+To create an executable file (in a "bin" directory) of the program run 
+
+```console
+pyinstaller DnoisE.py --onefile --distpath ../bin
+```
+from the directory where the conda package has been installed (typically ~/anaconda3/pkgs/dnoise-<dnoise_version>/lib/<python_version>/site-packages/src).
+
 
 ### __WORKFLOW__
 
@@ -136,7 +150,7 @@ Displaying help
 		-e --entropy [number,number,number] entropy values (or any user-settable measure of variability) of the different codon positions [0.47,0.23,1.02] by default
 		-m --modal_length [number] when running DnoisE with entropy correction, sequence length expected can be set, if not, modal_length is used and only sequences with modal_length + or - 3*n are accepted
 		-u --unique_length only modal length is accepted as sequence length when running with entropy correction
-		-x --first_nt_codon_position [number] as DnoisE has been developed for COI sequences amplified with Leray-XT primers, default value is 3 (i.e., the reading frame starts in the third nucleotide).
+		-x --first_nt_codon_position [number] as DnoisE has been developed for COI sequences amplified with Leray-XT primers, default value is 3 (i.e., the first nucleotide in the sequences is a third codon position).
 		-y --entropy_correction a distance correction based on entropy is performed (see ENTROPY CORRECTION below). If set to F, no correction for entropy is performed (corresponding to the standard Unoise formulation)
 ```
 
@@ -199,12 +213,11 @@ __*ENTROPY CORRECTION (-e|-y|-x|-m|-u)*__
 As described in Antich et al. (2021) a correction of the distance value (d) in Edgar's algorithm (2016) can be 
 performed using the entropy values of each codon position in coding barcodes. We performed DnoisE for COI 
 Leray/Leray-XT primers (Leray et al. 2013; Wangensteen et al. 2018) and consequently sequences start with a 
-codon position 2 and the first initial codon position is the third nucleotide as follows:
+codon position 3 and the first initial codon position is the second nucleotide as follows:
 
-!!!!!!!!!!!PER REVISAAR!!!!!
 ```console
 seq       --> T-T-T-G-A-G-T-T-C-A-A-T-...
-position  --> 2-3-1-2-3-1-2-3-1-2-3-1-...
+position  --> 3-1-2-3-1-2-3-1-2-3-1-2-...
 ```
 *-x/--first_nt_position* is set as 3 by default.
 
