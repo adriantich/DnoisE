@@ -37,13 +37,14 @@ d, and r_d criteria.
 
 DnoisE depends on the following software:
 
-* Python3.6
+* Python>=3.6
 * C (for Levenshtein module)
 * R
 * bash
 
-DnoisE is easy to install from terminal.
+DnoisE is easy to install from terminal. Presently it runs on UNIX/Linux systems. An executable file can be optionally created (see below), otherwise the program can be run directly from the python script DnoisE.py.
 
+#### __A. INSTALLATION FROM GITHUB__
 #### __1. First clone the github repository__
 
 ```console
@@ -51,12 +52,12 @@ git clone https://github.com/adriantich/DnoisE.git
 ```
 
 #### __2a. INSTALL WITH install.sh__
-install.sh is a bash script that creates a virtualenvironment with pyenv and creates an executable of DnoisE 
-in a "./bin" directory. install.sh requires pyenv (see pyenv [documentation](https://github.com/pyenv/pyenv)).
+install.sh is a bash script that installs DnoisE and the required modules and creates a "./bin" directory with an executable file (DnoisE). It is recommended
+to use a pyenv environment to avoid potential issues with python versions (see pyenv [documentation](https://github.com/pyenv/pyenv)).
 
 ```console
 cd DnoisE/
-bash required_modules.sh
+bash install.sh
 ```
 
 #### __2b. INSTALL MANUALLY__
@@ -67,7 +68,7 @@ The manual installation requires the following modules
    + [python-Levenshtein](https://pypi.org/project/python-Levenshtein/)
    + [tqdm](https://pypi.org/project/tqdm/)
 
- To make a stand-alone application, pyinstaller creates an executable in a bin directory as follows.
+ To make a stand-alone application (optional), pyinstaller creates an executable file (DnoisE) in a "./bin" directory as follows:
 
 ```console
 cd ./DnoisE/
@@ -81,9 +82,22 @@ cd ./src
 
 pyinstaller DnoisE.py --onefile --distpath ../bin
 ```
+#### __B. INSTALLATION FROM CONDA__
+#### __1. Install package__
 
+```console
+conda install -c adriantich dnoise
+```
+Different python versions (3.6, 3.7 and 3.8) are available at the [conda repository](https://anaconda.org/adriantich/dnoise/files)
 
-We also recommend to use pyenv to create an environment to run DnoisE (see pyenv [documentation](https://github.com/pyenv/pyenv))
+#### __2. Create an executable file (optional)__
+To create an executable file (in a "bin" directory) of the program run 
+
+```console
+pyinstaller DnoisE.py --onefile --distpath ../bin
+```
+from the directory where the conda package has been installed (typically ~/anaconda3/pkgs/dnoise-<dnoise_version>/lib/<python_version>/site-packages/src).
+
 
 ### __WORKFLOW__
 
