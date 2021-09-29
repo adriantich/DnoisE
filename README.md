@@ -150,7 +150,7 @@ Displaying help
 		-e --entropy [number,number,number] entropy values (or any user-settable measure of variability) of the different codon positions [0.47,0.23,1.02] by default
 		-m --modal_length [number] when running DnoisE with entropy correction, sequence length expected can be set, if not, modal_length is used and only sequences with modal_length + or - 3*n are accepted
 		-u --unique_length only modal length is accepted as sequence length when running with entropy correction
-		-x --first_nt_codon_position [number] as DnoisE has been developed for COI sequences amplified with Leray-XT primers, default value is 3 (i.e., the reading frame starts in the third nucleotide).
+		-x --first_nt_codon_position [number] as DnoisE has been developed for COI sequences amplified with Leray-XT primers, default value is 3 (i.e., the first nucleotide in the sequences is a third codon position).
 		-y --entropy_correction a distance correction based on entropy is performed (see ENTROPY CORRECTION below). If set to F, no correction for entropy is performed (corresponding to the standard Unoise formulation)
 ```
 
@@ -213,12 +213,11 @@ __*ENTROPY CORRECTION (-e|-y|-x|-m|-u)*__
 As described in Antich et al. (2021) a correction of the distance value (d) in Edgar's algorithm (2016) can be 
 performed using the entropy values of each codon position in coding barcodes. We performed DnoisE for COI 
 Leray/Leray-XT primers (Leray et al. 2013; Wangensteen et al. 2018) and consequently sequences start with a 
-codon position 2 and the first initial codon position is the third nucleotide as follows:
+codon position 3 and the first initial codon position is the second nucleotide as follows:
 
-!!!!!!!!!!!PER REVISAAR!!!!!
 ```console
 seq       --> T-T-T-G-A-G-T-T-C-A-A-T-...
-position  --> 2-3-1-2-3-1-2-3-1-2-3-1-...
+position  --> 3-1-2-3-1-2-3-1-2-3-1-2-...
 ```
 *-x/--first_nt_position* is set as 3 by default.
 
