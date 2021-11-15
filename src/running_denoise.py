@@ -194,8 +194,10 @@ def run_denoise_entropy(de):
         allowed_lengths = np.array(uniq_seq_lengths) - good_modal_length_value
         allowed_lengths = list(allowed_lengths % 3 == 0)
         allowed_lengths = list(itertools.compress(uniq_seq_lengths, allowed_lengths))
+        allowed_lengths.remove(good_modal_length_value)
+        allowed_lengths.insert(0, good_modal_length_value)
 
-    del good_modal_length_value, seq_length_per_read, de.modal_length_value
+    del seq_length_per_read, de.modal_length_value
 
     de.output_info = pd.DataFrame()
     if (de.output_type == 'ratio') or (de.output_type == 'all'):
@@ -209,21 +211,24 @@ def run_denoise_entropy(de):
 
         desub = DnoisEFunctions()
         copy_to_subset(declass=de, desub=desub, seq_length=seq_length, len_seq=len_seq)
-
-        if de.compute_entropy:
-            if desub.initial_pos == 1:
-                e1, e2, e3 = en.mean_entropy(desub.data_initial)
-            if desub.initial_pos == 2:
-                e2, e3, e1 = en.mean_entropy(desub.data_initial)
-            if desub.initial_pos == 3:
-                e3, e1, e2 = en.mean_entropy(desub.data_initial)
-            desub.Ad1 = e1 / (e1 + e2 + e3)
-            desub.Ad2 = e2 / (e1 + e2 + e3)
-            desub.Ad3 = e3 / (e1 + e2 + e3)
-            print('entropy values for length {:.0f} (first nt is a position {:.0f}):\n'
-                  '\t {:.3f} for first position of codon\n'
-                  '\t {:.3f} for second position of codon\n'
-                  '\t {:.3f} for third position of codon'.format(len_seq, desub.initial_pos, e1, e2, e3))
+        if len_seq == good_modal_length_value[0]:
+            if de.compute_entropy:
+                if desub.initial_pos == 1:
+                    e1, e2, e3 = en.mean_entropy(desub.data_initial)
+                if desub.initial_pos == 2:
+                    e2, e3, e1 = en.mean_entropy(desub.data_initial)
+                if desub.initial_pos == 3:
+                    e3, e1, e2 = en.mean_entropy(desub.data_initial)
+                desub.Ad1 = e1 / (e1 + e2 + e3)
+                de.Ad1 = e1 / (e1 + e2 + e3)
+                desub.Ad2 = e2 / (e1 + e2 + e3)
+                de.Ad2 = e2 / (e1 + e2 + e3)
+                desub.Ad3 = e3 / (e1 + e2 + e3)
+                de.Ad3 = e3 / (e1 + e2 + e3)
+                print('entropy values for length {:.0f} (first nt is a position {:.0f}):\n'
+                      '\t {:.3f} for first position of codon\n'
+                      '\t {:.3f} for second position of codon\n'
+                      '\t {:.3f} for third position of codon'.format(len_seq, desub.initial_pos, e1, e2, e3))
 
         # maximum ratio allowed
         desub.max_ratio = (1 / 2) ** (desub.alpha * 1 * min(desub.Ad1, desub.Ad2, desub.Ad3) + 1)
