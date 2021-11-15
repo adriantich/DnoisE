@@ -194,7 +194,7 @@ def run_denoise_entropy(de):
         allowed_lengths = np.array(uniq_seq_lengths) - good_modal_length_value
         allowed_lengths = list(allowed_lengths % 3 == 0)
         allowed_lengths = list(itertools.compress(uniq_seq_lengths, allowed_lengths))
-        allowed_lengths.remove(good_modal_length_value)
+        allowed_lengths.remove(good_modal_length_value[0])
         allowed_lengths.insert(0, good_modal_length_value)
 
     del seq_length_per_read, de.modal_length_value
