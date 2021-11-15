@@ -1161,11 +1161,19 @@ def run_dnoise_testing(declass):
                 print('running until %s reads' % declass.min_mother)
                 print(len(declass.run_list) / declass.data_initial.shape[0] * 100, '%')
                 pool = mp.Pool(declass.cores)
-                [declass.good_seq_2,
-                 declass.output_info_2,
-                 declass.denoised_ratio_output_2,
-                 declass.run_list_2] = zip(*pool.map(declass.denoising_parallel_ratio,
-                                                [pos for pos in range(len(declass.run_list), run_to)]))
+                if declass.entropy:
+                    [declass.good_seq_2,
+                     declass.output_info_2,
+                     declass.denoised_ratio_output_2,
+                     declass.run_list_2] = zip(*pool.map(declass.denoising_Adcorrected_parallel_ratio,
+                                                         [pos for pos in range(len(declass.run_list), run_to)]))
+                else:
+                    [declass.good_seq_2,
+                     declass.output_info_2,
+                     declass.denoised_ratio_output_2,
+                     declass.run_list_2] = zip(*pool.map(declass.denoising_parallel_ratio,
+                                                         [pos for pos in range(len(declass.run_list), run_to)]))
+
                 pool.close()
                 del pool
                 declass.good_seq.extend(list(declass.good_seq_2))
@@ -1187,13 +1195,22 @@ def run_dnoise_testing(declass):
                 print('running until %s reads' % declass.min_mother)
                 print(len(declass.run_list) / declass.data_initial.shape[0] * 100, '%')
                 pool = mp.Pool(declass.cores)
-                [declass.good_seq_2,
-                 declass.output_info_2,
-                 declass.denoised_d_output_2,
-                 declass.denoised_ratio_output_2,
-                 declass.denoised_ratio_d_output_2,
-                 declass.run_list_2] = zip(*pool.map(declass.denoising_parallel,
-                                                [pos for pos in range(len(declass.run_list), run_to)]))
+                if declass.entropy:
+                    [declass.good_seq_2,
+                     declass.output_info_2,
+                     declass.denoised_d_output_2,
+                     declass.denoised_ratio_output_2,
+                     declass.denoised_ratio_d_output_2,
+                     declass.run_list_2] = zip(*pool.map(declass.denoising_Adcorrected_parallel,
+                                                         [pos for pos in range(len(declass.run_list), run_to)]))
+                else:
+                    [declass.good_seq_2,
+                     declass.output_info_2,
+                     declass.denoised_d_output_2,
+                     declass.denoised_ratio_output_2,
+                     declass.denoised_ratio_d_output_2,
+                     declass.run_list_2] = zip(*pool.map(declass.denoising_parallel,
+                                                         [pos for pos in range(len(declass.run_list), run_to)]))
                 pool.close()
                 del pool
                 declass.good_seq.extend(list(declass.good_seq_2)[:])
@@ -1212,18 +1229,32 @@ def run_dnoise_testing(declass):
     else:
         if declass.output_type == 'ratio':
             for pos in tqdm(range(1, declass.data_initial.shape[0])):
-                [declass.good_seq[len(declass.good_seq):],
-                 declass.output_info[len(declass.output_info):],
-                 declass.denoised_ratio_output[len(declass.denoised_ratio_output):],
-                 declass.run_list[len(declass.run_list):]] = declass.denoising_ratio(pos)
+                if declass.entropy:
+                    [declass.good_seq[len(declass.good_seq):],
+                     declass.output_info[len(declass.output_info):],
+                     declass.denoised_ratio_output[len(declass.denoised_ratio_output):],
+                     declass.run_list[len(declass.run_list):]] = declass.denoising_ratio(pos)
+                else:
+                    [declass.good_seq[len(declass.good_seq):],
+                     declass.output_info[len(declass.output_info):],
+                     declass.denoised_ratio_output[len(declass.denoised_ratio_output):],
+                     declass.run_list[len(declass.run_list):]] = declass.denoising_ratio(pos)
         else:
             for pos in tqdm(range(1, declass.data_initial.shape[0])):
-                [declass.good_seq[len(declass.good_seq):],
-                 declass.output_info[len(declass.output_info):],
-                 declass.denoised_d_output[len(declass.denoised_d_output):],
-                 declass.denoised_ratio_output[len(declass.denoised_ratio_output):],
-                 declass.denoised_ratio_d_output[len(declass.denoised_ratio_d_output):],
-                 declass.run_list[len(declass.run_list):]] = declass.denoising(pos)
+                if declass.entropy:
+                    [declass.good_seq[len(declass.good_seq):],
+                     declass.output_info[len(declass.output_info):],
+                     declass.denoised_d_output[len(declass.denoised_d_output):],
+                     declass.denoised_ratio_output[len(declass.denoised_ratio_output):],
+                     declass.denoised_ratio_d_output[len(declass.denoised_ratio_d_output):],
+                     declass.run_list[len(declass.run_list):]] = declass.denoising(pos)
+                else:
+                    [declass.good_seq[len(declass.good_seq):],
+                     declass.output_info[len(declass.output_info):],
+                     declass.denoised_d_output[len(declass.denoised_d_output):],
+                     declass.denoised_ratio_output[len(declass.denoised_ratio_output):],
+                     declass.denoised_ratio_d_output[len(declass.denoised_ratio_d_output):],
+                     declass.run_list[len(declass.run_list):]] = declass.denoising(pos)
 
 
 def difference(self, seq1, seq2, initial_pos, Ad1, Ad2, Ad3):
@@ -1280,6 +1311,7 @@ def copy_to_subset(declass, desub, seq_length, len_seq):
     desub.Ad1 = declass.Ad1
     desub.Ad2 = declass.Ad2
     desub.Ad3 = declass.Ad3
+    desub.entropy = declass.entropy
 
 
 
