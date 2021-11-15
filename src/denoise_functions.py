@@ -1277,7 +1277,7 @@ def difference(seq1, seq2, initial_pos, Ad1, Ad2, Ad3):
     return difcount, difpos1, difpos2, difpos3
 
 
-def mother_id(self, test, M):
+def mother_id(test, M):
     return test == M
 
 
