@@ -1257,7 +1257,7 @@ def run_dnoise_testing(declass):
                      declass.run_list[len(declass.run_list):]] = declass.denoising(pos)
 
 
-def difference(self, seq1, seq2, initial_pos, Ad1, Ad2, Ad3):
+def difference(seq1, seq2, initial_pos, Ad1, Ad2, Ad3):
     difcount = 0
     difpos1 = 0
     difpos2 = 0
