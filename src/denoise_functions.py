@@ -26,9 +26,9 @@ class DnoisEFunctions:
     run_list = []
     run_list_2 = []
     alpha = 5
-    Ad1 = 0.473 * 3 / (0.473 + 0.227 + 1.021)
-    Ad2 = 0.227 * 3 / (0.473 + 0.227 + 1.021)
-    Ad3 = 1.021 * 3 / (0.473 + 0.227 + 1.021)
+    Ad1 = 0.473 * 3 / (0.473 + 0.227 + 1.021) # values from Antich et al 2021
+    Ad2 = 0.227 * 3 / (0.473 + 0.227 + 1.021) # values from Antich et al 2021
+    Ad3 = 1.021 * 3 / (0.473 + 0.227 + 1.021) # values from Antich et al 2021
     max_ratio = (1 / 2) ** (alpha * 1 * min(Ad1, Ad2, Ad3) + 1)
     min_mother = 1/max_ratio
     MOTUfile = ""
