@@ -219,12 +219,12 @@ def run_denoise_entropy(de):
                     e2, e3, e1 = en.mean_entropy(desub.data_initial)
                 if desub.initial_pos == 3:
                     e3, e1, e2 = en.mean_entropy(desub.data_initial)
-                desub.Ad1 = e1 / (e1 + e2 + e3)
-                de.Ad1 = e1 / (e1 + e2 + e3)
-                desub.Ad2 = e2 / (e1 + e2 + e3)
-                de.Ad2 = e2 / (e1 + e2 + e3)
-                desub.Ad3 = e3 / (e1 + e2 + e3)
-                de.Ad3 = e3 / (e1 + e2 + e3)
+                desub.Ad1 = e1 * 3 / (e1 + e2 + e3)
+                de.Ad1 = e1 * 3 / (e1 + e2 + e3)
+                desub.Ad2 = e2 * 3 / (e1 + e2 + e3)
+                de.Ad2 = e2 * 3 / (e1 + e2 + e3)
+                desub.Ad3 = e3 * 3 / (e1 + e2 + e3)
+                de.Ad3 = e3 * 3 / (e1 + e2 + e3)
                 print('entropy values for length {:.0f} (first nt is a position {:.0f}):\n'
                       '\t {:.3f} for first position of codon\n'
                       '\t {:.3f} for second position of codon\n'
