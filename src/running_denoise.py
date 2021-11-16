@@ -195,7 +195,7 @@ def run_denoise_entropy(de):
         allowed_lengths = list(allowed_lengths % 3 == 0)
         allowed_lengths = list(itertools.compress(uniq_seq_lengths, allowed_lengths))
         allowed_lengths.remove(good_modal_length_value[0])
-        allowed_lengths.insert(0, good_modal_length_value)
+        allowed_lengths.insert(0, good_modal_length_value[0])
 
     del seq_length_per_read, de.modal_length_value
 
@@ -207,11 +207,12 @@ def run_denoise_entropy(de):
     if (de.output_type == 'ratio_d') or (de.output_type == 'all'):
         de.denoised_ratio_d = pd.DataFrame()
 
-    for len_seq in allowed_lengths:
+    for i in list(range(len(allowed_lengths))):
+        len_seq = allowed_lengths[i]
 
         desub = DnoisEFunctions()
         copy_to_subset(declass=de, desub=desub, seq_length=seq_length, len_seq=len_seq)
-        if len_seq == good_modal_length_value[0]:
+        if i == 0:
             if de.compute_entropy:
                 if desub.initial_pos == 1:
                     e1, e2, e3 = en.mean_entropy(desub.data_initial)
