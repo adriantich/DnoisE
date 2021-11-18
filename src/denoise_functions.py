@@ -735,6 +735,9 @@ class DnoisEFunctions:
             else:
                 dd = dcorr
                 # if Edgar's equation:
+            if dcorr == 0:
+                print("ERROR! dataset must be of unique sequences")
+                sys.exit()
             betacorr = ((1 / 2) ** (self.alpha * d + 1)) * (d / dcorr)
             if b_ratio <= betacorr:
                 # TRUE:
@@ -776,7 +779,7 @@ class DnoisEFunctions:
             difpos3 = Ml.loc[(Ml['xavier_criteria'] == min(Ml.loc[:, 'xavier_criteria'])), 'difpos3'][0]
             if type(pM_ratio_d) is not str:
                 pM_ratio_d = pM_ratio_d.values[-1]
-            info = {'daughter': pD, 'mother_d': pM_d, 'd': min(Ml.loc[:, 'dcorr']),
+            info = {'daughter': pD, 'mother_d': pM_d, 'd': min(Ml.loc[:, 'd']),
                     'mother_ratio': pM_ratio, 'ratio': min(Ml.loc[:, 'ratio']),
                     'mother_ratio_d': pM_ratio_d, 'xavier_criteria': min(Ml.loc[:, 'xavier_criteria']),
                     'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3,
@@ -850,6 +853,9 @@ class DnoisEFunctions:
             else:
                 dd = dcorr
                 # if Edgar's equation:
+            if dcorr == 0:
+                print("ERROR! dataset must be of unique sequences")
+                sys.exit()
             betacorr = ((1 / 2) ** (self.alpha * d + 1)) * (d / dcorr)
             if b_ratio <= betacorr:
                 # TRUE:
@@ -891,7 +897,7 @@ class DnoisEFunctions:
             difpos3 = Ml.loc[(Ml['xavier_criteria'] == min(Ml.loc[:, 'xavier_criteria'])), 'difpos3'][0]
             if type(pM_ratio_d) is not str:
                 pM_ratio_d = pM_ratio_d.values[-1]
-            info = {'daughter': pD, 'mother_d': pM_d, 'd': min(Ml.loc[:, 'dcorr']),
+            info = {'daughter': pD, 'mother_d': pM_d, 'd': min(Ml.loc[:, 'd']),
                     'mother_ratio': pM_ratio, 'ratio': min(Ml.loc[:, 'ratio']),
                     'mother_ratio_d': pM_ratio_d, 'xavier_criteria': min(Ml.loc[:, 'xavier_criteria']),
                     'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3,
@@ -944,6 +950,9 @@ class DnoisEFunctions:
             else:
                 dd = dcorr
                 # if Edgar's equation:
+            if dcorr == 0:
+                print("ERROR! dataset must be of unique sequences")
+                sys.exit()
             betacorr = ((1 / 2) ** (self.alpha * d + 1)) * (d / dcorr)
             if b_ratio <= betacorr:
                 # TRUE:
@@ -986,7 +995,7 @@ class DnoisEFunctions:
             difpos3 = Ml.loc[(Ml['xavier_criteria'] == min(Ml.loc[:, 'xavier_criteria'])), 'difpos3'][0]
             if type(pM_ratio_d) is not str:
                 pM_ratio_d = pM_ratio_d.values[-1]
-            info = {'daughter': pD, 'mother_d': pM_d, 'd': min(Ml.loc[:, 'dcorr']),
+            info = {'daughter': pD, 'mother_d': pM_d, 'd': min(Ml.loc[:, 'd']),
                     'mother_ratio': pM_ratio, 'ratio': min(Ml.loc[:, 'ratio']),
                     'mother_ratio_d': pM_ratio_d, 'xavier_criteria': min(Ml.loc[:, 'xavier_criteria']),
                     'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3,
@@ -1060,6 +1069,9 @@ class DnoisEFunctions:
             else:
                 dd = dcorr
                 # if Edgar's equation:
+            if dcorr == 0:
+                print("ERROR! dataset must be of unique sequences")
+                sys.exit()
             betacorr = ((1 / 2) ** (self.alpha * d + 1)) * (d / dcorr)
             if b_ratio <= betacorr:
                 # TRUE:
@@ -1102,7 +1114,7 @@ class DnoisEFunctions:
             difpos3 = Ml.loc[(Ml['xavier_criteria'] == min(Ml.loc[:, 'xavier_criteria'])), 'difpos3'][0]
             if type(pM_ratio_d) is not str:
                 pM_ratio_d = pM_ratio_d.values[-1]
-            info = {'daughter': pD, 'mother_d': pM_d, 'd': min(Ml.loc[:, 'dcorr']),
+            info = {'daughter': pD, 'mother_d': pM_d, 'd': min(Ml.loc[:, 'd']),
                     'mother_ratio': pM_ratio, 'ratio': min(Ml.loc[:, 'ratio']),
                     'mother_ratio_d': pM_ratio_d, 'xavier_criteria': min(Ml.loc[:, 'xavier_criteria']),
                     'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3,
