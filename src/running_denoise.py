@@ -232,7 +232,8 @@ def run_denoise_entropy(de):
                       '\t {:.3f} for third position of codon'.format(len_seq, desub.initial_pos, e1, e2, e3))
 
         # maximum ratio allowed
-        desub.max_ratio = (1 / 2) ** (desub.alpha * 1 * min(desub.Ad1, desub.Ad2, desub.Ad3) + 1)
+        # desub.max_ratio = (1 / 2) ** (desub.alpha * 1 * min(desub.Ad1, desub.Ad2, desub.Ad3) + 1)
+        desub.max_ratio = ((1 / 2) ** (desub.alpha + 1)) * (1 / min(desub.Ad1, desub.Ad2, desub.Ad3))
 
         if desub.output_type == 'ratio':
             desub.denoised_ratio_output = [desub.data_initial.loc[0, 'id']]

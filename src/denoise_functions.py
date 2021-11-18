@@ -1030,7 +1030,7 @@ class DnoisEFunctions:
                 # obtain d ---> external function:
                 # input: must be seq of both pM and pD
                 # output: d
-            d, difpos1, difpos2, difpos3 = difference(seq1=pDseq, seq2=pMseq,
+            dcorr, difpos1, difpos2, difpos3, d = difference(seq1=pDseq, seq2=pMseq,
                                                            initial_pos=self.initial_pos,
                                                            Ad1=self.Ad1, Ad2=self.Ad2, Ad3=self.Ad3)
             # if d:
@@ -1044,9 +1044,9 @@ class DnoisEFunctions:
                 # if dd doesn't exist | d is smaller than dd:
                 # dd = d
                 else:
-                    dd = d
+                    dd = dcorr
             else:
-                dd = d
+                dd = dcorr
                 # if Edgar's equation:
             if b_ratio <= (1 / 2) ** (self.alpha * d + 1):
                 # TRUE:
@@ -1262,19 +1262,23 @@ def difference(seq1, seq2, initial_pos, Ad1, Ad2, Ad3):
     difpos1 = 0
     difpos2 = 0
     difpos3 = 0
+    dtotal = 0
     for i, o in enumerate(seq1):
         if o != seq2[i]:
             dif_position = (i + initial_pos) % 3
             if dif_position == 1:
+                dtotal += 1
                 difcount += Ad1
                 difpos1 += 1
             elif dif_position == 2:
+                dtotal += 1
                 difcount += Ad2
                 difpos2 += 1
             elif dif_position == 0:
+                dtotal += 1
                 difcount += Ad3
                 difpos3 += 1
-    return difcount, difpos1, difpos2, difpos3
+    return difcount, difpos1, difpos2, difpos3, dtotal
 
 
 def mother_id(test, M):
