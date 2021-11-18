@@ -1233,7 +1233,7 @@ def run_dnoise_testing(declass):
                     [declass.good_seq[len(declass.good_seq):],
                      declass.output_info[len(declass.output_info):],
                      declass.denoised_ratio_output[len(declass.denoised_ratio_output):],
-                     declass.run_list[len(declass.run_list):]] = declass.denoising_ratio(pos)
+                     declass.run_list[len(declass.run_list):]] = declass.denoising_Adcorrected_ratio(pos)
                 else:
                     [declass.good_seq[len(declass.good_seq):],
                      declass.output_info[len(declass.output_info):],
@@ -1247,7 +1247,7 @@ def run_dnoise_testing(declass):
                      declass.denoised_d_output[len(declass.denoised_d_output):],
                      declass.denoised_ratio_output[len(declass.denoised_ratio_output):],
                      declass.denoised_ratio_d_output[len(declass.denoised_ratio_d_output):],
-                     declass.run_list[len(declass.run_list):]] = declass.denoising(pos)
+                     declass.run_list[len(declass.run_list):]] = declass.denoising_Adcorrected(pos)
                 else:
                     [declass.good_seq[len(declass.good_seq):],
                      declass.output_info[len(declass.output_info):],
