@@ -245,7 +245,8 @@ def run_denoise_entropy(de):
         desub.output_info = [{'daughter': desub.data_initial.loc[0, 'id'], 'mother_d': None, 'd': None,
                               'mother_ratio': None, 'ratio': None,
                               'mother_ratio_d': None, 'xavier_criteria': None,
-                              'difpos1': None, 'difpos2': None, 'difpos3': None}]
+                              'difpos1': None, 'difpos2': None, 'difpos3': None,
+                              'dtotal': None, 'betacorr': None}]
         desub.good_seq = [True]
         desub.abund_col_names.insert(0, de.count)
         desub.run_list = [{'id': desub.data_initial.loc[0, 'id'], de.count: desub.data_initial.loc[0, de.count],
