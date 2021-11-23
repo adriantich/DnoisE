@@ -215,11 +215,11 @@ def run_denoise_entropy(de):
         if i == 0:
             if de.compute_entropy:
                 if desub.initial_pos == 1:
-                    e1, e2, e3 = en.mean_entropy(desub.data_initial)
+                    e1, e2, e3 = en.mean_entropy(desub.data_initial, de.seq, de.count)
                 if desub.initial_pos == 2:
-                    e2, e3, e1 = en.mean_entropy(desub.data_initial)
+                    e2, e3, e1 = en.mean_entropy(desub.data_initial, de.seq, de.count)
                 if desub.initial_pos == 3:
-                    e3, e1, e2 = en.mean_entropy(desub.data_initial)
+                    e3, e1, e2 = en.mean_entropy(desub.data_initial, de.seq, de.count)
                 desub.Ad1 = e1 * 3 / (e1 + e2 + e3)
                 de.Ad1 = e1 * 3 / (e1 + e2 + e3)
                 desub.Ad2 = e2 * 3 / (e1 + e2 + e3)
