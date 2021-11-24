@@ -298,7 +298,7 @@ def run_denoise_entropy(de):
                     desub.denoised_ratio = desub.denoised_ratio.append(row, ignore_index=True)
                     desub.good_mothers = desub.good_mothers.drop(index=mother)
                 desub.denoised_ratio = desub.denoised_ratio.append(desub.good_mothers, ignore_index=True)
-                desub.denoised_ratio = desub.denoised_ratio.sort_values([de.count], axis=0, ascending=False)
+                desub.denoised_ratio = desub.denoised_ratio.sort_values([desub.count], axis=0, ascending=False)
             if 'row' in locals():
                 del row
             de.denoised_ratio = pd.concat([de.denoised_ratio, desub.denoised_ratio], ignore_index=True)
@@ -332,7 +332,7 @@ def run_denoise_entropy(de):
                     desub.denoised_d = desub.denoised_d.append(row, ignore_index=True)
                     desub.good_mothers = desub.good_mothers.drop(index=mother)
                 desub.denoised_d = desub.denoised_d.append(desub.good_mothers, ignore_index=True)
-                desub.denoised_d = desub.denoised_d.sort_values([de.count], axis=0, ascending=False)
+                desub.denoised_d = desub.denoised_d.sort_values([desub.count], axis=0, ascending=False)
             if 'row' in locals():
                 del row
             de.denoised_d = pd.concat([de.denoised_d, desub.denoised_d], ignore_index=True)
@@ -352,7 +352,7 @@ def run_denoise_entropy(de):
                                                           0])
                 desub.good_mothers = desub.good_mothers.drop(index=mothers_ratio_d)
                 desub.denoised_ratio_d = desub.denoised_ratio_d.append(desub.good_mothers, ignore_index=True)
-                desub.denoised_ratio_d = desub.denoised_ratio_d.sort_values([de.count], axis=0, ascending=False)
+                desub.denoised_ratio_d = desub.denoised_ratio_d.sort_values([desub.count], axis=0, ascending=False)
             else:
                 desub.denoised_ratio_d = pd.DataFrame(
                     columns=[de.first_col_names + desub.abund_col_names + [de.seq]][0])
@@ -369,7 +369,7 @@ def run_denoise_entropy(de):
                     desub.denoised_ratio_d = desub.denoised_ratio_d.append(row, ignore_index=True)
                     desub.good_mothers = desub.good_mothers.drop(index=mother)
                 desub.denoised_ratio_d = desub.denoised_ratio_d.append(desub.good_mothers, ignore_index=True)
-                desub.denoised_ratio_d = desub.denoised_ratio_d.sort_values([de.count], axis=0, ascending=False)
+                desub.denoised_ratio_d = desub.denoised_ratio_d.sort_values([desub.count], axis=0, ascending=False)
             if 'row' in locals():
                 del row
 
