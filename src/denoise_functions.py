@@ -266,7 +266,7 @@ class DnoisEFunctions:
             if "arg_s" not in locals():  # no start of abundance cols specified
                 if "arg_z" not in locals():  # no end of abundance cols specified
                     print("start and end not given, no samples in file")
-                    self.abund_col_names = [self.count]
+                    # self.abund_col_names = [self.count]
                     self.justcount = True
                 else:
                     print("Err: end given but no start")
@@ -1253,7 +1253,7 @@ def run_dnoise_testing(declass):
                      declass.denoised_ratio_d_output_2, declass.run_list_2)
         if 'declass.min_mother' in locals():
             del declass.min_mother
-        del (declass.cores, declass.alpha)
+        del declass.alpha
     else:
         if declass.output_type == 'ratio':
             for pos in tqdm(range(1, declass.data_initial.shape[0])):

@@ -273,8 +273,8 @@ def run_denoise_entropy(de):
             desub.good_mothers = desub.data_initial.loc[desub.good_seq][de.first_col_names +
                                                                         desub.abund_col_names + [de.seq]]
             # writing ratio
-            if desub.cores > 1:
-                pool = mp.Pool(desub.cores)
+            if de.cores > 1:
+                pool = mp.Pool(de.cores)
                 [row] = zip(*pool.map(desub.write_output_ratio, [mother for mother in mothers_ratio]))
                 pool.close()
                 del pool
@@ -308,8 +308,8 @@ def run_denoise_entropy(de):
             desub.good_mothers = desub.data_initial.loc[desub.good_seq][de.first_col_names +
                                                                         desub.abund_col_names + [de.seq]]
             # writing d
-            if desub.cores > 1:
-                pool = mp.Pool(desub.cores)
+            if de.cores > 1:
+                pool = mp.Pool(de.cores)
                 [row] = zip(*pool.map(desub.write_output_d, [mother for mother in mothers_d]))
                 pool.close()
                 del pool
@@ -342,8 +342,8 @@ def run_denoise_entropy(de):
             desub.good_mothers = desub.data_initial.loc[desub.good_seq][
                 de.first_col_names + desub.abund_col_names + [de.seq]]
             # writing ratio_d
-            if desub.cores > 1:
-                pool = mp.Pool(desub.cores)
+            if de.cores > 1:
+                pool = mp.Pool(de.cores)
                 [row] = zip(*pool.map(desub.write_output_ratio_d, [mother for mother in mothers_ratio_d]))
                 pool.close()
                 del pool
