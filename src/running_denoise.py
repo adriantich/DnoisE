@@ -59,94 +59,109 @@ def run_denoise(de):
         de.good_mothers = de.data_initial.loc[de.good_seq][de.first_col_names + de.abund_col_names + [de.seq]]
         print('writing output_ratio')
         # writing ratio
-        if de.cores > 1:
-            pool = mp.Pool(de.cores)
-            [row] = zip(*pool.map(de.write_output_ratio, [mother for mother in mothers_ratio]))
-            pool.close()
-            del pool
-            de.denoised_ratio = pd.DataFrame(row, columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
-            de.good_mothers = de.good_mothers.drop(index=mothers_ratio)
-            de.denoised_ratio = de.denoised_ratio.append(de.good_mothers, ignore_index=True)
+        if len(mothers_ratio) == 0:
+            de.denoised_ratio = de.good_mothers
             de.denoised_ratio = de.denoised_ratio.sort_values([de.count], axis=0, ascending=False)
         else:
-            de.denoised_ratio = pd.DataFrame(columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
-            for mother in tqdm(mothers_ratio):
-                row = [
-                    de.good_mothers[list(de.good_mothers.loc[:, 'id'] == mother)][de.first_col_names].values.tolist()[
-                        0] +
-                    list(de.data_initial.loc[
-                             list(pd.Series(de.denoised_ratio_output) == mother), de.abund_col_names].sum(0)) +
-                    de.good_mothers[list(de.good_mothers.loc[:, 'id'] == mother)][de.seq].values.tolist()]
-                row = pd.Series(row[0], index=[de.first_col_names + de.abund_col_names + [de.seq]][0])
-                de.denoised_ratio = de.denoised_ratio.append(row, ignore_index=True)
-                de.good_mothers = de.good_mothers.drop(index=mother)
-            de.denoised_ratio = de.denoised_ratio.append(de.good_mothers, ignore_index=True)
-            de.denoised_ratio = de.denoised_ratio.sort_values([de.count], axis=0, ascending=False)
-        if 'row' in locals():
-            del row
+            if de.cores > 1:
+                pool = mp.Pool(de.cores)
+                [row] = zip(*pool.map(de.write_output_ratio, [mother for mother in mothers_ratio]))
+                pool.close()
+                del pool
+                de.denoised_ratio = pd.DataFrame(row, columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
+                de.good_mothers = de.good_mothers.drop(index=mothers_ratio)
+                de.denoised_ratio = de.denoised_ratio.append(de.good_mothers, ignore_index=True)
+                de.denoised_ratio = de.denoised_ratio.sort_values([de.count], axis=0, ascending=False)
+            else:
+                de.denoised_ratio = pd.DataFrame(columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
+                for mother in tqdm(mothers_ratio):
+                    row = [
+                        de.good_mothers[list(de.good_mothers.loc[:, 'id'] == mother)][
+                            de.first_col_names].values.tolist()[
+                            0] +
+                        list(de.data_initial.loc[
+                                 list(pd.Series(de.denoised_ratio_output) == mother), de.abund_col_names].sum(0)) +
+                        de.good_mothers[list(de.good_mothers.loc[:, 'id'] == mother)][de.seq].values.tolist()]
+                    row = pd.Series(row[0], index=[de.first_col_names + de.abund_col_names + [de.seq]][0])
+                    de.denoised_ratio = de.denoised_ratio.append(row, ignore_index=True)
+                    de.good_mothers = de.good_mothers.drop(index=mother)
+                de.denoised_ratio = de.denoised_ratio.append(de.good_mothers, ignore_index=True)
+                de.denoised_ratio = de.denoised_ratio.sort_values([de.count], axis=0, ascending=False)
+            if 'row' in locals():
+                del row
         del de.good_mothers, mothers_ratio, de.denoised_ratio_output
 
     if (de.output_type == 'd') or (de.output_type == 'all'):
         de.good_mothers = de.data_initial.loc[de.good_seq][de.first_col_names + de.abund_col_names + [de.seq]]
         print('writing output_d')
         # writing d
-        if de.cores > 1:
-            pool = mp.Pool(de.cores)
-            [row] = zip(*pool.map(de.write_output_d, [mother for mother in mothers_d]))
-            pool.close()
-            del pool
-            de.denoised_d = pd.DataFrame(row, columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
-            de.good_mothers = de.good_mothers.drop(index=mothers_d)
-            de.denoised_d = de.denoised_d.append(de.good_mothers, ignore_index=True)
+        if len(mothers_d) == 0:
+            de.denoised_d = de.good_mothers
             de.denoised_d = de.denoised_d.sort_values([de.count], axis=0, ascending=False)
         else:
-            de.denoised_d = pd.DataFrame(columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
-            for mother in tqdm(mothers_d):
-                row = [
-                    de.good_mothers[list(de.good_mothers.loc[:, 'id'] == mother)][de.first_col_names].values.tolist()[
-                        0] +
-                    list(de.data_initial.loc[list(pd.Series(de.denoised_d_output) == mother), de.abund_col_names].sum(
-                        0)) +
-                    de.good_mothers[list(de.good_mothers.loc[:, 'id'] == mother)][de.seq].values.tolist()]
-                row = pd.Series(row[0], index=[de.first_col_names + de.abund_col_names + [de.seq]][0])
-                de.denoised_d = de.denoised_d.append(row, ignore_index=True)
-                de.good_mothers = de.good_mothers.drop(index=mother)
-            de.denoised_d = de.denoised_d.append(de.good_mothers, ignore_index=True)
-            de.denoised_d = de.denoised_d.sort_values([de.count], axis=0, ascending=False)
-        if 'row' in locals():
-            del row
+            if de.cores > 1:
+                pool = mp.Pool(de.cores)
+                [row] = zip(*pool.map(de.write_output_d, [mother for mother in mothers_d]))
+                pool.close()
+                del pool
+                de.denoised_d = pd.DataFrame(row, columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
+                de.good_mothers = de.good_mothers.drop(index=mothers_d)
+                de.denoised_d = de.denoised_d.append(de.good_mothers, ignore_index=True)
+                de.denoised_d = de.denoised_d.sort_values([de.count], axis=0, ascending=False)
+            else:
+                de.denoised_d = pd.DataFrame(columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
+                for mother in tqdm(mothers_d):
+                    row = [
+                        de.good_mothers[list(de.good_mothers.loc[:, 'id'] == mother)][
+                            de.first_col_names].values.tolist()[
+                            0] +
+                        list(de.data_initial.loc[
+                            list(pd.Series(de.denoised_d_output) == mother), de.abund_col_names].sum(
+                            0)) +
+                        de.good_mothers[list(de.good_mothers.loc[:, 'id'] == mother)][de.seq].values.tolist()]
+                    row = pd.Series(row[0], index=[de.first_col_names + de.abund_col_names + [de.seq]][0])
+                    de.denoised_d = de.denoised_d.append(row, ignore_index=True)
+                    de.good_mothers = de.good_mothers.drop(index=mother)
+                de.denoised_d = de.denoised_d.append(de.good_mothers, ignore_index=True)
+                de.denoised_d = de.denoised_d.sort_values([de.count], axis=0, ascending=False)
+            if 'row' in locals():
+                del row
         del de.good_mothers, mothers_d, de.denoised_d_output
 
     if (de.output_type == 'ratio_d') or (de.output_type == 'all'):
         de.good_mothers = de.data_initial.loc[de.good_seq][de.first_col_names + de.abund_col_names + [de.seq]]
         print('writing output_ratio_d')
         # writing ratio_d
-        if de.cores > 1:
-            pool = mp.Pool(de.cores)
-            [row] = zip(*pool.map(de.write_output_ratio_d, [mother for mother in mothers_ratio_d]))
-            pool.close()
-            del pool
-            de.denoised_ratio_d = pd.DataFrame(row, columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
-            de.good_mothers = de.good_mothers.drop(index=mothers_ratio_d)
-            de.denoised_ratio_d = de.denoised_ratio_d.append(de.good_mothers, ignore_index=True)
+        if len(mothers_ratio_d) == 0:
+            de.denoised_ratio_d = de.good_mothers
             de.denoised_ratio_d = de.denoised_ratio_d.sort_values([de.count], axis=0, ascending=False)
         else:
-            de.denoised_ratio_d = pd.DataFrame(columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
-            for mother in tqdm(mothers_ratio_d):
-                row = [
-                    de.good_mothers[list(de.good_mothers.loc[:, 'id'] == mother)][de.first_col_names].values.tolist()[
-                        0] +
-                    list(de.data_initial.loc[
-                        list(pd.Series(de.denoised_ratio_d_output) == mother), de.abund_col_names].sum(
-                        0)) +
-                    de.good_mothers[list(de.good_mothers.loc[:, 'id'] == mother)][de.seq].values.tolist()]
-                row = pd.Series(row[0], index=[de.first_col_names + de.abund_col_names + [de.seq]][0])
-                de.denoised_ratio_d = de.denoised_ratio_d.append(row, ignore_index=True)
-                de.good_mothers = de.good_mothers.drop(index=mother)
-            de.denoised_ratio_d = de.denoised_ratio_d.append(de.good_mothers, ignore_index=True)
-            de.denoised_ratio_d = de.denoised_ratio_d.sort_values([de.count], axis=0, ascending=False)
-        if 'row' in locals():
-            del row
+            if de.cores > 1:
+                pool = mp.Pool(de.cores)
+                [row] = zip(*pool.map(de.write_output_ratio_d, [mother for mother in mothers_ratio_d]))
+                pool.close()
+                del pool
+                de.denoised_ratio_d = pd.DataFrame(row, columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
+                de.good_mothers = de.good_mothers.drop(index=mothers_ratio_d)
+                de.denoised_ratio_d = de.denoised_ratio_d.append(de.good_mothers, ignore_index=True)
+                de.denoised_ratio_d = de.denoised_ratio_d.sort_values([de.count], axis=0, ascending=False)
+            else:
+                de.denoised_ratio_d = pd.DataFrame(columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
+                for mother in tqdm(mothers_ratio_d):
+                    row = [
+                        de.good_mothers[list(de.good_mothers.loc[:, 'id'] == mother)][de.first_col_names].values.tolist()[
+                            0] +
+                        list(de.data_initial.loc[
+                            list(pd.Series(de.denoised_ratio_d_output) == mother), de.abund_col_names].sum(
+                            0)) +
+                        de.good_mothers[list(de.good_mothers.loc[:, 'id'] == mother)][de.seq].values.tolist()]
+                    row = pd.Series(row[0], index=[de.first_col_names + de.abund_col_names + [de.seq]][0])
+                    de.denoised_ratio_d = de.denoised_ratio_d.append(row, ignore_index=True)
+                    de.good_mothers = de.good_mothers.drop(index=mother)
+                de.denoised_ratio_d = de.denoised_ratio_d.append(de.good_mothers, ignore_index=True)
+                de.denoised_ratio_d = de.denoised_ratio_d.sort_values([de.count], axis=0, ascending=False)
+            if 'row' in locals():
+                del row
         del de.good_mothers, mothers_ratio_d, de.denoised_ratio_d_output
 
 
@@ -273,34 +288,38 @@ def run_denoise_entropy(de):
             desub.good_mothers = desub.data_initial.loc[desub.good_seq][de.first_col_names +
                                                                         desub.abund_col_names + [de.seq]]
             # writing ratio
-            if de.cores > 1:
-                pool = mp.Pool(de.cores)
-                [row] = zip(*pool.map(desub.write_output_ratio, [mother for mother in mothers_ratio]))
-                pool.close()
-                del pool
-                desub.denoised_ratio = pd.DataFrame(row,
-                                                    columns=[de.first_col_names + desub.abund_col_names +
-                                                             [de.seq]][0])
-                desub.good_mothers = desub.good_mothers.drop(index=mothers_ratio)
-                desub.denoised_ratio = desub.denoised_ratio.append(desub.good_mothers, ignore_index=True)
-                desub.denoised_ratio = desub.denoised_ratio.sort_values([desub.count], axis=0, ascending=False)
+            if len(mothers_ratio) == 0:
+                desub.denoised_ratio = desub.good_mothers
+                desub.denoised_ratio = desub.denoised_ratio.sort_values([de.count], axis=0, ascending=False)
             else:
-                desub.denoised_ratio = pd.DataFrame(columns=[de.first_col_names + desub.abund_col_names + [de.seq]][0])
-                for mother in tqdm(mothers_ratio):
-                    row = [
-                        desub.good_mothers[list(desub.good_mothers.loc[:, 'id'] == mother)][de.first_col_names
-                        ].values.tolist()[0] +
-                        list(desub.data_initial.loc[
-                            list(pd.Series(desub.denoised_ratio_output) == mother), desub.abund_col_names].sum(
-                            0)) +
-                        desub.good_mothers[list(desub.good_mothers.loc[:, 'id'] == mother)][de.seq].values.tolist()]
-                    row = pd.Series(row[0], index=[de.first_col_names + desub.abund_col_names + [de.seq]][0])
-                    desub.denoised_ratio = desub.denoised_ratio.append(row, ignore_index=True)
-                    desub.good_mothers = desub.good_mothers.drop(index=mother)
-                desub.denoised_ratio = desub.denoised_ratio.append(desub.good_mothers, ignore_index=True)
-                desub.denoised_ratio = desub.denoised_ratio.sort_values([desub.count], axis=0, ascending=False)
-            if 'row' in locals():
-                del row
+                if de.cores > 1:
+                    pool = mp.Pool(de.cores)
+                    [row] = zip(*pool.map(desub.write_output_ratio, [mother for mother in mothers_ratio]))
+                    pool.close()
+                    del pool
+                    desub.denoised_ratio = pd.DataFrame(row,
+                                                        columns=[de.first_col_names + desub.abund_col_names +
+                                                                 [de.seq]][0])
+                    desub.good_mothers = desub.good_mothers.drop(index=mothers_ratio)
+                    desub.denoised_ratio = desub.denoised_ratio.append(desub.good_mothers, ignore_index=True)
+                    desub.denoised_ratio = desub.denoised_ratio.sort_values([desub.count], axis=0, ascending=False)
+                else:
+                    desub.denoised_ratio = pd.DataFrame(columns=[de.first_col_names + desub.abund_col_names + [de.seq]][0])
+                    for mother in tqdm(mothers_ratio):
+                        row = [
+                            desub.good_mothers[list(desub.good_mothers.loc[:, 'id'] == mother)][de.first_col_names
+                            ].values.tolist()[0] +
+                            list(desub.data_initial.loc[
+                                list(pd.Series(desub.denoised_ratio_output) == mother), desub.abund_col_names].sum(
+                                0)) +
+                            desub.good_mothers[list(desub.good_mothers.loc[:, 'id'] == mother)][de.seq].values.tolist()]
+                        row = pd.Series(row[0], index=[de.first_col_names + desub.abund_col_names + [de.seq]][0])
+                        desub.denoised_ratio = desub.denoised_ratio.append(row, ignore_index=True)
+                        desub.good_mothers = desub.good_mothers.drop(index=mother)
+                    desub.denoised_ratio = desub.denoised_ratio.append(desub.good_mothers, ignore_index=True)
+                    desub.denoised_ratio = desub.denoised_ratio.sort_values([desub.count], axis=0, ascending=False)
+                if 'row' in locals():
+                    del row
             de.denoised_ratio = pd.concat([de.denoised_ratio, desub.denoised_ratio], ignore_index=True)
             del desub.denoised_ratio, desub.good_mothers, mothers_ratio, desub.denoised_ratio_output
 
@@ -308,33 +327,37 @@ def run_denoise_entropy(de):
             desub.good_mothers = desub.data_initial.loc[desub.good_seq][de.first_col_names +
                                                                         desub.abund_col_names + [de.seq]]
             # writing d
-            if de.cores > 1:
-                pool = mp.Pool(de.cores)
-                [row] = zip(*pool.map(desub.write_output_d, [mother for mother in mothers_d]))
-                pool.close()
-                del pool
-                desub.denoised_d = pd.DataFrame(row, columns=[de.first_col_names + desub.abund_col_names + [de.seq]][0])
-                desub.good_mothers = desub.good_mothers.drop(index=mothers_d)
-                desub.denoised_d = desub.denoised_d.append(desub.good_mothers, ignore_index=True)
+            if len(mothers_d) == 0:
+                desub.denoised_d = desub.good_mothers
                 desub.denoised_d = desub.denoised_d.sort_values([de.count], axis=0, ascending=False)
             else:
-                desub.denoised_d = pd.DataFrame(columns=[de.first_col_names + desub.abund_col_names + [de.seq]][0])
-                for mother in tqdm(mothers_d):
-                    row = [
-                        desub.good_mothers[list(desub.good_mothers.loc[:, 'id'] == mother)][
-                            de.first_col_names].values.tolist()[
-                            0] +
-                        list(desub.data_initial.loc[
-                            list(pd.Series(desub.denoised_d_output) == mother), desub.abund_col_names].sum(
-                            0)) +
-                        desub.good_mothers[list(desub.good_mothers.loc[:, 'id'] == mother)][de.seq].values.tolist()]
-                    row = pd.Series(row[0], index=[de.first_col_names + desub.abund_col_names + [de.seq]][0])
-                    desub.denoised_d = desub.denoised_d.append(row, ignore_index=True)
-                    desub.good_mothers = desub.good_mothers.drop(index=mother)
-                desub.denoised_d = desub.denoised_d.append(desub.good_mothers, ignore_index=True)
-                desub.denoised_d = desub.denoised_d.sort_values([desub.count], axis=0, ascending=False)
-            if 'row' in locals():
-                del row
+                if de.cores > 1:
+                    pool = mp.Pool(de.cores)
+                    [row] = zip(*pool.map(desub.write_output_d, [mother for mother in mothers_d]))
+                    pool.close()
+                    del pool
+                    desub.denoised_d = pd.DataFrame(row, columns=[de.first_col_names + desub.abund_col_names + [de.seq]][0])
+                    desub.good_mothers = desub.good_mothers.drop(index=mothers_d)
+                    desub.denoised_d = desub.denoised_d.append(desub.good_mothers, ignore_index=True)
+                    desub.denoised_d = desub.denoised_d.sort_values([de.count], axis=0, ascending=False)
+                else:
+                    desub.denoised_d = pd.DataFrame(columns=[de.first_col_names + desub.abund_col_names + [de.seq]][0])
+                    for mother in tqdm(mothers_d):
+                        row = [
+                            desub.good_mothers[list(desub.good_mothers.loc[:, 'id'] == mother)][
+                                de.first_col_names].values.tolist()[
+                                0] +
+                            list(desub.data_initial.loc[
+                                list(pd.Series(desub.denoised_d_output) == mother), desub.abund_col_names].sum(
+                                0)) +
+                            desub.good_mothers[list(desub.good_mothers.loc[:, 'id'] == mother)][de.seq].values.tolist()]
+                        row = pd.Series(row[0], index=[de.first_col_names + desub.abund_col_names + [de.seq]][0])
+                        desub.denoised_d = desub.denoised_d.append(row, ignore_index=True)
+                        desub.good_mothers = desub.good_mothers.drop(index=mother)
+                    desub.denoised_d = desub.denoised_d.append(desub.good_mothers, ignore_index=True)
+                    desub.denoised_d = desub.denoised_d.sort_values([desub.count], axis=0, ascending=False)
+                if 'row' in locals():
+                    del row
             de.denoised_d = pd.concat([de.denoised_d, desub.denoised_d], ignore_index=True)
             del desub.denoised_d, desub.good_mothers, mothers_d, desub.denoised_d_output
 
@@ -342,37 +365,40 @@ def run_denoise_entropy(de):
             desub.good_mothers = desub.data_initial.loc[desub.good_seq][
                 de.first_col_names + desub.abund_col_names + [de.seq]]
             # writing ratio_d
-            if de.cores > 1:
-                pool = mp.Pool(de.cores)
-                [row] = zip(*pool.map(desub.write_output_ratio_d, [mother for mother in mothers_ratio_d]))
-                pool.close()
-                del pool
-                desub.denoised_ratio_d = pd.DataFrame(row,
-                                                      columns=[de.first_col_names + desub.abund_col_names + [de.seq]][
-                                                          0])
-                desub.good_mothers = desub.good_mothers.drop(index=mothers_ratio_d)
-                desub.denoised_ratio_d = desub.denoised_ratio_d.append(desub.good_mothers, ignore_index=True)
-                desub.denoised_ratio_d = desub.denoised_ratio_d.sort_values([desub.count], axis=0, ascending=False)
+            if len(mothers_ratio_d) == 0:
+                desub.denoised_ratio_d = desub.good_mothers
+                desub.denoised_ratio_d = desub.denoised_ratio_d.sort_values([de.count], axis=0, ascending=False)
             else:
-                desub.denoised_ratio_d = pd.DataFrame(
-                    columns=[de.first_col_names + desub.abund_col_names + [de.seq]][0])
-                for mother in tqdm(mothers_ratio_d):
-                    row = [
-                        desub.good_mothers[list(desub.good_mothers.loc[:, 'id'] == mother)][
-                            de.first_col_names].values.tolist()[
-                            0] +
-                        list(desub.data_initial.loc[
-                            list(pd.Series(desub.denoised_ratio_d_output) == mother), desub.abund_col_names].sum(
-                            0)) +
-                        desub.good_mothers[list(desub.good_mothers.loc[:, 'id'] == mother)][de.seq].values.tolist()]
-                    row = pd.Series(row[0], index=[de.first_col_names + desub.abund_col_names + [de.seq]][0])
-                    desub.denoised_ratio_d = desub.denoised_ratio_d.append(row, ignore_index=True)
-                    desub.good_mothers = desub.good_mothers.drop(index=mother)
-                desub.denoised_ratio_d = desub.denoised_ratio_d.append(desub.good_mothers, ignore_index=True)
-                desub.denoised_ratio_d = desub.denoised_ratio_d.sort_values([desub.count], axis=0, ascending=False)
-            if 'row' in locals():
-                del row
-
+                if de.cores > 1:
+                    pool = mp.Pool(de.cores)
+                    [row] = zip(*pool.map(desub.write_output_ratio_d, [mother for mother in mothers_ratio_d]))
+                    pool.close()
+                    del pool
+                    desub.denoised_ratio_d = pd.DataFrame(row,
+                                                          columns=[de.first_col_names + desub.abund_col_names + [de.seq]][
+                                                              0])
+                    desub.good_mothers = desub.good_mothers.drop(index=mothers_ratio_d)
+                    desub.denoised_ratio_d = desub.denoised_ratio_d.append(desub.good_mothers, ignore_index=True)
+                    desub.denoised_ratio_d = desub.denoised_ratio_d.sort_values([desub.count], axis=0, ascending=False)
+                else:
+                    desub.denoised_ratio_d = pd.DataFrame(
+                        columns=[de.first_col_names + desub.abund_col_names + [de.seq]][0])
+                    for mother in tqdm(mothers_ratio_d):
+                        row = [
+                            desub.good_mothers[list(desub.good_mothers.loc[:, 'id'] == mother)][
+                                de.first_col_names].values.tolist()[
+                                0] +
+                            list(desub.data_initial.loc[
+                                list(pd.Series(desub.denoised_ratio_d_output) == mother), desub.abund_col_names].sum(
+                                0)) +
+                            desub.good_mothers[list(desub.good_mothers.loc[:, 'id'] == mother)][de.seq].values.tolist()]
+                        row = pd.Series(row[0], index=[de.first_col_names + desub.abund_col_names + [de.seq]][0])
+                        desub.denoised_ratio_d = desub.denoised_ratio_d.append(row, ignore_index=True)
+                        desub.good_mothers = desub.good_mothers.drop(index=mother)
+                    desub.denoised_ratio_d = desub.denoised_ratio_d.append(desub.good_mothers, ignore_index=True)
+                    desub.denoised_ratio_d = desub.denoised_ratio_d.sort_values([desub.count], axis=0, ascending=False)
+                if 'row' in locals():
+                    del row
             de.denoised_ratio_d = pd.concat([de.denoised_ratio_d, desub.denoised_ratio_d], ignore_index=True)
             del desub.denoised_ratio_d, desub.good_mothers, mothers_ratio_d, desub.denoised_ratio_d_output
 
@@ -396,32 +422,36 @@ def run_from_info(de):
                                                                                                      [de.seq]]
         print('writing output_ratio')
         # writing ratio
-        if de.cores > 1:
-            pool = mp.Pool(de.cores)
-            [row] = zip(*pool.map(de.write_ratio_from_info, [mother for mother in mothers_ratio]))
-            pool.close()
-            del pool
-            de.denoised_ratio = pd.DataFrame(row, columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
-            de.good_mothers = de.good_mothers.drop(index=mothers_ratio)
-            de.denoised_ratio = de.denoised_ratio.append(de.good_mothers, ignore_index=True)
+        if len(mothers_ratio) == 0:
+            de.denoised_ratio = de.good_mothers
             de.denoised_ratio = de.denoised_ratio.sort_values([de.count], axis=0, ascending=False)
         else:
-            de.denoised_ratio = pd.DataFrame(columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
-            for mother in tqdm(mothers_ratio):
-                row = [
-                    de.good_mothers[list(de.good_mothers.id == mother)][de.first_col_names].values.tolist()[
-                        0] +
-                    list(de.data_initial.loc[[[mother] +
-                                              list(de.merge_data.daughter[de.merge_data.mother_ratio == mother])][0],
-                                             de.abund_col_names].sum(0)) +
-                    de.good_mothers[list(de.good_mothers.id == mother)][de.seq].values.tolist()]
-                row = pd.Series(row[0], index=[de.first_col_names + de.abund_col_names + [de.seq]][0])
-                de.denoised_ratio = de.denoised_ratio.append(row, ignore_index=True)
-                de.good_mothers = de.good_mothers.drop(index=mother)
-            de.denoised_ratio = de.denoised_ratio.append(de.good_mothers, ignore_index=True)
-            de.denoised_ratio = de.denoised_ratio.sort_values([de.count], axis=0, ascending=False)
-        if 'row' in locals():
-            del row
+            if de.cores > 1:
+                pool = mp.Pool(de.cores)
+                [row] = zip(*pool.map(de.write_ratio_from_info, [mother for mother in mothers_ratio]))
+                pool.close()
+                del pool
+                de.denoised_ratio = pd.DataFrame(row, columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
+                de.good_mothers = de.good_mothers.drop(index=mothers_ratio)
+                de.denoised_ratio = de.denoised_ratio.append(de.good_mothers, ignore_index=True)
+                de.denoised_ratio = de.denoised_ratio.sort_values([de.count], axis=0, ascending=False)
+            else:
+                de.denoised_ratio = pd.DataFrame(columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
+                for mother in tqdm(mothers_ratio):
+                    row = [
+                        de.good_mothers[list(de.good_mothers.id == mother)][de.first_col_names].values.tolist()[
+                            0] +
+                        list(de.data_initial.loc[[[mother] +
+                                                  list(de.merge_data.daughter[de.merge_data.mother_ratio == mother])][0],
+                                                 de.abund_col_names].sum(0)) +
+                        de.good_mothers[list(de.good_mothers.id == mother)][de.seq].values.tolist()]
+                    row = pd.Series(row[0], index=[de.first_col_names + de.abund_col_names + [de.seq]][0])
+                    de.denoised_ratio = de.denoised_ratio.append(row, ignore_index=True)
+                    de.good_mothers = de.good_mothers.drop(index=mother)
+                de.denoised_ratio = de.denoised_ratio.append(de.good_mothers, ignore_index=True)
+                de.denoised_ratio = de.denoised_ratio.sort_values([de.count], axis=0, ascending=False)
+            if 'row' in locals():
+                del row
         del de.good_mothers, mothers_ratio
 
     if (de.output_type == 'd') or (de.output_type == 'all'):
@@ -430,32 +460,36 @@ def run_from_info(de):
         ][de.first_col_names + de.abund_col_names + [de.seq]]
         print('writing output_d')
         # writing ratio
-        if de.cores > 1:
-            pool = mp.Pool(de.cores)
-            [row] = zip(*pool.map(de.write_d_from_info, [mother for mother in mothers_d]))
-            pool.close()
-            del pool
-            de.denoised_d = pd.DataFrame(row, columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
-            de.good_mothers = de.good_mothers.drop(index=mothers_d)
-            de.denoised_d = de.denoised_d.append(de.good_mothers, ignore_index=True)
+        if len(mothers_d) == 0:
+            de.denoised_d = de.good_mothers
             de.denoised_d = de.denoised_d.sort_values([de.count], axis=0, ascending=False)
         else:
-            de.denoised_d = pd.DataFrame(columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
-            for mother in tqdm(mothers_d):
-                row = [
-                    de.good_mothers[list(de.good_mothers.id == mother)][de.first_col_names].values.tolist()[
-                        0] +
-                    list(de.data_initial.loc[[[mother] +
-                                              list(de.merge_data.daughter[de.merge_data.mother_d == mother])][0],
-                                             de.abund_col_names].sum(0)) +
-                    de.good_mothers[list(de.good_mothers.id == mother)][de.seq].values.tolist()]
-                row = pd.Series(row[0], index=[de.first_col_names + de.abund_col_names + [de.seq]][0])
-                de.denoised_d = de.denoised_d.append(row, ignore_index=True)
-                de.good_mothers = de.good_mothers.drop(index=mother)
-            de.denoised_d = de.denoised_d.append(de.good_mothers, ignore_index=True)
-            de.denoised_d = de.denoised_d.sort_values([de.count], axis=0, ascending=False)
-        if 'row' in locals():
-            del row
+            if de.cores > 1:
+                pool = mp.Pool(de.cores)
+                [row] = zip(*pool.map(de.write_d_from_info, [mother for mother in mothers_d]))
+                pool.close()
+                del pool
+                de.denoised_d = pd.DataFrame(row, columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
+                de.good_mothers = de.good_mothers.drop(index=mothers_d)
+                de.denoised_d = de.denoised_d.append(de.good_mothers, ignore_index=True)
+                de.denoised_d = de.denoised_d.sort_values([de.count], axis=0, ascending=False)
+            else:
+                de.denoised_d = pd.DataFrame(columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
+                for mother in tqdm(mothers_d):
+                    row = [
+                        de.good_mothers[list(de.good_mothers.id == mother)][de.first_col_names].values.tolist()[
+                            0] +
+                        list(de.data_initial.loc[[[mother] +
+                                                  list(de.merge_data.daughter[de.merge_data.mother_d == mother])][0],
+                                                 de.abund_col_names].sum(0)) +
+                        de.good_mothers[list(de.good_mothers.id == mother)][de.seq].values.tolist()]
+                    row = pd.Series(row[0], index=[de.first_col_names + de.abund_col_names + [de.seq]][0])
+                    de.denoised_d = de.denoised_d.append(row, ignore_index=True)
+                    de.good_mothers = de.good_mothers.drop(index=mother)
+                de.denoised_d = de.denoised_d.append(de.good_mothers, ignore_index=True)
+                de.denoised_d = de.denoised_d.sort_values([de.count], axis=0, ascending=False)
+            if 'row' in locals():
+                del row
         del de.good_mothers, mothers_d
     if (de.output_type == 'ratio_d') or (de.output_type == 'all'):
         mothers_ratio_d = de.merge_data.mother_ratio_d.unique()[1:]
@@ -463,32 +497,36 @@ def run_from_info(de):
         ][de.first_col_names + de.abund_col_names + [de.seq]]
         print('writing output_ratio_d')
         # writing ratio
-        if de.cores > 1:
-            pool = mp.Pool(de.cores)
-            [row] = zip(*pool.map(de.write_ratio_d_from_info, [mother for mother in mothers_ratio_d]))
-            pool.close()
-            del pool
-            de.denoised_ratio_d = pd.DataFrame(row, columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
-            de.good_mothers = de.good_mothers.drop(index=mothers_ratio_d)
-            de.denoised_ratio_d = de.denoised_ratio_d.append(de.good_mothers, ignore_index=True)
+        if len(mothers_ratio_d) == 0:
+            de.denoised_ratio_d = de.good_mothers
             de.denoised_ratio_d = de.denoised_ratio_d.sort_values([de.count], axis=0, ascending=False)
         else:
-            de.denoised_ratio_d = pd.DataFrame(columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
-            for mother in tqdm(mothers_ratio_d):
-                row = [
-                    de.good_mothers[list(de.good_mothers.id == mother)][de.first_col_names].values.tolist()[
-                        0] +
-                    list(de.data_initial.loc[[[mother] +
-                                              list(de.merge_data.daughter[de.merge_data.mother_ratio_d == mother])][0],
-                                             de.abund_col_names].sum(0)) +
-                    de.good_mothers[list(de.good_mothers.id == mother)][de.seq].values.tolist()]
-                row = pd.Series(row[0], index=[de.first_col_names + de.abund_col_names + [de.seq]][0])
-                de.denoised_ratio_d = de.denoised_ratio_d.append(row, ignore_index=True)
-                de.good_mothers = de.good_mothers.drop(index=mother)
-            de.denoised_ratio_d = de.denoised_ratio_d.append(de.good_mothers, ignore_index=True)
-            de.denoised_ratio_d = de.denoised_ratio_d.sort_values([de.count], axis=0, ascending=False)
-        if 'row' in locals():
-            del row
+            if de.cores > 1:
+                pool = mp.Pool(de.cores)
+                [row] = zip(*pool.map(de.write_ratio_d_from_info, [mother for mother in mothers_ratio_d]))
+                pool.close()
+                del pool
+                de.denoised_ratio_d = pd.DataFrame(row, columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
+                de.good_mothers = de.good_mothers.drop(index=mothers_ratio_d)
+                de.denoised_ratio_d = de.denoised_ratio_d.append(de.good_mothers, ignore_index=True)
+                de.denoised_ratio_d = de.denoised_ratio_d.sort_values([de.count], axis=0, ascending=False)
+            else:
+                de.denoised_ratio_d = pd.DataFrame(columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
+                for mother in tqdm(mothers_ratio_d):
+                    row = [
+                        de.good_mothers[list(de.good_mothers.id == mother)][de.first_col_names].values.tolist()[
+                            0] +
+                        list(de.data_initial.loc[[[mother] +
+                                                  list(de.merge_data.daughter[de.merge_data.mother_ratio_d == mother])][0],
+                                                 de.abund_col_names].sum(0)) +
+                        de.good_mothers[list(de.good_mothers.id == mother)][de.seq].values.tolist()]
+                    row = pd.Series(row[0], index=[de.first_col_names + de.abund_col_names + [de.seq]][0])
+                    de.denoised_ratio_d = de.denoised_ratio_d.append(row, ignore_index=True)
+                    de.good_mothers = de.good_mothers.drop(index=mother)
+                de.denoised_ratio_d = de.denoised_ratio_d.append(de.good_mothers, ignore_index=True)
+                de.denoised_ratio_d = de.denoised_ratio_d.sort_values([de.count], axis=0, ascending=False)
+            if 'row' in locals():
+                del row
         del de.good_mothers, mothers_ratio_d
 
     del de.merge_data
