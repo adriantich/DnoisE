@@ -215,11 +215,11 @@ def run_denoise_entropy(de):
         if i == 0:
             if de.compute_entropy:
                 if desub.initial_pos == 1:
-                    e1, e2, e3 = en.mean_entropy(desub.data_initial)
+                    e1, e2, e3 = en.mean_entropy(desub.data_initial, de.seq, de.count)
                 if desub.initial_pos == 2:
-                    e2, e3, e1 = en.mean_entropy(desub.data_initial)
+                    e2, e3, e1 = en.mean_entropy(desub.data_initial, de.seq, de.count)
                 if desub.initial_pos == 3:
-                    e3, e1, e2 = en.mean_entropy(desub.data_initial)
+                    e3, e1, e2 = en.mean_entropy(desub.data_initial, de.seq, de.count)
                 desub.Ad1 = e1 * 3 / (e1 + e2 + e3)
                 de.Ad1 = e1 * 3 / (e1 + e2 + e3)
                 desub.Ad2 = e2 * 3 / (e1 + e2 + e3)
@@ -232,7 +232,8 @@ def run_denoise_entropy(de):
                       '\t {:.3f} for third position of codon'.format(len_seq, desub.initial_pos, e1, e2, e3))
 
         # maximum ratio allowed
-        desub.max_ratio = (1 / 2) ** (desub.alpha * 1 * min(desub.Ad1, desub.Ad2, desub.Ad3) + 1)
+        # desub.max_ratio = (1 / 2) ** (desub.alpha * 1 * min(desub.Ad1, desub.Ad2, desub.Ad3) + 1)
+        desub.max_ratio = ((1 / 2) ** (desub.alpha + 1)) * (1 / min(desub.Ad1, desub.Ad2, desub.Ad3))
 
         if desub.output_type == 'ratio':
             desub.denoised_ratio_output = [desub.data_initial.loc[0, 'id']]
@@ -244,7 +245,8 @@ def run_denoise_entropy(de):
         desub.output_info = [{'daughter': desub.data_initial.loc[0, 'id'], 'mother_d': None, 'd': None,
                               'mother_ratio': None, 'ratio': None,
                               'mother_ratio_d': None, 'xavier_criteria': None,
-                              'difpos1': None, 'difpos2': None, 'difpos3': None}]
+                              'difpos1': None, 'difpos2': None, 'difpos3': None,
+                              'dtotal': None, 'betacorr': None}]
         desub.good_seq = [True]
         desub.abund_col_names.insert(0, de.count)
         desub.run_list = [{'id': desub.data_initial.loc[0, 'id'], de.count: desub.data_initial.loc[0, de.count],
@@ -271,8 +273,8 @@ def run_denoise_entropy(de):
             desub.good_mothers = desub.data_initial.loc[desub.good_seq][de.first_col_names +
                                                                         desub.abund_col_names + [de.seq]]
             # writing ratio
-            if desub.cores > 1:
-                pool = mp.Pool(desub.cores)
+            if de.cores > 1:
+                pool = mp.Pool(de.cores)
                 [row] = zip(*pool.map(desub.write_output_ratio, [mother for mother in mothers_ratio]))
                 pool.close()
                 del pool
@@ -296,7 +298,7 @@ def run_denoise_entropy(de):
                     desub.denoised_ratio = desub.denoised_ratio.append(row, ignore_index=True)
                     desub.good_mothers = desub.good_mothers.drop(index=mother)
                 desub.denoised_ratio = desub.denoised_ratio.append(desub.good_mothers, ignore_index=True)
-                desub.denoised_ratio = desub.denoised_ratio.sort_values([de.count], axis=0, ascending=False)
+                desub.denoised_ratio = desub.denoised_ratio.sort_values([desub.count], axis=0, ascending=False)
             if 'row' in locals():
                 del row
             de.denoised_ratio = pd.concat([de.denoised_ratio, desub.denoised_ratio], ignore_index=True)
@@ -306,8 +308,8 @@ def run_denoise_entropy(de):
             desub.good_mothers = desub.data_initial.loc[desub.good_seq][de.first_col_names +
                                                                         desub.abund_col_names + [de.seq]]
             # writing d
-            if desub.cores > 1:
-                pool = mp.Pool(desub.cores)
+            if de.cores > 1:
+                pool = mp.Pool(de.cores)
                 [row] = zip(*pool.map(desub.write_output_d, [mother for mother in mothers_d]))
                 pool.close()
                 del pool
@@ -330,7 +332,7 @@ def run_denoise_entropy(de):
                     desub.denoised_d = desub.denoised_d.append(row, ignore_index=True)
                     desub.good_mothers = desub.good_mothers.drop(index=mother)
                 desub.denoised_d = desub.denoised_d.append(desub.good_mothers, ignore_index=True)
-                desub.denoised_d = desub.denoised_d.sort_values([de.count], axis=0, ascending=False)
+                desub.denoised_d = desub.denoised_d.sort_values([desub.count], axis=0, ascending=False)
             if 'row' in locals():
                 del row
             de.denoised_d = pd.concat([de.denoised_d, desub.denoised_d], ignore_index=True)
@@ -340,8 +342,8 @@ def run_denoise_entropy(de):
             desub.good_mothers = desub.data_initial.loc[desub.good_seq][
                 de.first_col_names + desub.abund_col_names + [de.seq]]
             # writing ratio_d
-            if desub.cores > 1:
-                pool = mp.Pool(desub.cores)
+            if de.cores > 1:
+                pool = mp.Pool(de.cores)
                 [row] = zip(*pool.map(desub.write_output_ratio_d, [mother for mother in mothers_ratio_d]))
                 pool.close()
                 del pool
@@ -350,7 +352,7 @@ def run_denoise_entropy(de):
                                                           0])
                 desub.good_mothers = desub.good_mothers.drop(index=mothers_ratio_d)
                 desub.denoised_ratio_d = desub.denoised_ratio_d.append(desub.good_mothers, ignore_index=True)
-                desub.denoised_ratio_d = desub.denoised_ratio_d.sort_values([de.count], axis=0, ascending=False)
+                desub.denoised_ratio_d = desub.denoised_ratio_d.sort_values([desub.count], axis=0, ascending=False)
             else:
                 desub.denoised_ratio_d = pd.DataFrame(
                     columns=[de.first_col_names + desub.abund_col_names + [de.seq]][0])
@@ -367,7 +369,7 @@ def run_denoise_entropy(de):
                     desub.denoised_ratio_d = desub.denoised_ratio_d.append(row, ignore_index=True)
                     desub.good_mothers = desub.good_mothers.drop(index=mother)
                 desub.denoised_ratio_d = desub.denoised_ratio_d.append(desub.good_mothers, ignore_index=True)
-                desub.denoised_ratio_d = desub.denoised_ratio_d.sort_values([de.count], axis=0, ascending=False)
+                desub.denoised_ratio_d = desub.denoised_ratio_d.sort_values([desub.count], axis=0, ascending=False)
             if 'row' in locals():
                 del row
 

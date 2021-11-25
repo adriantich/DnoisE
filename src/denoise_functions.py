@@ -266,7 +266,7 @@ class DnoisEFunctions:
             if "arg_s" not in locals():  # no start of abundance cols specified
                 if "arg_z" not in locals():  # no end of abundance cols specified
                     print("start and end not given, no samples in file")
-                    self.abund_col_names = [self.count]
+                    # self.abund_col_names = [self.count]
                     self.justcount = True
                 else:
                     print("Err: end given but no start")
@@ -363,10 +363,11 @@ class DnoisEFunctions:
             else:
                 dd = d
                 # if Edgar's equation:
-            if b_ratio <= (1 / 2) ** (self.alpha * d + 1):
+            betacorr = ((1 / 2) ** (self.alpha * d + 1))
+            if b_ratio <= betacorr:
                 # TRUE:
                 # add to Ml:
-                xavier_criteria = b_ratio / ((1 / 2) ** (self.alpha * d + 1))
+                xavier_criteria = b_ratio / betacorr
                 df1 = [
                     {'pM': pM, 'pMpos': pMpos, 'pD': pD, 'ratio': b_ratio, 'd': d, 'xavier_criteria': xavier_criteria}]
                 Ml = Ml.append(df1)
@@ -465,10 +466,11 @@ class DnoisEFunctions:
             else:
                 dd = d
                 # if Edgar's equation:
-            if b_ratio <= (1 / 2) ** (self.alpha * d + 1):
+            betacorr = ((1 / 2) ** (self.alpha * d + 1))
+            if b_ratio <= betacorr:
                 # TRUE:
                 # add to Ml:
-                xavier_criteria = b_ratio / ((1 / 2) ** (self.alpha * d + 1))
+                xavier_criteria = b_ratio / betacorr
                 df1 = [
                     {'pM': pM, 'pMpos': pMpos, 'pD': pD, 'ratio': b_ratio, 'd': d, 'xavier_criteria': xavier_criteria}]
                 Ml = Ml.append(df1)
@@ -546,10 +548,11 @@ class DnoisEFunctions:
             else:
                 dd = d
                 # if Edgar's equation:
-            if b_ratio <= (1 / 2) ** (self.alpha * d + 1):
+            betacorr = ((1 / 2) ** (self.alpha * d + 1))
+            if b_ratio <= betacorr:
                 # TRUE:
                 # add to Ml:
-                xavier_criteria = b_ratio / ((1 / 2) ** (self.alpha * d + 1))
+                xavier_criteria = b_ratio / betacorr
                 df1 = [
                     {'pM': pM, 'pMpos': pMpos, 'pD': pD, 'ratio': b_ratio, 'd': d, 'xavier_criteria': xavier_criteria}]
                 Ml = Ml.append(df1)
@@ -650,10 +653,11 @@ class DnoisEFunctions:
             else:
                 dd = d
                 # if Edgar's equation:
-            if b_ratio <= (1 / 2) ** (self.alpha * d + 1):
+            betacorr = ((1 / 2) ** (self.alpha * d + 1))
+            if b_ratio <= betacorr:
                 # TRUE:
                 # add to Ml:
-                xavier_criteria = b_ratio / ((1 / 2) ** (self.alpha * d + 1))
+                xavier_criteria = b_ratio / betacorr
                 df1 = [
                     {'pM': pM, 'pMpos': pMpos, 'pD': pD, 'ratio': b_ratio, 'd': d, 'xavier_criteria': xavier_criteria}]
                 Ml = Ml.append(df1)
@@ -697,7 +701,7 @@ class DnoisEFunctions:
         position = len(self.run_list)
         # create void list for pM info ---> Motherslist (Ml)
         Ml = pd.DataFrame(columns=['pM', 'pMpos', 'pD', 'ratio', 'd', 'xavier_criteria',
-                                   'difpos1', 'difpos2', 'difpos3'])
+                                   'difpos1', 'difpos2', 'difpos3', 'dtotal', 'betacorr'])
         # compare with each possible Mother (pM).
         for a in range(position):
             # if the pM is running wait
@@ -717,7 +721,7 @@ class DnoisEFunctions:
                 # obtain d ---> external function:
                 # input: must be seq of both pM and pD
                 # output: d
-            d, difpos1, difpos2, difpos3 = difference(seq1=pDseq, seq2=pMseq,
+            dcorr, difpos1, difpos2, difpos3, d = difference(seq1=pDseq, seq2=pMseq,
                                                            initial_pos=self.initial_pos,
                                                            Ad1=self.Ad1, Ad2=self.Ad2, Ad3=self.Ad3)
             # if d:
@@ -726,22 +730,28 @@ class DnoisEFunctions:
             if 'dd' in locals():
                 if dd == min(self.Ad1, self.Ad2, self.Ad3):
                     break
-                if d >= dd:
+                if dcorr >= dd:
                     continue
                 # if dd doesn't exist | d is smaller than dd:
                 # dd = d
                 else:
-                    dd = d
+                    dd = dcorr
             else:
-                dd = d
+                dd = dcorr
                 # if Edgar's equation:
-            if b_ratio <= (1 / 2) ** (self.alpha * d + 1):
+            if dcorr == 0:
+                print("ERROR! dataset must be of unique sequences")
+                sys.exit()
+            betacorr = ((1 / 2) ** (self.alpha * d + 1)) * (d / dcorr)
+            # betacorr = ((1 / 2) ** (self.alpha * dcorr + 1))
+            if b_ratio <= betacorr:
                 # TRUE:
                 # add to Ml:
-                xavier_criteria = b_ratio / ((1 / 2) ** (self.alpha * d + 1))
+                xavier_criteria = b_ratio / betacorr
                 df1 = [
-                    {'pM': pM, 'pMpos': pMpos, 'pD': pD, 'ratio': b_ratio, 'd': d, 'xavier_criteria': xavier_criteria,
-                     'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3}]
+                    {'pM': pM, 'pMpos': pMpos, 'pD': pD, 'ratio': b_ratio, 'd': dcorr, 'xavier_criteria': xavier_criteria,
+                     'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3,
+                     'dtotal': d, 'betacorr': betacorr}]
                 Ml = Ml.append(df1)
                 # identification of the pM
                 # ratio
@@ -757,13 +767,14 @@ class DnoisEFunctions:
             info = {'daughter': pD, 'mother_d': None, 'd': None,
                     'mother_ratio': None, 'ratio': None,
                     'mother_ratio_d': None, 'xavier_criteria': None,
-                    'difpos1': None, 'difpos2': None, 'difpos3': None}
+                    'difpos1': None, 'difpos2': None, 'difpos3': None,
+                    'dtotal': None, 'betacorr': None}
             run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': False}
             return [True], [info], [pD], [pD], [pD], [run_list]
         else:  # it is a daughter
             # print pD name to each pM depending on different criteria
             # _mothers_d
-            pM_d = Ml.loc[(Ml['d'] == min(Ml.loc[:, 'd'])), 'pM'][0]
+            pM_d = Ml.loc[(Ml['betacorr'] == min(Ml.loc[:, 'betacorr'])), 'pM'][0]
             pM_ratio = Ml.loc[(Ml['ratio'] == min(Ml.loc[:, 'ratio'])), 'pM'][0]
             if type(pM_ratio) is not str:
                 pM_ratio = pM_ratio.values[-1]
@@ -776,7 +787,8 @@ class DnoisEFunctions:
             info = {'daughter': pD, 'mother_d': pM_d, 'd': min(Ml.loc[:, 'd']),
                     'mother_ratio': pM_ratio, 'ratio': min(Ml.loc[:, 'ratio']),
                     'mother_ratio_d': pM_ratio_d, 'xavier_criteria': min(Ml.loc[:, 'xavier_criteria']),
-                    'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3}
+                    'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3,
+                    'dtotal': d, 'betacorr': betacorr}
             run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': True}
             return [False], [info], [pM_d], [pM_ratio], [pM_ratio_d], [run_list]
 
@@ -808,7 +820,7 @@ class DnoisEFunctions:
         position = len(self.run_list)
         # create void list for pM info ---> Motherslist (Ml)
         Ml = pd.DataFrame(columns=['pM', 'pMpos', 'pD', 'ratio', 'd', 'xavier_criteria',
-                                   'difpos1', 'difpos2', 'difpos3'])
+                                   'difpos1', 'difpos2', 'difpos3', 'dtotal', 'betacorr'])
         # compare with each possible Mother (pM).
         for a in range(position):
             # if the pM is running wait
@@ -828,7 +840,7 @@ class DnoisEFunctions:
                 # obtain d ---> external function:
                 # input: must be seq of both pM and pD
                 # output: d
-            d, difpos1, difpos2, difpos3 = difference(seq1=pDseq, seq2=pMseq,
+            dcorr, difpos1, difpos2, difpos3, d = difference(seq1=pDseq, seq2=pMseq,
                                                            initial_pos=self.initial_pos,
                                                            Ad1=self.Ad1, Ad2=self.Ad2, Ad3=self.Ad3)
             # if d:
@@ -837,22 +849,28 @@ class DnoisEFunctions:
             if 'dd' in locals():
                 if dd == min(self.Ad1, self.Ad2, self.Ad3):
                     break
-                if d >= dd:
+                if dcorr >= dd:
                     continue
                 # if dd doesn't exist | d is smaller than dd:
                 # dd = d
                 else:
-                    dd = d
+                    dd = dcorr
             else:
-                dd = d
+                dd = dcorr
                 # if Edgar's equation:
-            if b_ratio <= (1 / 2) ** (self.alpha * d + 1):
+            if dcorr == 0:
+                print("ERROR! dataset must be of unique sequences")
+                sys.exit()
+            betacorr = ((1 / 2) ** (self.alpha * d + 1)) * (d / dcorr)
+            # betacorr = ((1 / 2) ** (self.alpha * dcorr + 1))
+            if b_ratio <= betacorr:
                 # TRUE:
                 # add to Ml:
-                xavier_criteria = b_ratio / ((1 / 2) ** (self.alpha * d + 1))
+                xavier_criteria = b_ratio / betacorr
                 df1 = [
-                    {'pM': pM, 'pMpos': pMpos, 'pD': pD, 'ratio': b_ratio, 'd': d, 'xavier_criteria': xavier_criteria,
-                     'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3}]
+                    {'pM': pM, 'pMpos': pMpos, 'pD': pD, 'ratio': b_ratio, 'd': dcorr, 'xavier_criteria': xavier_criteria,
+                     'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3,
+                     'dtotal': d, 'betacorr': betacorr}]
                 Ml = Ml.append(df1)
                 # identification of the pM
                 # ratio
@@ -867,14 +885,15 @@ class DnoisEFunctions:
             info = {'daughter': pD, 'mother_d': None, 'd': None,
                     'mother_ratio': None, 'ratio': None,
                     'mother_ratio_d': None, 'xavier_criteria': None,
-                    'difpos1': None, 'difpos2': None, 'difpos3': None}
+                    'difpos1': None, 'difpos2': None, 'difpos3': None,
+                    'dtotal': None, 'betacorr': None}
             run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': False}
             return True, info, pD, pD, pD, run_list
             # exist
         else:  # it is a daughter
             # print pD name to each pM depending on different criteria
             # pDinfo = np.transpose(pd.DataFrame(self.data_initial.loc[pos, abund_col_names]))
-            pM_d = Ml.loc[(Ml['d'] == min(Ml.loc[:, 'd'])), 'pM'][0]
+            pM_d = Ml.loc[(Ml['betacorr'] == min(Ml.loc[:, 'betacorr'])), 'pM'][0]
             pM_ratio = Ml.loc[(Ml['ratio'] == min(Ml.loc[:, 'ratio'])), 'pM'][0]
             if type(pM_ratio) is not str:
                 pM_ratio = pM_ratio.values[-1]
@@ -887,7 +906,8 @@ class DnoisEFunctions:
             info = {'daughter': pD, 'mother_d': pM_d, 'd': min(Ml.loc[:, 'd']),
                     'mother_ratio': pM_ratio, 'ratio': min(Ml.loc[:, 'ratio']),
                     'mother_ratio_d': pM_ratio_d, 'xavier_criteria': min(Ml.loc[:, 'xavier_criteria']),
-                    'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3}
+                    'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3,
+                    'dtotal': d, 'betacorr': betacorr}
             run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': True}
             return False, info, pM_d, pM_ratio, pM_ratio_d, run_list
 
@@ -898,7 +918,7 @@ class DnoisEFunctions:
         position = len(self.run_list)
         # create void list for pM info ---> Motherslist (Ml)
         Ml = pd.DataFrame(columns=['pM', 'pMpos', 'pD', 'ratio', 'd', 'xavier_criteria',
-                                   'difpos1', 'difpos2', 'difpos3'])
+                                   'difpos1', 'difpos2', 'difpos3', 'dtotal', 'betacorr'])
         # compare with each bigger seq possible Mother (pM).
         for a in range(position):
             # if the pM is running wait
@@ -918,7 +938,7 @@ class DnoisEFunctions:
                 # obtain d ---> external function:
                 # input: must be seq of both pM and pD
                 # output: d
-            d, difpos1, difpos2, difpos3 = difference(seq1=pDseq, seq2=pMseq,
+            dcorr, difpos1, difpos2, difpos3, d = difference(seq1=pDseq, seq2=pMseq,
                                                            initial_pos=self.initial_pos,
                                                            Ad1=self.Ad1, Ad2=self.Ad2, Ad3=self.Ad3)
             # if d:
@@ -927,22 +947,28 @@ class DnoisEFunctions:
             if 'dd' in locals():
                 if dd == min(self.Ad1, self.Ad2, self.Ad3):
                     break
-                if d >= dd:
+                if dcorr >= dd:
                     continue
                 # if dd doesn't exist | d is smaller than dd:
                 # dd = d
                 else:
-                    dd = d
+                    dd = dcorr
             else:
-                dd = d
+                dd = dcorr
                 # if Edgar's equation:
-            if b_ratio <= (1 / 2) ** (self.alpha * d + 1):
+            if dcorr == 0:
+                print("ERROR! dataset must be of unique sequences")
+                sys.exit()
+            betacorr = ((1 / 2) ** (self.alpha * d + 1)) * (d / dcorr)
+            # betacorr = ((1 / 2) ** (self.alpha * dcorr + 1))
+            if b_ratio <= betacorr:
                 # TRUE:
                 # add to Ml:
-                xavier_criteria = b_ratio / ((1 / 2) ** (self.alpha * d + 1))
+                xavier_criteria = b_ratio / betacorr
                 df1 = [
-                    {'pM': pM, 'pMpos': pMpos, 'pD': pD, 'ratio': b_ratio, 'd': d, 'xavier_criteria': xavier_criteria,
-                     'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3}]
+                    {'pM': pM, 'pMpos': pMpos, 'pD': pD, 'ratio': b_ratio, 'd': dcorr, 'xavier_criteria': xavier_criteria,
+                     'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3,
+                     'dtotal': d, 'betacorr': betacorr}]
                 Ml = Ml.append(df1)
                 # identification of the pM
                 # ratio
@@ -959,13 +985,14 @@ class DnoisEFunctions:
             info = {'daughter': pD, 'mother_d': None, 'd': None,
                     'mother_ratio': None, 'ratio': None,
                     'mother_ratio_d': None, 'xavier_criteria': None,
-                    'difpos1': None, 'difpos2': None, 'difpos3': None}
+                    'difpos1': None, 'difpos2': None, 'difpos3': None,
+                    'dtotal': None, 'betacorr': None}
             run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': False}
             return [True], [info], [pD], [run_list]
         else:  # it is a daughter
             # print pD name to each pM depending on different criteria
             # _mothers_d
-            pM_d = Ml.loc[(Ml['d'] == min(Ml.loc[:, 'd'])), 'pM'][0]
+            pM_d = Ml.loc[(Ml['betacorr'] == min(Ml.loc[:, 'betacorr'])), 'pM'][0]
             pM_ratio = Ml.loc[(Ml['ratio'] == min(Ml.loc[:, 'ratio'])), 'pM'][0]
             if type(pM_ratio) is not str:
                 pM_ratio = pM_ratio.values[-1]
@@ -978,7 +1005,8 @@ class DnoisEFunctions:
             info = {'daughter': pD, 'mother_d': pM_d, 'd': min(Ml.loc[:, 'd']),
                     'mother_ratio': pM_ratio, 'ratio': min(Ml.loc[:, 'ratio']),
                     'mother_ratio_d': pM_ratio_d, 'xavier_criteria': min(Ml.loc[:, 'xavier_criteria']),
-                    'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3}
+                    'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3,
+                    'dtotal': d, 'betacorr': betacorr}
             run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': True}
             return [False], [info], [pM_ratio], [run_list]
 
@@ -1010,7 +1038,7 @@ class DnoisEFunctions:
         position = len(self.run_list)
         # create void list for pM info ---> Motherslist (Ml)
         Ml = pd.DataFrame(columns=['pM', 'pMpos', 'pD', 'ratio', 'd', 'xavier_criteria',
-                                   'difpos1', 'difpos2', 'difpos3'])
+                                   'difpos1', 'difpos2', 'difpos3', 'dtotal', 'betacorr'])
         # compare with each possible Mother (pM).
         for a in range(position):
             # if the pM is running wait
@@ -1030,7 +1058,7 @@ class DnoisEFunctions:
                 # obtain d ---> external function:
                 # input: must be seq of both pM and pD
                 # output: d
-            d, difpos1, difpos2, difpos3 = difference(seq1=pDseq, seq2=pMseq,
+            dcorr, difpos1, difpos2, difpos3, d = difference(seq1=pDseq, seq2=pMseq,
                                                            initial_pos=self.initial_pos,
                                                            Ad1=self.Ad1, Ad2=self.Ad2, Ad3=self.Ad3)
             # if d:
@@ -1039,22 +1067,28 @@ class DnoisEFunctions:
             if 'dd' in locals():
                 if dd == min(self.Ad1, self.Ad2, self.Ad3):
                     break
-                if d >= dd:
+                if dcorr >= dd:
                     continue
                 # if dd doesn't exist | d is smaller than dd:
                 # dd = d
                 else:
-                    dd = d
+                    dd = dcorr
             else:
-                dd = d
+                dd = dcorr
                 # if Edgar's equation:
-            if b_ratio <= (1 / 2) ** (self.alpha * d + 1):
+            if dcorr == 0:
+                print("ERROR! dataset must be of unique sequences")
+                sys.exit()
+            betacorr = ((1 / 2) ** (self.alpha * d + 1)) * (d / dcorr)
+            # betacorr = ((1 / 2) ** (self.alpha * dcorr + 1))
+            if b_ratio <= betacorr:
                 # TRUE:
                 # add to Ml:
-                xavier_criteria = b_ratio / ((1 / 2) ** (self.alpha * d + 1))
+                xavier_criteria = b_ratio / betacorr
                 df1 = [
-                    {'pM': pM, 'pMpos': pMpos, 'pD': pD, 'ratio': b_ratio, 'd': d, 'xavier_criteria': xavier_criteria,
-                     'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3}]
+                    {'pM': pM, 'pMpos': pMpos, 'pD': pD, 'ratio': b_ratio, 'd': dcorr, 'xavier_criteria': xavier_criteria,
+                     'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3,
+                     'dtotal': d, 'betacorr': betacorr}]
                 Ml = Ml.append(df1)
                 # identification of the pM
                 # ratio
@@ -1070,14 +1104,15 @@ class DnoisEFunctions:
             info = {'daughter': pD, 'mother_d': None, 'd': None,
                     'mother_ratio': None, 'ratio': None,
                     'mother_ratio_d': None, 'xavier_criteria': None,
-                    'difpos1': None, 'difpos2': None, 'difpos3': None}
+                    'difpos1': None, 'difpos2': None, 'difpos3': None,
+                    'dtotal': None, 'betacorr': None}
             run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': False}
             return True, info, pD, run_list
             # exist
         else:  # it is a daughter
             # print pD name to each pM depending on different criteria
             # pDinfo = np.transpose(pd.DataFrame(self.data_initial.loc[pos, abund_col_names]))
-            pM_d = Ml.loc[(Ml['d'] == min(Ml.loc[:, 'd'])), 'pM'][0]
+            pM_d = Ml.loc[(Ml['betacorr'] == max(Ml.loc[:, 'betacorr'])), 'pM'][0]
             pM_ratio = Ml.loc[(Ml['ratio'] == min(Ml.loc[:, 'ratio'])), 'pM'][0]
             if type(pM_ratio) is not str:
                 pM_ratio = pM_ratio.values[-1]
@@ -1090,7 +1125,8 @@ class DnoisEFunctions:
             info = {'daughter': pD, 'mother_d': pM_d, 'd': min(Ml.loc[:, 'd']),
                     'mother_ratio': pM_ratio, 'ratio': min(Ml.loc[:, 'ratio']),
                     'mother_ratio_d': pM_ratio_d, 'xavier_criteria': min(Ml.loc[:, 'xavier_criteria']),
-                    'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3}
+                    'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3,
+                    'dtotal': d, 'betacorr': betacorr}
             run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': True}
             return False, info, pM_ratio, run_list
 
@@ -1225,7 +1261,7 @@ def run_dnoise_testing(declass):
                      declass.denoised_ratio_d_output_2, declass.run_list_2)
         if 'declass.min_mother' in locals():
             del declass.min_mother
-        del (declass.cores, declass.alpha)
+        del declass.alpha
     else:
         if declass.output_type == 'ratio':
             for pos in tqdm(range(1, declass.data_initial.shape[0])):
@@ -1262,19 +1298,23 @@ def difference(seq1, seq2, initial_pos, Ad1, Ad2, Ad3):
     difpos1 = 0
     difpos2 = 0
     difpos3 = 0
+    dtotal = 0
     for i, o in enumerate(seq1):
         if o != seq2[i]:
             dif_position = (i + initial_pos) % 3
             if dif_position == 1:
+                dtotal += 1
                 difcount += Ad1
                 difpos1 += 1
             elif dif_position == 2:
+                dtotal += 1
                 difcount += Ad2
                 difpos2 += 1
             elif dif_position == 0:
+                dtotal += 1
                 difcount += Ad3
                 difpos3 += 1
-    return difcount, difpos1, difpos2, difpos3
+    return difcount, difpos1, difpos2, difpos3, dtotal
 
 
 def mother_id(test, M):
