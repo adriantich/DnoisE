@@ -363,10 +363,11 @@ class DnoisEFunctions:
             else:
                 dd = d
                 # if Edgar's equation:
-            if b_ratio <= (1 / 2) ** (self.alpha * d + 1):
+            betacorr = ((1 / 2) ** (self.alpha * d + 1))
+            if b_ratio <= betacorr:
                 # TRUE:
                 # add to Ml:
-                xavier_criteria = b_ratio / ((1 / 2) ** (self.alpha * d + 1))
+                xavier_criteria = b_ratio / betacorr
                 df1 = [
                     {'pM': pM, 'pMpos': pMpos, 'pD': pD, 'ratio': b_ratio, 'd': d, 'xavier_criteria': xavier_criteria}]
                 Ml = Ml.append(df1)
@@ -465,10 +466,11 @@ class DnoisEFunctions:
             else:
                 dd = d
                 # if Edgar's equation:
-            if b_ratio <= (1 / 2) ** (self.alpha * d + 1):
+            betacorr = ((1 / 2) ** (self.alpha * d + 1))
+            if b_ratio <= betacorr:
                 # TRUE:
                 # add to Ml:
-                xavier_criteria = b_ratio / ((1 / 2) ** (self.alpha * d + 1))
+                xavier_criteria = b_ratio / betacorr
                 df1 = [
                     {'pM': pM, 'pMpos': pMpos, 'pD': pD, 'ratio': b_ratio, 'd': d, 'xavier_criteria': xavier_criteria}]
                 Ml = Ml.append(df1)
@@ -546,10 +548,11 @@ class DnoisEFunctions:
             else:
                 dd = d
                 # if Edgar's equation:
-            if b_ratio <= (1 / 2) ** (self.alpha * d + 1):
+            betacorr = ((1 / 2) ** (self.alpha * d + 1))
+            if b_ratio <= betacorr:
                 # TRUE:
                 # add to Ml:
-                xavier_criteria = b_ratio / ((1 / 2) ** (self.alpha * d + 1))
+                xavier_criteria = b_ratio / betacorr
                 df1 = [
                     {'pM': pM, 'pMpos': pMpos, 'pD': pD, 'ratio': b_ratio, 'd': d, 'xavier_criteria': xavier_criteria}]
                 Ml = Ml.append(df1)
@@ -650,10 +653,11 @@ class DnoisEFunctions:
             else:
                 dd = d
                 # if Edgar's equation:
-            if b_ratio <= (1 / 2) ** (self.alpha * d + 1):
+            betacorr = ((1 / 2) ** (self.alpha * d + 1))
+            if b_ratio <= betacorr:
                 # TRUE:
                 # add to Ml:
-                xavier_criteria = b_ratio / ((1 / 2) ** (self.alpha * d + 1))
+                xavier_criteria = b_ratio / betacorr
                 df1 = [
                     {'pM': pM, 'pMpos': pMpos, 'pD': pD, 'ratio': b_ratio, 'd': d, 'xavier_criteria': xavier_criteria}]
                 Ml = Ml.append(df1)
@@ -739,6 +743,7 @@ class DnoisEFunctions:
                 print("ERROR! dataset must be of unique sequences")
                 sys.exit()
             betacorr = ((1 / 2) ** (self.alpha * d + 1)) * (d / dcorr)
+            # betacorr = ((1 / 2) ** (self.alpha * dcorr + 1))
             if b_ratio <= betacorr:
                 # TRUE:
                 # add to Ml:
@@ -857,6 +862,7 @@ class DnoisEFunctions:
                 print("ERROR! dataset must be of unique sequences")
                 sys.exit()
             betacorr = ((1 / 2) ** (self.alpha * d + 1)) * (d / dcorr)
+            # betacorr = ((1 / 2) ** (self.alpha * dcorr + 1))
             if b_ratio <= betacorr:
                 # TRUE:
                 # add to Ml:
@@ -954,6 +960,7 @@ class DnoisEFunctions:
                 print("ERROR! dataset must be of unique sequences")
                 sys.exit()
             betacorr = ((1 / 2) ** (self.alpha * d + 1)) * (d / dcorr)
+            # betacorr = ((1 / 2) ** (self.alpha * dcorr + 1))
             if b_ratio <= betacorr:
                 # TRUE:
                 # add to Ml:
