@@ -742,8 +742,8 @@ class DnoisEFunctions:
             if dcorr == 0:
                 print("ERROR! dataset must be of unique sequences")
                 sys.exit()
-            betacorr = ((1 / 2) ** (self.alpha * d + 1)) * (d / dcorr)
-            # betacorr = ((1 / 2) ** (self.alpha * dcorr + 1))
+            # betacorr = ((1 / 2) ** (self.alpha * d + 1)) * (d / dcorr)
+            betacorr = ((1 / 2) ** (self.alpha * dcorr + 1))
             if b_ratio <= betacorr:
                 # TRUE:
                 # add to Ml:
@@ -861,8 +861,8 @@ class DnoisEFunctions:
             if dcorr == 0:
                 print("ERROR! dataset must be of unique sequences")
                 sys.exit()
-            betacorr = ((1 / 2) ** (self.alpha * d + 1)) * (d / dcorr)
-            # betacorr = ((1 / 2) ** (self.alpha * dcorr + 1))
+            # betacorr = ((1 / 2) ** (self.alpha * d + 1)) * (d / dcorr)
+            betacorr = ((1 / 2) ** (self.alpha * dcorr + 1))
             if b_ratio <= betacorr:
                 # TRUE:
                 # add to Ml:
@@ -959,8 +959,8 @@ class DnoisEFunctions:
             if dcorr == 0:
                 print("ERROR! dataset must be of unique sequences")
                 sys.exit()
-            betacorr = ((1 / 2) ** (self.alpha * d + 1)) * (d / dcorr)
-            # betacorr = ((1 / 2) ** (self.alpha * dcorr + 1))
+            # betacorr = ((1 / 2) ** (self.alpha * d + 1)) * (d / dcorr)
+            betacorr = ((1 / 2) ** (self.alpha * dcorr + 1))
             if b_ratio <= betacorr:
                 # TRUE:
                 # add to Ml:
@@ -1079,8 +1079,8 @@ class DnoisEFunctions:
             if dcorr == 0:
                 print("ERROR! dataset must be of unique sequences")
                 sys.exit()
-            betacorr = ((1 / 2) ** (self.alpha * d + 1)) * (d / dcorr)
-            # betacorr = ((1 / 2) ** (self.alpha * dcorr + 1))
+            # betacorr = ((1 / 2) ** (self.alpha * d + 1)) * (d / dcorr)
+            betacorr = ((1 / 2) ** (self.alpha * dcorr + 1))
             if b_ratio <= betacorr:
                 # TRUE:
                 # add to Ml:
