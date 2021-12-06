@@ -19,6 +19,7 @@ import pandas as pd
 import platform
 import sys
 from tqdm import tqdm
+import json
 
 
 class DnoisEFunctions:
@@ -1183,6 +1184,10 @@ class DnoisEFunctions:
             self.good_mothers[list(self.good_mothers.loc[:, 'id'] == mother)][self.seq].values.tolist()]
 
         return row
+
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__,
+                          sort_keys=True, indent=4)
 
 
 def run_dnoise_testing(declass):

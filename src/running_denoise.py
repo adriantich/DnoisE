@@ -18,7 +18,7 @@ from denoise_functions import *
 import entropy as en
 
 
-def run_denoise(de):
+def run_denoise(de, test=False):
     # if not platform.system() == 'Linux':
     #     print('not Linux system detected')
     #     mp.set_start_method('spawn')
@@ -42,7 +42,8 @@ def run_denoise(de):
     run_dnoise_testing(de)  # function in denoise_functions.py
 
     de.output_info = pd.DataFrame.from_dict(de.output_info)
-    de.output_info.to_csv(str(de.MOTUoutfile + '_denoising_info.csv'), index=False)
+    if not test:
+        de.output_info.to_csv(str(de.MOTUoutfile + '_denoising_info.csv'), index=False)
 
     if (de.output_type == 'ratio') or (de.output_type == 'all'):
         mothers_ratio = de.output_info.mother_ratio.unique()[1:]
