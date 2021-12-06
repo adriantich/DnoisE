@@ -103,13 +103,18 @@ class MyTestCase(unittest.TestCase):
             de.data_initial = pd.read_json(doc_json, orient='table')
 
         create_de_for_test(de)
-        de.entropy = False
-        de.cores = 2
-        de.abund_col_names = []
-        run_denoise(de, test=True)
-        a = self.output_no_entropy != de.denoised_ratio_d
+        seq_length = []
+        for i in list(range(de.data_initial.shape[0])):
+            i_seq = de.data_initial.loc[i, de.seq]
+            seq_length.append(len(i_seq))
+
+        de.data_initial = de.data_initial.loc[(np.asarray(seq_length) == 313)]
+        de.index = list(range(de.data_initial.shape[0]))
+
+        a = mean_entropy(de.data_initial, de.seq, de.count)
+        b = a != (0.05514546661142029, 0.015393252672788314, 0.0061458562821177735)
         del de
-        self.assertEqual(a.any(axis=None), False)  # add assertion here
+        self.assertEqual(b, False)  # add assertion here
 
 
 if __name__ == '__main__':
