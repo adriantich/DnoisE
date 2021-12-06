@@ -68,7 +68,7 @@ The manual installation requires the following modules
    + [levenshtein](https://maxbachmann.github.io/Levenshtein/)
    + [tqdm](https://pypi.org/project/tqdm/)
 
- To make a stand-alone application (optional), pyinstaller creates an executable file (DnoisE) in a "./bin" directory as follows:
+ To make a binary of the program, nuitka creates an executable file (DnoisE.bin) in a "./src" directory as follows:
 
 ```console
 cd ./DnoisE/
@@ -80,7 +80,7 @@ pip3 install tqdm
 
 cd ./src
 
-python -m nuitka --enable-plugin=multiprocessing --follow-imports DnoisE.py
+python3 -m nuitka --enable-plugin=multiprocessing --follow-imports DnoisE.py
 ```
 #### __B. INSTALLATION FROM CONDA__
 #### __1. Install package__
@@ -91,10 +91,10 @@ conda install -c adriantich dnoise
 Different python versions (3.6, 3.7 and 3.8) are available at the [conda repository](https://anaconda.org/adriantich/dnoise/files)
 
 #### __2. Create an executable file (optional)__
-To create an executable file (in a "bin" directory) of the program run 
+To create a binary file of the program run 
 
 ```console
-pyinstaller DnoisE.py --onefile --distpath ../bin
+python3 -m nuitka --enable-plugin=multiprocessing --follow-imports DnoisE.py
 ```
 from the directory where the conda package has been installed (typically ~/anaconda3/pkgs/dnoise-<dnoise_version>/lib/<python_version>/site-packages/src).
 
@@ -111,14 +111,14 @@ DnoisE can be called from the executable created by *pyinstaller* or directly fr
 the python script. See example below:
 
 ```console
-> ./bin/DnoisE -h
+> ./src/DnoisE.bin -h
 > python3 ./src/DnoisE.py -h
 ```
 
 Parameters of DnoisE are described in help but some are explained in more detail below.
 
 ```console
-> ./bin/DnoisE -h
+> ./src/DnoisE -h
 
 *HELP*
 Displaying help
