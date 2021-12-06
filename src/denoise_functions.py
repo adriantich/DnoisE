@@ -77,6 +77,7 @@ class DnoisEFunctions:
     infofile = []
     merge_from_info = False
     unique_length = False
+    min_abund = 0
 
     def __init__(self):
         print("starting to denoise")
@@ -129,6 +130,8 @@ class DnoisEFunctions:
                       "\t\033[1mOther options:\033[0m\n"
                       "\t\t-a --alpha [number] alpha value, 5 by default\n"
                       "\t\t-c --cores [number] number of cores, 1 by default\n"
+                      "\t\t-d --min_abund [number] minimum abundance filtering "
+                      "applied at the end of analysis, 1 by default\n"
                       "\t\t-e --entropy [number,number,number] entropy values (or any user-settable "
                       "measure of variability) of the different codon positions [0.47,0.23,1.02] by default\n"
                       "\t\t-m --modal_length [number] when running DnoisE with entropy correction, "
@@ -221,6 +224,10 @@ class DnoisEFunctions:
                 print("Running with %s cores" % current_value)
                 self.cores = int(current_value)
                 arg_c = True
+            elif current_argument in ("-d", "--min_abund"):
+                print("After the analysis, all amplicons with less then %s reads will be removed" % current_value)
+                self.min_abund = int(current_value)
+                arg_d = True
             elif current_argument in ("-e", "--entropy"):
                 e1, e2, e3 = current_value.split(",")
                 print(str("E1: " + e1 + " \nE2: " + e2 + " \nE3: " + e3))
@@ -288,6 +295,9 @@ class DnoisEFunctions:
             self.alpha = 5
         if 'arg_c' not in locals():
             print("cores not given, 1 core by default")
+            self.cores = 1
+        if 'arg_c' not in locals():
+            print("min_abund not given, 0 reads by default")
             self.cores = 1
         if "arg_y" not in locals() and "arg_e" not in locals():  # no entropy correction
             self.entropy = False

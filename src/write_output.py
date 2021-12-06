@@ -18,6 +18,7 @@ def write_output(de):
         de.MOTUoutfile = str(de.MOTUoutfile + '_Adcorr')
 
     if (de.output_type == 'ratio') or (de.output_type == 'all'):
+        de.denoised_ratio = de.denoised_ratio[list(de.denoised_ratio.loc[:, de.count] >= de.min_abund)]
 
         if de.output_file_type == 'fasta':
             de.denoised_ratio = de.denoised_ratio.to_dict(orient='index')
@@ -32,6 +33,7 @@ def write_output(de):
         del de.denoised_ratio
 
     if (de.output_type == 'd') or (de.output_type == 'all'):
+        de.denoised_d = de.denoised_d[list(de.denoised_d.loc[:, de.count] >= de.min_abund)]
 
         if de.output_file_type == 'fasta':
             de.denoised_d = de.denoised_d.to_dict(orient='index')
@@ -46,6 +48,7 @@ def write_output(de):
         del de.denoised_d
 
     if (de.output_type == 'ratio_d') or (de.output_type == 'all'):
+        de.denoised_ratio_d = de.denoised_ratio_d[list(de.denoised_ratio_d.loc[:, de.count] >= de.min_abund)]
 
         if de.output_file_type == 'fasta':
             de.denoised_ratio_d = de.denoised_ratio_d.to_dict(orient='index')
