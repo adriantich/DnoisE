@@ -13,10 +13,10 @@ requirements:
   build:
     - python
     - cython
-    - pyinstaller
+    - nuitka
   run:
     - python
-    - python-Levenshtein
+    - levenshtein
     - pandas
     - numpy
     - tqdm

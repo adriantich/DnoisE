@@ -9,6 +9,6 @@ setup(
     author_email="adriantich@gmail.com",
     url="https://github.com/adriantich/DnoisE",
     packages=["src"],
-    install_requires=["pandas", "pyinstaller", "levenshtein", "tqdm"]
+    install_requires=["pandas", "nuitka", "levenshtein", "tqdm"]
 )
 

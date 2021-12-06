@@ -4,4 +4,5 @@ python3 setup.py install
 
 cd ./src
 
-pyinstaller DnoisE.py --onefile --distpath ../bin
+python -m nuitka --enable-plugin=multiprocessing --follow-imports DnoisE.py
+

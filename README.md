@@ -64,8 +64,8 @@ bash install.sh
 The manual installation requires the following modules
 
    + [Pandas](https://pandas.pydata.org/)
-   + [pyinstaller](https://www.pyinstaller.org/)
-   + [python-Levenshtein](https://pypi.org/project/python-Levenshtein/)
+   + [nuitka](https://nuitka.net/)
+   + [levenshtein](https://maxbachmann.github.io/Levenshtein/)
    + [tqdm](https://pypi.org/project/tqdm/)
 
  To make a stand-alone application (optional), pyinstaller creates an executable file (DnoisE) in a "./bin" directory as follows:
@@ -74,13 +74,13 @@ The manual installation requires the following modules
 cd ./DnoisE/
 
 pip3 install pandas
-pip3 install pyinstaller
-pip3 install python-Levenshtein
+pip3 install nuitka
+pip3 install levenshtein
 pip3 install tqdm
 
 cd ./src
 
-pyinstaller DnoisE.py --onefile --distpath ../bin
+python -m nuitka --enable-plugin=multiprocessing --follow-imports DnoisE.py
 ```
 #### __B. INSTALLATION FROM CONDA__
 #### __1. Install package__
