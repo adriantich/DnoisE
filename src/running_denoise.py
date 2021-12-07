@@ -32,7 +32,7 @@ def run_denoise(de, test=False):
 
     de.output_info = [{'daughter': de.data_initial.loc[0, 'id'], 'mother_d': None, 'd': None,
                        'mother_ratio': None, 'ratio': None,
-                       'mother_ratio_d': None, 'xavier_criteria': None}]
+                       'mother_ratio_d': None, 'ratio_d': None}]
 
     de.good_seq = [True]
     de.abund_col_names.insert(0, de.count)
@@ -260,7 +260,7 @@ def run_denoise_entropy(de):
 
         desub.output_info = [{'daughter': desub.data_initial.loc[0, 'id'], 'mother_d': None, 'd': None,
                               'mother_ratio': None, 'ratio': None,
-                              'mother_ratio_d': None, 'xavier_criteria': None,
+                              'mother_ratio_d': None, 'ratio_d': None,
                               'difpos1': None, 'difpos2': None, 'difpos3': None,
                               'dtotal': None, 'betacorr': None}]
         desub.good_seq = [True]

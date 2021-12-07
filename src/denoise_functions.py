@@ -83,13 +83,13 @@ class DnoisEFunctions:
         print("starting to denoise")
 
     def read_parameters(self, argument_list):
-        short_options = "hP:f:F:j:c:s:z:n:a:q:p:e:yx:m:u"
-        long_options = ["help", "fasta_input=", "csv_input=", "fastq_input=",
-                        "fasta_output=", "csv_output=", "part=", "joining_criteria=",
-                        "cores=", "start_sample_cols=",
-                        "end_sample_cols=", "count_name=", "alpha=", "sequence=", "separation=", "entropy=",
-                        "entropy_correction", "first_nt_codon_position=", "modal_length=", "joining_file=",
-                        "unique_length"]
+        short_options = "hn:p:q:s:z:j:a:c:d:e:m:ux:y"
+        long_options = ["help", "csv_input=", "fasta_input=", "fastq_input=",
+                        "joining_criteria=", "count_name=", "sep=", "sequence=",
+                        "start_sample_cols=", "end_sample_cols=",
+                        "csv_output=", "fasta_output=", "part=", "joining_file=",
+                        "alpha=", "cores=", "min_abund=", "entropy=", "modal_length=",
+                        "unique_length", "first_nt_codon_position=", "entropy_correction"]
         try:
             arguments, values = getopt.getopt(argument_list, short_options, long_options)
         except getopt.error as err:
@@ -296,9 +296,9 @@ class DnoisEFunctions:
         if 'arg_c' not in locals():
             print("cores not given, 1 core by default")
             self.cores = 1
-        if 'arg_c' not in locals():
+        if 'arg_d' not in locals():
             print("min_abund not given, 0 reads by default")
-            self.cores = 1
+            self.min_abund = 0
         if "arg_y" not in locals() and "arg_e" not in locals():  # no entropy correction
             self.entropy = False
             if not self.merge_from_info:
@@ -339,7 +339,7 @@ class DnoisEFunctions:
         pDabund = self.data_initial.loc[pos, self.count]
         position = len(self.run_list)
 
-        Ml = pd.DataFrame(columns=['pM', 'pMpos', 'pD', 'ratio', 'd', 'xavier_criteria'])
+        Ml = pd.DataFrame(columns=['pM', 'pMpos', 'pD', 'ratio', 'd', 'ratio_d'])
         # compare with each possible Mother sequence (pM).
         for a in range(position):
             # if the pM is a daughter sequence, move to the next pM
@@ -378,9 +378,9 @@ class DnoisEFunctions:
             if b_ratio <= betacorr:
                 # TRUE:
                 # add to Ml:
-                xavier_criteria = b_ratio / betacorr
+                ratio_d = b_ratio / betacorr
                 df1 = [
-                    {'pM': pM, 'pMpos': pMpos, 'pD': pD, 'ratio': b_ratio, 'd': d, 'xavier_criteria': xavier_criteria}]
+                    {'pM': pM, 'pMpos': pMpos, 'pD': pD, 'ratio': b_ratio, 'd': d, 'ratio_d': ratio_d}]
                 Ml = Ml.append(df1)
                 # identification of the pM
                 # ratio
@@ -395,7 +395,7 @@ class DnoisEFunctions:
         if Ml.empty:  # means that it is not a daughter
             info = {'daughter': pD, 'mother_d': None, 'd': None,
                     'mother_ratio': None, 'ratio': None,
-                    'mother_ratio_d': None, 'xavier_criteria': None}
+                    'mother_ratio_d': None, 'ratio_d': None}
             run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': False}
             return [True], [info], [pD], [pD], [pD], [run_list]
         else:  # it is a daughter
@@ -405,12 +405,12 @@ class DnoisEFunctions:
             pM_ratio = Ml.loc[(Ml['ratio'] == min(Ml.loc[:, 'ratio'])), 'pM'][0]
             if type(pM_ratio) is not str:
                 pM_ratio = pM_ratio.values[-1]
-            pM_ratio_d = Ml.loc[(Ml['xavier_criteria'] == min(Ml.loc[:, 'xavier_criteria'])), 'pM'][0]
+            pM_ratio_d = Ml.loc[(Ml['ratio_d'] == min(Ml.loc[:, 'ratio_d'])), 'pM'][0]
             if type(pM_ratio_d) is not str:
                 pM_ratio_d = pM_ratio_d.values[-1]
             info = {'daughter': pD, 'mother_d': pM_d, 'd': min(Ml.loc[:, 'd']),
                     'mother_ratio': pM_ratio, 'ratio': min(Ml.loc[:, 'ratio']),
-                    'mother_ratio_d': pM_ratio_d, 'xavier_criteria': min(Ml.loc[:, 'xavier_criteria'])}
+                    'mother_ratio_d': pM_ratio_d, 'ratio_d': min(Ml.loc[:, 'ratio_d'])}
             run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': True}
             return [False], [info], [pM_d], [pM_ratio], [pM_ratio_d], [run_list]
 
@@ -441,7 +441,7 @@ class DnoisEFunctions:
         pDabund = self.data_initial.loc[pos, self.count]
         position = len(self.run_list)
         # create void list for pM info ---> Motherslist (Ml)
-        Ml = pd.DataFrame(columns=['pM', 'pMpos', 'pD', 'ratio', 'd', 'xavier_criteria'])
+        Ml = pd.DataFrame(columns=['pM', 'pMpos', 'pD', 'ratio', 'd', 'ratio_d'])
         # compare with each possible Mother (pM).
         for a in range(position):
             # if the pM is running wait
@@ -481,9 +481,9 @@ class DnoisEFunctions:
             if b_ratio <= betacorr:
                 # TRUE:
                 # add to Ml:
-                xavier_criteria = b_ratio / betacorr
+                ratio_d = b_ratio / betacorr
                 df1 = [
-                    {'pM': pM, 'pMpos': pMpos, 'pD': pD, 'ratio': b_ratio, 'd': d, 'xavier_criteria': xavier_criteria}]
+                    {'pM': pM, 'pMpos': pMpos, 'pD': pD, 'ratio': b_ratio, 'd': d, 'ratio_d': ratio_d}]
                 Ml = Ml.append(df1)
                 # identification of the pM
                 # ratio
@@ -497,7 +497,7 @@ class DnoisEFunctions:
         if Ml.empty:  # means that it is not a daughter
             info = {'daughter': pD, 'mother_d': None, 'd': None,
                     'mother_ratio': None, 'ratio': None,
-                    'mother_ratio_d': None, 'xavier_criteria': None}
+                    'mother_ratio_d': None, 'ratio_d': None}
             run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': False}
             return True, info, pD, pD, pD, run_list
             # exist
@@ -508,12 +508,12 @@ class DnoisEFunctions:
             pM_ratio = Ml.loc[(Ml['ratio'] == min(Ml.loc[:, 'ratio'])), 'pM'][0]
             if type(pM_ratio) is not str:
                 pM_ratio = pM_ratio.values[-1]
-            pM_ratio_d = Ml.loc[(Ml['xavier_criteria'] == min(Ml.loc[:, 'xavier_criteria'])), 'pM'][0]
+            pM_ratio_d = Ml.loc[(Ml['ratio_d'] == min(Ml.loc[:, 'ratio_d'])), 'pM'][0]
             if type(pM_ratio_d) is not str:
                 pM_ratio_d = pM_ratio_d.values[-1]
             info = {'daughter': pD, 'mother_d': pM_d, 'd': min(Ml.loc[:, 'd']),
                     'mother_ratio': pM_ratio, 'ratio': min(Ml.loc[:, 'ratio']),
-                    'mother_ratio_d': pM_ratio_d, 'xavier_criteria': min(Ml.loc[:, 'xavier_criteria'])}
+                    'mother_ratio_d': pM_ratio_d, 'ratio_d': min(Ml.loc[:, 'ratio_d'])}
             run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': True}
             return False, info, pM_d, pM_ratio, pM_ratio_d, run_list
 
@@ -523,7 +523,7 @@ class DnoisEFunctions:
         pDabund = self.data_initial.loc[pos, self.count]
         position = len(self.run_list)
             # create void list for pM info ---> Motherslist (Ml)
-        Ml = pd.DataFrame(columns=['pM', 'pMpos', 'pD', 'ratio', 'd', 'xavier_criteria'])
+        Ml = pd.DataFrame(columns=['pM', 'pMpos', 'pD', 'ratio', 'd', 'ratio_d'])
         # compare with each possible Mother (pM).
         for a in range(position):
             # if the pM is running wait
@@ -563,9 +563,9 @@ class DnoisEFunctions:
             if b_ratio <= betacorr:
                 # TRUE:
                 # add to Ml:
-                xavier_criteria = b_ratio / betacorr
+                ratio_d = b_ratio / betacorr
                 df1 = [
-                    {'pM': pM, 'pMpos': pMpos, 'pD': pD, 'ratio': b_ratio, 'd': d, 'xavier_criteria': xavier_criteria}]
+                    {'pM': pM, 'pMpos': pMpos, 'pD': pD, 'ratio': b_ratio, 'd': d, 'ratio_d': ratio_d}]
                 Ml = Ml.append(df1)
                 # identification of the pM
                 # ratio
@@ -581,7 +581,7 @@ class DnoisEFunctions:
         if Ml.empty:  # means that it is not a daughter
             info = {'daughter': pD, 'mother_d': None, 'd': None,
                     'mother_ratio': None, 'ratio': None,
-                    'mother_ratio_d': None, 'xavier_criteria': None}
+                    'mother_ratio_d': None, 'ratio_d': None}
             run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': False}
             return [True], [info], [pD], [run_list]
         else:  # it is a daughter
@@ -591,12 +591,12 @@ class DnoisEFunctions:
             pM_ratio = Ml.loc[(Ml['ratio'] == min(Ml.loc[:, 'ratio'])), 'pM'][0]
             if type(pM_ratio) is not str:
                 pM_ratio = pM_ratio.values[-1]
-            pM_ratio_d = Ml.loc[(Ml['xavier_criteria'] == min(Ml.loc[:, 'xavier_criteria'])), 'pM'][0]
+            pM_ratio_d = Ml.loc[(Ml['ratio_d'] == min(Ml.loc[:, 'ratio_d'])), 'pM'][0]
             if type(pM_ratio_d) is not str:
                 pM_ratio_d = pM_ratio_d.values[-1]
             info = {'daughter': pD, 'mother_d': pM_d, 'd': min(Ml.loc[:, 'd']),
                     'mother_ratio': pM_ratio, 'ratio': min(Ml.loc[:, 'ratio']),
-                    'mother_ratio_d': pM_ratio_d, 'xavier_criteria': min(Ml.loc[:, 'xavier_criteria'])}
+                    'mother_ratio_d': pM_ratio_d, 'ratio_d': min(Ml.loc[:, 'ratio_d'])}
             run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': True}
             return [False], [info], [pM_ratio], [run_list]
 
@@ -628,7 +628,7 @@ class DnoisEFunctions:
         pDabund = self.data_initial.loc[pos, self.count]
         position = len(self.run_list)
         # create void list for pM info ---> Motherslist (Ml)
-        Ml = pd.DataFrame(columns=['pM', 'pMpos', 'pD', 'ratio', 'd', 'xavier_criteria'])
+        Ml = pd.DataFrame(columns=['pM', 'pMpos', 'pD', 'ratio', 'd', 'ratio_d'])
         # compare with each possible Mother (pM).
         for a in range(position):
             # if the pM is running wait
@@ -668,9 +668,9 @@ class DnoisEFunctions:
             if b_ratio <= betacorr:
                 # TRUE:
                 # add to Ml:
-                xavier_criteria = b_ratio / betacorr
+                ratio_d = b_ratio / betacorr
                 df1 = [
-                    {'pM': pM, 'pMpos': pMpos, 'pD': pD, 'ratio': b_ratio, 'd': d, 'xavier_criteria': xavier_criteria}]
+                    {'pM': pM, 'pMpos': pMpos, 'pD': pD, 'ratio': b_ratio, 'd': d, 'ratio_d': ratio_d}]
                 Ml = Ml.append(df1)
                 # identification of the pM
                 # ratio
@@ -685,7 +685,7 @@ class DnoisEFunctions:
         if Ml.empty:  # means that it is not a daughter
             info = {'daughter': pD, 'mother_d': None, 'd': None,
                     'mother_ratio': None, 'ratio': None,
-                    'mother_ratio_d': None, 'xavier_criteria': None}
+                    'mother_ratio_d': None, 'ratio_d': None}
             run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': False}
             return True, info, pD, run_list
             # exist
@@ -696,12 +696,12 @@ class DnoisEFunctions:
             pM_ratio = Ml.loc[(Ml['ratio'] == min(Ml.loc[:, 'ratio'])), 'pM'][0]
             if type(pM_ratio) is not str:
                 pM_ratio = pM_ratio.values[-1]
-            pM_ratio_d = Ml.loc[(Ml['xavier_criteria'] == min(Ml.loc[:, 'xavier_criteria'])), 'pM'][0]
+            pM_ratio_d = Ml.loc[(Ml['ratio_d'] == min(Ml.loc[:, 'ratio_d'])), 'pM'][0]
             if type(pM_ratio_d) is not str:
                 pM_ratio_d = pM_ratio_d.values[-1]
             info = {'daughter': pD, 'mother_d': pM_d, 'd': min(Ml.loc[:, 'd']),
                     'mother_ratio': pM_ratio, 'ratio': min(Ml.loc[:, 'ratio']),
-                    'mother_ratio_d': pM_ratio_d, 'xavier_criteria': min(Ml.loc[:, 'xavier_criteria'])}
+                    'mother_ratio_d': pM_ratio_d, 'ratio_d': min(Ml.loc[:, 'ratio_d'])}
             run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': True}
             return False, info, pM_ratio, run_list
 
@@ -711,7 +711,7 @@ class DnoisEFunctions:
         pDabund = self.data_initial.loc[pos, self.count]
         position = len(self.run_list)
         # create void list for pM info ---> Motherslist (Ml)
-        Ml = pd.DataFrame(columns=['pM', 'pMpos', 'pD', 'ratio', 'd', 'xavier_criteria',
+        Ml = pd.DataFrame(columns=['pM', 'pMpos', 'pD', 'ratio', 'd', 'ratio_d',
                                    'difpos1', 'difpos2', 'difpos3', 'dtotal', 'betacorr'])
         # compare with each possible Mother (pM).
         for a in range(position):
@@ -758,9 +758,9 @@ class DnoisEFunctions:
             if b_ratio <= betacorr:
                 # TRUE:
                 # add to Ml:
-                xavier_criteria = b_ratio / betacorr
+                ratio_d = b_ratio / betacorr
                 df1 = [
-                    {'pM': pM, 'pMpos': pMpos, 'pD': pD, 'ratio': b_ratio, 'd': dcorr, 'xavier_criteria': xavier_criteria,
+                    {'pM': pM, 'pMpos': pMpos, 'pD': pD, 'ratio': b_ratio, 'd': dcorr, 'ratio_d': ratio_d,
                      'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3,
                      'dtotal': d, 'betacorr': betacorr}]
                 Ml = Ml.append(df1)
@@ -777,7 +777,7 @@ class DnoisEFunctions:
         if Ml.empty:  # means that it is not a daughter
             info = {'daughter': pD, 'mother_d': None, 'd': None,
                     'mother_ratio': None, 'ratio': None,
-                    'mother_ratio_d': None, 'xavier_criteria': None,
+                    'mother_ratio_d': None, 'ratio_d': None,
                     'difpos1': None, 'difpos2': None, 'difpos3': None,
                     'dtotal': None, 'betacorr': None}
             run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': False}
@@ -789,15 +789,15 @@ class DnoisEFunctions:
             pM_ratio = Ml.loc[(Ml['ratio'] == min(Ml.loc[:, 'ratio'])), 'pM'][0]
             if type(pM_ratio) is not str:
                 pM_ratio = pM_ratio.values[-1]
-            pM_ratio_d = Ml.loc[(Ml['xavier_criteria'] == min(Ml.loc[:, 'xavier_criteria'])), 'pM'][0]
-            difpos1 = Ml.loc[(Ml['xavier_criteria'] == min(Ml.loc[:, 'xavier_criteria'])), 'difpos1'][0]
-            difpos2 = Ml.loc[(Ml['xavier_criteria'] == min(Ml.loc[:, 'xavier_criteria'])), 'difpos2'][0]
-            difpos3 = Ml.loc[(Ml['xavier_criteria'] == min(Ml.loc[:, 'xavier_criteria'])), 'difpos3'][0]
+            pM_ratio_d = Ml.loc[(Ml['ratio_d'] == min(Ml.loc[:, 'ratio_d'])), 'pM'][0]
+            difpos1 = Ml.loc[(Ml['ratio_d'] == min(Ml.loc[:, 'ratio_d'])), 'difpos1'][0]
+            difpos2 = Ml.loc[(Ml['ratio_d'] == min(Ml.loc[:, 'ratio_d'])), 'difpos2'][0]
+            difpos3 = Ml.loc[(Ml['ratio_d'] == min(Ml.loc[:, 'ratio_d'])), 'difpos3'][0]
             if type(pM_ratio_d) is not str:
                 pM_ratio_d = pM_ratio_d.values[-1]
             info = {'daughter': pD, 'mother_d': pM_d, 'd': min(Ml.loc[:, 'd']),
                     'mother_ratio': pM_ratio, 'ratio': min(Ml.loc[:, 'ratio']),
-                    'mother_ratio_d': pM_ratio_d, 'xavier_criteria': min(Ml.loc[:, 'xavier_criteria']),
+                    'mother_ratio_d': pM_ratio_d, 'ratio_d': min(Ml.loc[:, 'ratio_d']),
                     'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3,
                     'dtotal': d, 'betacorr': betacorr}
             run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': True}
@@ -830,7 +830,7 @@ class DnoisEFunctions:
         pDabund = self.data_initial.loc[pos, self.count]
         position = len(self.run_list)
         # create void list for pM info ---> Motherslist (Ml)
-        Ml = pd.DataFrame(columns=['pM', 'pMpos', 'pD', 'ratio', 'd', 'xavier_criteria',
+        Ml = pd.DataFrame(columns=['pM', 'pMpos', 'pD', 'ratio', 'd', 'ratio_d',
                                    'difpos1', 'difpos2', 'difpos3', 'dtotal', 'betacorr'])
         # compare with each possible Mother (pM).
         for a in range(position):
@@ -877,9 +877,9 @@ class DnoisEFunctions:
             if b_ratio <= betacorr:
                 # TRUE:
                 # add to Ml:
-                xavier_criteria = b_ratio / betacorr
+                ratio_d = b_ratio / betacorr
                 df1 = [
-                    {'pM': pM, 'pMpos': pMpos, 'pD': pD, 'ratio': b_ratio, 'd': dcorr, 'xavier_criteria': xavier_criteria,
+                    {'pM': pM, 'pMpos': pMpos, 'pD': pD, 'ratio': b_ratio, 'd': dcorr, 'ratio_d': ratio_d,
                      'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3,
                      'dtotal': d, 'betacorr': betacorr}]
                 Ml = Ml.append(df1)
@@ -895,7 +895,7 @@ class DnoisEFunctions:
         if Ml.empty:  # means that it is not a daughter
             info = {'daughter': pD, 'mother_d': None, 'd': None,
                     'mother_ratio': None, 'ratio': None,
-                    'mother_ratio_d': None, 'xavier_criteria': None,
+                    'mother_ratio_d': None, 'ratio_d': None,
                     'difpos1': None, 'difpos2': None, 'difpos3': None,
                     'dtotal': None, 'betacorr': None}
             run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': False}
@@ -908,15 +908,15 @@ class DnoisEFunctions:
             pM_ratio = Ml.loc[(Ml['ratio'] == min(Ml.loc[:, 'ratio'])), 'pM'][0]
             if type(pM_ratio) is not str:
                 pM_ratio = pM_ratio.values[-1]
-            pM_ratio_d = Ml.loc[(Ml['xavier_criteria'] == min(Ml.loc[:, 'xavier_criteria'])), 'pM'][0]
-            difpos1 = Ml.loc[(Ml['xavier_criteria'] == min(Ml.loc[:, 'xavier_criteria'])), 'difpos1'][0]
-            difpos2 = Ml.loc[(Ml['xavier_criteria'] == min(Ml.loc[:, 'xavier_criteria'])), 'difpos2'][0]
-            difpos3 = Ml.loc[(Ml['xavier_criteria'] == min(Ml.loc[:, 'xavier_criteria'])), 'difpos3'][0]
+            pM_ratio_d = Ml.loc[(Ml['ratio_d'] == min(Ml.loc[:, 'ratio_d'])), 'pM'][0]
+            difpos1 = Ml.loc[(Ml['ratio_d'] == min(Ml.loc[:, 'ratio_d'])), 'difpos1'][0]
+            difpos2 = Ml.loc[(Ml['ratio_d'] == min(Ml.loc[:, 'ratio_d'])), 'difpos2'][0]
+            difpos3 = Ml.loc[(Ml['ratio_d'] == min(Ml.loc[:, 'ratio_d'])), 'difpos3'][0]
             if type(pM_ratio_d) is not str:
                 pM_ratio_d = pM_ratio_d.values[-1]
             info = {'daughter': pD, 'mother_d': pM_d, 'd': min(Ml.loc[:, 'd']),
                     'mother_ratio': pM_ratio, 'ratio': min(Ml.loc[:, 'ratio']),
-                    'mother_ratio_d': pM_ratio_d, 'xavier_criteria': min(Ml.loc[:, 'xavier_criteria']),
+                    'mother_ratio_d': pM_ratio_d, 'ratio_d': min(Ml.loc[:, 'ratio_d']),
                     'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3,
                     'dtotal': d, 'betacorr': betacorr}
             run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': True}
@@ -928,7 +928,7 @@ class DnoisEFunctions:
         pDabund = self.data_initial.loc[pos, self.count]
         position = len(self.run_list)
         # create void list for pM info ---> Motherslist (Ml)
-        Ml = pd.DataFrame(columns=['pM', 'pMpos', 'pD', 'ratio', 'd', 'xavier_criteria',
+        Ml = pd.DataFrame(columns=['pM', 'pMpos', 'pD', 'ratio', 'd', 'ratio_d',
                                    'difpos1', 'difpos2', 'difpos3', 'dtotal', 'betacorr'])
         # compare with each bigger seq possible Mother (pM).
         for a in range(position):
@@ -975,9 +975,9 @@ class DnoisEFunctions:
             if b_ratio <= betacorr:
                 # TRUE:
                 # add to Ml:
-                xavier_criteria = b_ratio / betacorr
+                ratio_d = b_ratio / betacorr
                 df1 = [
-                    {'pM': pM, 'pMpos': pMpos, 'pD': pD, 'ratio': b_ratio, 'd': dcorr, 'xavier_criteria': xavier_criteria,
+                    {'pM': pM, 'pMpos': pMpos, 'pD': pD, 'ratio': b_ratio, 'd': dcorr, 'ratio_d': ratio_d,
                      'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3,
                      'dtotal': d, 'betacorr': betacorr}]
                 Ml = Ml.append(df1)
@@ -995,7 +995,7 @@ class DnoisEFunctions:
         if Ml.empty:  # means that is not a daughter
             info = {'daughter': pD, 'mother_d': None, 'd': None,
                     'mother_ratio': None, 'ratio': None,
-                    'mother_ratio_d': None, 'xavier_criteria': None,
+                    'mother_ratio_d': None, 'ratio_d': None,
                     'difpos1': None, 'difpos2': None, 'difpos3': None,
                     'dtotal': None, 'betacorr': None}
             run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': False}
@@ -1007,15 +1007,15 @@ class DnoisEFunctions:
             pM_ratio = Ml.loc[(Ml['ratio'] == min(Ml.loc[:, 'ratio'])), 'pM'][0]
             if type(pM_ratio) is not str:
                 pM_ratio = pM_ratio.values[-1]
-            pM_ratio_d = Ml.loc[(Ml['xavier_criteria'] == min(Ml.loc[:, 'xavier_criteria'])), 'pM'][0]
-            difpos1 = Ml.loc[(Ml['xavier_criteria'] == min(Ml.loc[:, 'xavier_criteria'])), 'difpos1'][0]
-            difpos2 = Ml.loc[(Ml['xavier_criteria'] == min(Ml.loc[:, 'xavier_criteria'])), 'difpos2'][0]
-            difpos3 = Ml.loc[(Ml['xavier_criteria'] == min(Ml.loc[:, 'xavier_criteria'])), 'difpos3'][0]
+            pM_ratio_d = Ml.loc[(Ml['ratio_d'] == min(Ml.loc[:, 'ratio_d'])), 'pM'][0]
+            difpos1 = Ml.loc[(Ml['ratio_d'] == min(Ml.loc[:, 'ratio_d'])), 'difpos1'][0]
+            difpos2 = Ml.loc[(Ml['ratio_d'] == min(Ml.loc[:, 'ratio_d'])), 'difpos2'][0]
+            difpos3 = Ml.loc[(Ml['ratio_d'] == min(Ml.loc[:, 'ratio_d'])), 'difpos3'][0]
             if type(pM_ratio_d) is not str:
                 pM_ratio_d = pM_ratio_d.values[-1]
             info = {'daughter': pD, 'mother_d': pM_d, 'd': min(Ml.loc[:, 'd']),
                     'mother_ratio': pM_ratio, 'ratio': min(Ml.loc[:, 'ratio']),
-                    'mother_ratio_d': pM_ratio_d, 'xavier_criteria': min(Ml.loc[:, 'xavier_criteria']),
+                    'mother_ratio_d': pM_ratio_d, 'ratio_d': min(Ml.loc[:, 'ratio_d']),
                     'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3,
                     'dtotal': d, 'betacorr': betacorr}
             run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': True}
@@ -1048,7 +1048,7 @@ class DnoisEFunctions:
         pDabund = self.data_initial.loc[pos, self.count]
         position = len(self.run_list)
         # create void list for pM info ---> Motherslist (Ml)
-        Ml = pd.DataFrame(columns=['pM', 'pMpos', 'pD', 'ratio', 'd', 'xavier_criteria',
+        Ml = pd.DataFrame(columns=['pM', 'pMpos', 'pD', 'ratio', 'd', 'ratio_d',
                                    'difpos1', 'difpos2', 'difpos3', 'dtotal', 'betacorr'])
         # compare with each possible Mother (pM).
         for a in range(position):
@@ -1095,9 +1095,9 @@ class DnoisEFunctions:
             if b_ratio <= betacorr:
                 # TRUE:
                 # add to Ml:
-                xavier_criteria = b_ratio / betacorr
+                ratio_d = b_ratio / betacorr
                 df1 = [
-                    {'pM': pM, 'pMpos': pMpos, 'pD': pD, 'ratio': b_ratio, 'd': dcorr, 'xavier_criteria': xavier_criteria,
+                    {'pM': pM, 'pMpos': pMpos, 'pD': pD, 'ratio': b_ratio, 'd': dcorr, 'ratio_d': ratio_d,
                      'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3,
                      'dtotal': d, 'betacorr': betacorr}]
                 Ml = Ml.append(df1)
@@ -1114,7 +1114,7 @@ class DnoisEFunctions:
         if Ml.empty:  # means that it is not a daughter
             info = {'daughter': pD, 'mother_d': None, 'd': None,
                     'mother_ratio': None, 'ratio': None,
-                    'mother_ratio_d': None, 'xavier_criteria': None,
+                    'mother_ratio_d': None, 'ratio_d': None,
                     'difpos1': None, 'difpos2': None, 'difpos3': None,
                     'dtotal': None, 'betacorr': None}
             run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': False}
@@ -1127,15 +1127,15 @@ class DnoisEFunctions:
             pM_ratio = Ml.loc[(Ml['ratio'] == min(Ml.loc[:, 'ratio'])), 'pM'][0]
             if type(pM_ratio) is not str:
                 pM_ratio = pM_ratio.values[-1]
-            pM_ratio_d = Ml.loc[(Ml['xavier_criteria'] == min(Ml.loc[:, 'xavier_criteria'])), 'pM'][0]
-            difpos1 = Ml.loc[(Ml['xavier_criteria'] == min(Ml.loc[:, 'xavier_criteria'])), 'difpos1'][0]
-            difpos2 = Ml.loc[(Ml['xavier_criteria'] == min(Ml.loc[:, 'xavier_criteria'])), 'difpos2'][0]
-            difpos3 = Ml.loc[(Ml['xavier_criteria'] == min(Ml.loc[:, 'xavier_criteria'])), 'difpos3'][0]
+            pM_ratio_d = Ml.loc[(Ml['ratio_d'] == min(Ml.loc[:, 'ratio_d'])), 'pM'][0]
+            difpos1 = Ml.loc[(Ml['ratio_d'] == min(Ml.loc[:, 'ratio_d'])), 'difpos1'][0]
+            difpos2 = Ml.loc[(Ml['ratio_d'] == min(Ml.loc[:, 'ratio_d'])), 'difpos2'][0]
+            difpos3 = Ml.loc[(Ml['ratio_d'] == min(Ml.loc[:, 'ratio_d'])), 'difpos3'][0]
             if type(pM_ratio_d) is not str:
                 pM_ratio_d = pM_ratio_d.values[-1]
             info = {'daughter': pD, 'mother_d': pM_d, 'd': min(Ml.loc[:, 'd']),
                     'mother_ratio': pM_ratio, 'ratio': min(Ml.loc[:, 'ratio']),
-                    'mother_ratio_d': pM_ratio_d, 'xavier_criteria': min(Ml.loc[:, 'xavier_criteria']),
+                    'mother_ratio_d': pM_ratio_d, 'ratio_d': min(Ml.loc[:, 'ratio_d']),
                     'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3,
                     'dtotal': d, 'betacorr': betacorr}
             run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': True}
