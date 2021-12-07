@@ -133,7 +133,8 @@ class DnoisEFunctions:
                       "\t\t-d --min_abund [number] minimum abundance filtering "
                       "applied at the end of analysis, 1 by default\n"
                       "\t\t-e --entropy [number,number,number] entropy values (or any user-settable "
-                      "measure of variability) of the different codon positions [0.47,0.23,1.02] by default\n"
+                      "measure of variability) of the different codon positions. If -y is enabled, default entropy "
+                      "values are computed from data if no values are given\n"
                       "\t\t-m --modal_length [number] when running DnoisE with entropy correction, "
                       "sequence length expected can be set, if not, modal_length is used and only sequences "
                       "with modal_length + or - 3*n are accepted\n"
@@ -143,7 +144,7 @@ class DnoisEFunctions:
                       "sequences amplified with Leray-XT primers, default value is 3 (i.e., the first nucleotide "
                       "in the sequences is a third codon position).\n"
                       "\t\t-y --entropy_correction a distance correction "
-                      "based on entropy is performed (see ENTROPY CORRECTION below). If set to F, "
+                      "based on entropy is performed (see https://github.com/adriantich/DnoisE). If not enabled "
                       "no correction for entropy is performed (corresponding to the standard Unoise formulation)\n")
                 sys.exit()
             # input args

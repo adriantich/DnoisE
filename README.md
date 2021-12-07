@@ -33,6 +33,16 @@ Unoise formulation); (2) the “mother” with which it has the lowest d (distan
 the skew abundance ratio divided by beta(d) is the lowest (ratio_distance criterion). These criteria are short-named r, 
 d, and r_d criteria.
 
+### __WHAT'S NEW?__
+#### __In version 1.0.2__
+- In the later version the entropy correction was disabled due to a problem when reading the parameters.
+- Now abundance filtering is possible using the *-d* parameter.
+- We have changed the Levenshtein module in order to make the installation easy but no difference in results have been found.
+- Now the binary is produced by the nuitka software which takes more time but retrieves less errors.
+- We have modified the info.csv output file to retrieve more information when running with entropy correction.
+- If the User wants to change the correction formula, this can be done in an easiest way.
+- The Entropy computation now is easier to use.
+
 ### __INSTALLING DnoisE__
 
 DnoisE depends on the following software:
@@ -122,36 +132,38 @@ Parameters of DnoisE are described in help but some are explained in more detail
 
 *HELP*
 Displaying help
-		-h --help display help
-	Input file options:
-		--csv_input [path] input file path in csv format
-		--fasta_input [path] input file path in fasta format
-		--fastq_input [path] input file path in fastq format
-		--joining_file [path] file path of an info output from DnoisE. This option allows to use the information of previous runs of DnoisE to return different joining criteriaoutputs without running all the program again
-		-n --count_name [size/reads/count...] count name column 'size' by default
-		-p --sep [1/2/3] separator in case of csv input file
-				1='	' (tab)
-				2=','
-				3=';'
-		-q --sequence [sequence/seq...] sequence column name, 'sequence' by default
-		-s --start_sample_cols [number] first sample column (1 == 1st col) if not given, just one column with total read counts expected (see README.md)
-		-z --end_sample_cols [number] last sample column (n == nst col) if not given, just one column with total read counts expected (see README.md)
-	Output file options:
-		--csv_output [path] common path for csv format
-		--fasta_output [path] common path for fasta format
-		-j --joining_criteria [1/2/3]
-				1-> will join by the lesser [abundance ratio / beta(d)] (default)
-				2-> will join by the lesser abundance ratio (r criterion)
-				3-> will join by the lesser distance (d) value (d criterion)
-				4-> will provide all joining criteria in three different outputs (all)
-	Other options:
-		-a --alpha [number] alpha value, 5 by default
-		-c --cores [number] number of cores, 1 by default
-		-e --entropy [number,number,number] entropy values (or any user-settable measure of variability) of the different codon positions [0.47,0.23,1.02] by default
-		-m --modal_length [number] when running DnoisE with entropy correction, sequence length expected can be set, if not, modal_length is used and only sequences with modal_length + or - 3*n are accepted
-		-u --unique_length only modal length is accepted as sequence length when running with entropy correction
-		-x --first_nt_codon_position [number] as DnoisE has been developed for COI sequences amplified with Leray-XT primers, default value is 3 (i.e., the first nucleotide in the sequences is a third codon position).
-		-y --entropy_correction a distance correction based on entropy is performed (see ENTROPY CORRECTION below). If set to F, no correction for entropy is performed (corresponding to the standard Unoise formulation)
+                -h --help display help
+        Input file options:
+                --csv_input [path] input file path in csv format
+                --fasta_input [path] input file path in fasta format
+                --fastq_input [path] input file path in fastq format
+                --joining_file [path] file path of an info output from DnoisE. This option allows to use the information of previous runs of DnoisE to return different joining criteriaoutputs without running all the program again
+                -n --count_name [size/reads/count...] count name column 'size' by default
+                -p --sep [1/2/3] separator in case of csv input file
+                                1='     ' (tab)
+                                2=','
+                                3=';'
+                -q --sequence [sequence/seq...] sequence column name, 'sequence' by default
+                -s --start_sample_cols [number] first sample column (1 == 1st col) if not given, just one column with total read counts expected (see README.md)
+                -z --end_sample_cols [number] last sample column (n == nst col) if not given, just one column with total read counts expected (see README.md)
+        Output file options:
+                --csv_output [path] common path for csv format
+                --fasta_output [path] common path for fasta format
+                -j --joining_criteria [1/2/3]
+                                1-> will join by the lesser [abundance ratio / beta(d)] (default)
+                                2-> will join by the lesser abundance ratio (r criterion)
+                                3-> will join by the lesser distance (d) value (d criterion)
+                                4-> will provide all joining criteria in three different outputs (all)
+        Other options:
+                -a --alpha [number] alpha value, 5 by default
+                -c --cores [number] number of cores, 1 by default
+                -d --min_abund [number] minimum abundance filtering applied at the end of analysis, 1 by default
+                -e --entropy [number,number,number] entropy values (or any user-settable measure of variability) of the different codon positions. If -y is enabled, default entropy values are computed from data if no values are given
+                -m --modal_length [number] when running DnoisE with entropy correction, sequence length expected can be set, if not, modal_length is used and only sequences with modal_length + or - 3*n are accepted
+                -u --unique_length only modal length is accepted as sequence length when running with entropy correction
+                -x --first_nt_codon_position [number] as DnoisE has been developed for COI sequences amplified with Leray-XT primers, default value is 3 (i.e., the first nucleotide in the sequences is a third codon position).
+                -y --entropy_correction a distance correction based on entropy is performed (see https://github.com/adriantich/DnoisE). If not enabled no correction for entropy is performed (corresponding to the standard Unoise formulation)
+
 ```
 
 
