@@ -14,6 +14,7 @@ import io
 import numpy as np
 import pandas as pd
 import sys
+import re
 
 
 def import_data(de):
@@ -62,6 +63,8 @@ def import_data(de):
             all_file = file.read()
             file.close()
             all_file = all_file.replace('\r', '')
+            if not re.findall(r'>.*;\n', all_file):
+                all_file = re.sub(r'(>.*\n)', r'\1;', all_file)
             all_file = all_file.replace('\n', '')
             all_file = all_file.replace('>', '\n>')
             io_file = io.StringIO(all_file)
