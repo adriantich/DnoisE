@@ -38,10 +38,11 @@ d, and r_d criteria.
 - In the later version the entropy correction was disabled due to a problem when reading the parameters.
 - Now abundance filtering is possible using the *-d* parameter.
 - We have changed the Levenshtein module in order to make the installation easy but no difference in results have been found.
-- Now the binary is produced by the nuitka software which takes more time but retrieves less errors.
+- Now the binary is produced by the nuitka software which takes more time but retrieves fewer errors.
 - We have modified the info.csv output file to retrieve more information when running with entropy correction.
-- If the User wants to change the correction formula, this can be done in an easiest way.
+- If the User wants to customize the correction formula, this can be done in an easier way.
 - The Entropy computation now is easier to use.
+- For fasta files, accepts no ';' at the end of the description line of the sequence
 
 ### __INSTALLING DnoisE__
 
@@ -62,7 +63,7 @@ git clone https://github.com/adriantich/DnoisE.git
 ```
 
 #### __2a. INSTALL WITH install.sh__
-install.sh is a bash script that installs DnoisE and the required modules and creates a "./bin" directory with an executable file (DnoisE). It is recommended
+install.sh is a bash script that installs DnoisE and the required modules and creates an executable file (DnoisE.bin). It is recommended
 to use a pyenv environment to avoid potential issues with python versions (see pyenv [documentation](https://github.com/pyenv/pyenv)).
 
 ```console
@@ -78,7 +79,7 @@ The manual installation requires the following modules
    + [levenshtein](https://maxbachmann.github.io/Levenshtein/)
    + [tqdm](https://pypi.org/project/tqdm/)
 
- To make a binary of the program, nuitka creates an executable file (DnoisE.bin) in a "./src" directory as follows:
+To make a binary of the program, nuitka creates an executable file (DnoisE.bin) in the "./src" directory as follows:
 
 ```console
 cd ./DnoisE/
@@ -114,11 +115,10 @@ from the directory where the conda package has been installed (typically ~/anaco
 #### __Running DnoisE__
 
 DnoisE has been created to run both after and before clustering as described in Antich et al. (2021).
-Therefore, it accepts and returns both .fasta and .csv files. However, writing output is faster if .csv. 
-It also accepts .fastq	input files.
+Therefore, it accepts and returns both .fasta and .csv files. However, writing output is faster if .csv (specially for 
+large files). It also accepts .fastq input files.
 
-DnoisE can be called from the executable created by *pyinstaller* or directly from
-the python script. See example below:
+DnoisE can be called from the executable created by *nuitka* or directly from the python script. See example below:
 
 ```console
 > ./src/DnoisE.bin -h
@@ -170,13 +170,14 @@ Displaying help
 __*INPUT FILES (--csv_input|--fasta_input|--fastq_input|-n|-q|-p)*__
 
 Input files can be in either .csv, .fasta and .fastq format. This can be specified using *-f* parameter set as T 
-as default meaning that input file is in .fasta format. All sequences are supposed to be aligned.
+as default meaning that input file is in .fasta format. **All sequences are supposed to be aligned specially when applying entropy correction.**
 
 Different pipelines use different names for the number of reads (size/count/reads...). This can be specified using 
-parameter *-n* followed by a string weith the name (for instance: -n size, default).  Sequence name can also be 
+parameter *-n* followed by a string with the name (for instance: -n size, default).  Sequence name can also be 
 specified using *-q* parameter (sequence/seq...)(*-q* sequence, default)
 
-If input is a fasta file both id (first qualifier) and size must end by ";". Any other qualifiers will be ignored.
+If input is a fasta file, id (first qualifier) and size must be separated by ";". In version 1.0.2 the ";" after the size
+flag is optional. Any other qualifiers will be ignored.
 
 If input file is a .csv, the separator between columns can be specified using the *-p* parameter (see help).
 
@@ -185,7 +186,7 @@ Examples of *how to run* and input files are available in the test-DnoisE subdir
 
 __*OUTPUT FILES (--csv_output|--fasta_output|-j)*__
 
-Outoput files can be both in .csv and .fasta files but the path and a common pattern identifier 
+Output files can be both in .csv and .fasta file formats but the path and a common pattern identifier 
 (i.e. "/PATH/TO/DIR/common_pattern") must be specified. However, writing output is faster if .csv is chosen, especially 
 in case of large files.
 
@@ -195,13 +196,47 @@ done sequentially from higher to lower abundances, when a sequence meets a "moth
 criteria (*-j* 2) is chosen (i.e., the lesser ratio value between "daughter" abundance and "mother" abundance). 
 However, this doesn't guarantee that the "mother" found is the best. 
 
-If d criteria (*-j* 3 , lesser d value), r_d criteria (*-j* 1, lesser value of the skew abundance ratio divided by beta(d)), or all criteria (*-j* 4), are chosen, comparisons continue and all potential “mothers” are stored. The program will choose afterwards the best “mother” according to the preferred criterion.
-Therefore, when r criteria is chosen, computation time is lower because less comparisons are performed. However, we recommend the r_d criteria which is set as default value.
+If d criteria (*-j* 3 , lesser d value), r_d criteria (*-j* 1, lesser value of the skew abundance ratio divided 
+by beta(d)), or all criteria (*-j* 4), are chosen, comparisons continue and all potential “mothers” are stored. 
+The program will choose afterwards the best “mother” according to the preferred criterion. Therefore, when r criteria 
+is chosen, computation time is lower because fewer comparisons are performed. However, we recommend the r_d criteria 
+which is set as default value.
+
+__*info.csv output file*__
+
+DnoisE returns also a .csv file with the information of how the sequences have been merged to their mothers. For each of the 
+above mentioned criteria, the preferred mother is given. The information retrieved from this file goes as follows:
+
+"daughter" -> the sequence from which the information is retrieved
+
+"mother_d -> the mother sequence corresponding to the "d" criteria
+
+"d" -> the "d" value corresponding to the comparison between daughter and "mother_d"
+
+"mother_ratio -> the mother sequence corresponding to the "ratio" criteria
+
+"ratio" -> the "ratio" value corresponding to the comparison between daughter and "mother_ratio"
+
+"mother_ratio_d -> the mother sequence corresponding to the "ratio_d" criteria
+
+"ratio_d" -> the "ratio_d" value corresponding to the comparison between daughter and "mother_ratio_d"
+
+If a entropy correction is performed, the following information is also given:
+
+"difpos1" -> number of differences in position 1 of the codon corresponding to the "mother_ratio_d" comparison
+
+"difpos2" -> number of differences in position 2 of the codon corresponding to the "mother_ratio_d" comparison
+
+"difpos3" -> number of differences in position 3 of the codon corresponding to the "mother_ratio_d" comparison
+
+"dtotal" -> number of total differences corresponding to the "mother_ratio_d" comparison
+
+"betacorr" -> beta value corrected by entropy values corresponding to the "mother_d" comparison.
 
 
 __*MERGING FROM INFO FILE (--joining_file)*__
 
-In order to return different types of output criteria (*-j*), even after DnoisE is finished, DnoisE creates an info file 
+In order to return different types of output criteria (*-j*), even after DnoisE is finished, DnoisE creates the info file 
 which contains information on whether a sequence is correct or if not, and how each sequence is merged to a mother with 
 the proper distance value. This output can be re-analysed again by running DnoisE if the info file is specified with 
 *--joining_file* and *-j* as desired. Note that if *-j* 2 has been initially chosen, it is not possible to obtain the 
@@ -233,7 +268,10 @@ position  --> 3-1-2-3-1-2-3-1-2-3-1-2-...
 ```
 *-x/--first_nt_position* is set as 3 by default.
 
-Note that, in Edgar’s formula, the d used is the Levenshtein distance. This is the one used by DnoisE if no correction is applied. However, when entropy correction is selected, the Levenshtein distance is not applicable as the codon position needs to be considered, and a d based simply on the number of nucleotide differences is used instead. With sequences of equal length and aligned, both distances are practically equivalent.
+Note that, in Edgar’s formula, the d used is the Levenshtein distance. This is the one used by DnoisE if no correction 
+is applied. However, when entropy correction is selected, the Levenshtein distance is not applicable as the codon 
+position needs to be considered, and a d based simply on the number of nucleotide differences is used instead. With 
+sequences of equal length and aligned, both distances are practically equivalent.
 
 The use of Levenshtein distance allowed us to compare sequences of inequal length, both in the complete dataset or within 
 MOTUs (depending on whether DnoisE is performed before or after clustering). However, with the entropy correction length 
@@ -243,7 +281,7 @@ sequence length can be set using *-m* parameter (i.e. in case of sequence length
 nucleotides, if the modal length is 313, lengths of 311 and 314 will be considered as incorrect and will be eliminated). If *-u*,
 only modal length is used and all sequences with different depth are not included.
 
-Entropy values are given as E_1, E_2, E_3, where 1, 2, and 3 are the codon positions (default as *-e* 0.47,0.23,1.02). 
+Entropy values are given as E_1, E_2, E_3, where 1, 2, and 3 are the codon positions (for instance: *-e* 0.47,0.23,1.02). 
 By default, the program computes the entropies from the complete dataset. Any user-derived value of variability of 
 each codon position can be used instead of entropy.
 
@@ -260,6 +298,13 @@ We correct the d value as:
 Entropy is computed by DnoisE if no entropy values are given when *-y*. In practice, when entropy is computed, 
 *-x* is not mandatory so the program will compute three independent entropy values associated with codon 
 positions of the current dataset.
+
+
+__*MINIMUM ABUNDANCE FILTERING (-d)*__
+
+When entropy correction is applied, usually more true sequences with natural variability in the 3th codon position are
+kept. However, as low abundance false positive can remain, a minimum abundance filtering step is advisable. with the *-a* 
+parameter (default: *-a* 0) the user can set the minimum amount of reads that a sequence must have in order to remain as true sequence.
 
 
 #### __Running DnoisE after SWARM within MOTU__
