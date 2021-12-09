@@ -786,7 +786,7 @@ class DnoisEFunctions:
         else:  # it is a daughter
             # print pD name to each pM depending on different criteria
             # _mothers_d
-            pM_d = Ml.loc[(Ml['betacorr'] == min(Ml.loc[:, 'betacorr'])), 'pM'][0]
+            pM_d = Ml.loc[(Ml['betacorr'] == max(Ml.loc[:, 'betacorr'])), 'pM'][0]
             pM_ratio = Ml.loc[(Ml['ratio'] == min(Ml.loc[:, 'ratio'])), 'pM'][0]
             if type(pM_ratio) is not str:
                 pM_ratio = pM_ratio.values[-1]
@@ -905,7 +905,7 @@ class DnoisEFunctions:
         else:  # it is a daughter
             # print pD name to each pM depending on different criteria
             # pDinfo = np.transpose(pd.DataFrame(self.data_initial.loc[pos, abund_col_names]))
-            pM_d = Ml.loc[(Ml['betacorr'] == min(Ml.loc[:, 'betacorr'])), 'pM'][0]
+            pM_d = Ml.loc[(Ml['betacorr'] == max(Ml.loc[:, 'betacorr'])), 'pM'][0]
             pM_ratio = Ml.loc[(Ml['ratio'] == min(Ml.loc[:, 'ratio'])), 'pM'][0]
             if type(pM_ratio) is not str:
                 pM_ratio = pM_ratio.values[-1]
@@ -1004,7 +1004,7 @@ class DnoisEFunctions:
         else:  # it is a daughter
             # print pD name to each pM depending on different criteria
             # _mothers_d
-            pM_d = Ml.loc[(Ml['betacorr'] == min(Ml.loc[:, 'betacorr'])), 'pM'][0]
+            pM_d = Ml.loc[(Ml['betacorr'] == max(Ml.loc[:, 'betacorr'])), 'pM'][0]
             pM_ratio = Ml.loc[(Ml['ratio'] == min(Ml.loc[:, 'ratio'])), 'pM'][0]
             if type(pM_ratio) is not str:
                 pM_ratio = pM_ratio.values[-1]
