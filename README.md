@@ -310,8 +310,8 @@ nucleotide is a first, second, or third codon position).
 __*MINIMUM ABUNDANCE FILTERING (-r)*__
 
 When entropy correction is applied, usually more true sequences with natural variability in the 3th codon position are
-kept. However, as low abundance false positives can remain, a minimum abundance filtering step is advisable. with the *-a* 
-parameter (default: *-a* 0) the user can set the minimum amount of reads that a sequence must have in order to 
+kept. However, as low abundance false positives can remain, a minimum abundance filtering step is advisable. with the *-r* 
+parameter (default: *-r* 0) the user can set the minimum amount of reads that a sequence must have in order to 
 be accepted as a true sequence after the denoising procedure is finished.
 
 
