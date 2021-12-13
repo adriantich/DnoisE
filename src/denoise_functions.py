@@ -130,14 +130,14 @@ class DnoisEFunctions:
                       "\t\033[1mOther options:\033[0m\n"
                       "\t\t-a --alpha [number] alpha value, 5 by default\n"
                       "\t\t-c --cores [number] number of cores, 1 by default\n"
-                      "\t\t-d --min_abund [number] minimum abundance filtering "
-                      "applied at the end of analysis, 1 by default\n"
                       "\t\t-e --entropy [number,number,number] entropy values (or any user-settable "
                       "measure of variability) of the different codon positions. If -y is enabled and no values are "
                       "given, default entropy values are computed from the data\n"
                       "\t\t-m --modal_length [number] when running DnoisE with entropy correction, "
                       "sequence length expected can be set, if not, modal_length is used and only sequences "
                       "with modal_length + or - 3*n are accepted\n"
+                      "\t\t-r --min_abund [number] minimum abundance filtering "
+                      "applied at the end of analysis, 1 by default\n"
                       "\t\t-u --unique_length only modal length is accepted as sequence length when running with "
                       "entropy correction\n"
                       "\t\t-x --first_nt_codon_position [number] as DnoisE has been developed for COI "
@@ -225,10 +225,10 @@ class DnoisEFunctions:
                 print("Running with %s cores" % current_value)
                 self.cores = int(current_value)
                 arg_c = True
-            elif current_argument in ("-d", "--min_abund"):
+            elif current_argument in ("-r", "--min_abund"):
                 print("After the analysis, all amplicons with less then %s reads will be removed" % current_value)
                 self.min_abund = int(current_value)
-                arg_d = True
+                arg_r = True
             elif current_argument in ("-e", "--entropy"):
                 e1, e2, e3 = current_value.split(",")
                 print(str("E1: " + e1 + " \nE2: " + e2 + " \nE3: " + e3))
@@ -297,7 +297,7 @@ class DnoisEFunctions:
         if 'arg_c' not in locals():
             print("cores not given, 1 core by default")
             self.cores = 1
-        if 'arg_d' not in locals():
+        if 'arg_r' not in locals():
             print("min_abund not given, 0 reads by default")
             self.min_abund = 0
         if "arg_y" not in locals() and "arg_e" not in locals():  # no entropy correction

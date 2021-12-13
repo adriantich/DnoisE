@@ -36,7 +36,7 @@ d, and r_d criteria.
 ### __WHAT'S NEW?__
 #### __In version 1.0.2__
 - In the previous version the entropy correction did not work correctly due to a problem when reading the parameters.
-- Now abundance filtering is possible using the *-d* parameter.
+- Now abundance filtering is possible using the *-r* parameter.
 - We have improved the Levenshtein module in order to make the installation easy.
 - Now the binary is produced by the nuitka software which takes more time but produces fewer errors on most systems.
 - We have modified the info.csv output file to retrieve more information when running with entropy correction.
@@ -157,9 +157,9 @@ Displaying help
         Other options:
                 -a --alpha [number] alpha value, 5 by default
                 -c --cores [number] number of cores, 1 by default
-                -d --min_abund [number] minimum abundance filtering applied at the end of analysis, 1 by default
                 -e --entropy [number,number,number] entropy values (or any user-settable measure of variability) of the different codon positions. If -y is enabled and no values are given, default entropy values are computed from the data
                 -m --modal_length [number] when running DnoisE with entropy correction, sequence length expected can be set, if not, modal_length is used and only sequences with modal_length + or - 3*n are accepted
+                -r --min_abund [number] minimum abundance filtering applied at the end of analysis, 1 by default
                 -u --unique_length only modal length is accepted as sequence length when running with entropy correction
                 -x --first_nt_codon_position [number] as DnoisE has been developed for COI sequences amplified with Leray-XT primers, default value is 3 (i.e., the first nucleotide in the sequences is a third codon position).
                 -y --entropy_correction a distance correction based on entropy is performed (see https://github.com/adriantich/DnoisE). If not enabled no correction for entropy is performed (corresponding to the standard Unoise formulation)
@@ -307,7 +307,7 @@ values associated with nucleotide positions of the current dataset (i.e., it is 
 nucleotide is a first, second, or third codon position).
 
 
-__*MINIMUM ABUNDANCE FILTERING (-d)*__
+__*MINIMUM ABUNDANCE FILTERING (-r)*__
 
 When entropy correction is applied, usually more true sequences with natural variability in the 3th codon position are
 kept. However, as low abundance false positives can remain, a minimum abundance filtering step is advisable. with the *-a* 
