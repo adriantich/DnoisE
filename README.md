@@ -314,6 +314,12 @@ kept. However, as low abundance false positives can remain, a minimum abundance 
 parameter (default: *-r* 0) the user can set the minimum amount of reads that a sequence must have in order to 
 be accepted as a true sequence after the denoising procedure is finished.
 
+#### __test-DnoisE__
+
+To test how DnoisE can be used with a small dataset and examples of command lines, in the test-DnoisE directory two dataset
+are stored in three different file format (.csv, .fasta, .fastq). The first dataset contains sequences of different
+lengths to show how entropy correction runs with different sequence lengths. The second dataset consist on the sequences 
+of 313bp from the former. In the test-DnoisE.txt some command lines are given as example.
 
 #### __Running DnoisE after SWARM within MOTU__
 
