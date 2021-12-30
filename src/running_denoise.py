@@ -191,7 +191,7 @@ def run_denoise_entropy(de):
     if len(de.modal_length_value) != 1:
         for e in range(0, len(de.modal_length_value)):
             if ((de.modal_length_value[e] - 1) % 3) == 0:
-                good_modal_length_value = de.modal_length_value[e]
+                good_modal_length_value = [de.modal_length_value[e]]
                 break
         if 'good_modal_length_value' not in locals():
             good_modal_length_value = de.modal_length_value[0]
