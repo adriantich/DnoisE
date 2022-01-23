@@ -16,7 +16,7 @@ import Levenshtein as lv
 import multiprocessing as mp
 import numpy as np
 import pandas as pd
-import platform
+# import platform
 import sys
 from tqdm import tqdm
 import json
@@ -78,17 +78,18 @@ class DnoisEFunctions:
     merge_from_info = False
     unique_length = False
     min_abund = 0
+    get_entropy = False
 
     def __init__(self):
         print("starting to denoise")
 
     def read_parameters(self, argument_list):
-        short_options = "hn:p:q:s:z:j:a:c:d:e:m:ux:y"
+        short_options = "hn:p:q:s:z:j:a:c:e:gd:m:ux:y"
         long_options = ["help", "csv_input=", "fasta_input=", "fastq_input=",
                         "joining_criteria=", "count_name=", "sep=", "sequence=",
                         "start_sample_cols=", "end_sample_cols=",
-                        "csv_output=", "fasta_output=", "part=", "joining_file=",
-                        "alpha=", "cores=", "min_abund=", "entropy=", "modal_length=",
+                        "csv_output=", "fasta_output=", "joining_file=",
+                        "alpha=", "cores=", "entropy=", "get_entropy", "min_abund=", "modal_length=",
                         "unique_length", "first_nt_codon_position=", "entropy_correction"]
         try:
             arguments, values = getopt.getopt(argument_list, short_options, long_options)
@@ -133,6 +134,7 @@ class DnoisEFunctions:
                       "\t\t-e --entropy [number,number,number] entropy values (or any user-settable "
                       "measure of variability) of the different codon positions. If -y is enabled and no values are "
                       "given, default entropy values are computed from the data\n"
+                      "\t\t-g --get_entropy get only entropy values from a dataset\n"
                       "\t\t-m --modal_length [number] when running DnoisE with entropy correction, "
                       "sequence length expected can be set, if not, modal_length is used and only sequences "
                       "with modal_length + or - 3*n are accepted\n"
@@ -225,10 +227,6 @@ class DnoisEFunctions:
                 print("Running with %s cores" % current_value)
                 self.cores = int(current_value)
                 arg_c = True
-            elif current_argument in ("-r", "--min_abund"):
-                print("After the analysis, all amplicons with less then %s reads will be removed" % current_value)
-                self.min_abund = int(current_value)
-                arg_r = True
             elif current_argument in ("-e", "--entropy"):
                 e1, e2, e3 = current_value.split(",")
                 print(str("E1: " + e1 + " \nE2: " + e2 + " \nE3: " + e3))
@@ -237,6 +235,13 @@ class DnoisEFunctions:
                 e3 = float(e3)
                 self.entropy = True
                 arg_e = True
+            elif current_argument in ("-g", "--get_entropy"):
+                self.get_entropy = True
+                arg_g = True
+            elif current_argument in ("-r", "--min_abund"):
+                print("After the analysis, all amplicons with less then %s reads will be removed" % current_value)
+                self.min_abund = int(current_value)
+                arg_r = True
             elif current_argument in ("-m", "--modal_length"):
                 self.modal_length_value = [int(current_value)]
                 print("modal_length set as %s" % current_value)
@@ -286,8 +291,11 @@ class DnoisEFunctions:
             else:  # sample cols specified
                 self.justcount = False
         if 'arg_co' not in locals() and 'arg_fo' not in locals():  # no output file
-            print("Error: output path needed")
-            sys.exit()
+            if 'arg_g' in locals():  # get_entropy TRUE
+                self.MOTUoutfile = self.MOTUfile
+            else:
+                print("Error: output path needed")
+                sys.exit()
         if 'arg_j' not in locals():  # no joining criterion specified
             self.output_type = 'ratio_d'
         if "arg_a" not in locals():  # alpha not specified
@@ -300,25 +308,32 @@ class DnoisEFunctions:
         if 'arg_r' not in locals():
             print("min_abund not given, 0 reads by default")
             self.min_abund = 0
-        if "arg_y" not in locals() and "arg_e" not in locals():  # no entropy correction
-            self.entropy = False
-            if not self.merge_from_info:
-                print("Entropy correction not applied")
-            self.Ad1, self.Ad2, self.Ad3 = (1, 1, 1)
-        else:  # entropy correction
-            if "arg_e" not in locals():
-                self.compute_entropy = True
-                if not self.merge_from_info:
-                    print("Entropy will be computed from data")
-            # defining Ad correction factor taking into account Entropy
-            else:
-                self.Ad1 = e1 / (e1 + e2 + e3) * 3
-                self.Ad2 = e2 / (e1 + e2 + e3) * 3
-                self.Ad3 = e3 / (e1 + e2 + e3) * 3
+        if 'arg_g' in locals(): # get_entropy TRUE
+            self.MOTUoutfile = str(self.MOTUoutfile + '_entropy_values.csv')
             if 'arg_x' not in locals():
                 self.initial_pos = 3
             if 'arg_u' not in locals():
                 self.unique_length = False
+        else:
+            if "arg_y" not in locals() and "arg_e" not in locals():  # no entropy correction
+                self.entropy = False
+                if not self.merge_from_info:
+                    print("Entropy correction not applied")
+                self.Ad1, self.Ad2, self.Ad3 = (1, 1, 1)
+            else:  # entropy correction
+                if "arg_e" not in locals():
+                    self.compute_entropy = True
+                    if not self.merge_from_info:
+                        print("Entropy will be computed from data")
+                # defining Ad correction factor taking into account Entropy
+                else:
+                    self.Ad1 = e1 / (e1 + e2 + e3) * 3
+                    self.Ad2 = e2 / (e1 + e2 + e3) * 3
+                    self.Ad3 = e3 / (e1 + e2 + e3) * 3
+                if 'arg_x' not in locals():
+                    self.initial_pos = 3
+                if 'arg_u' not in locals():
+                    self.unique_length = False
 
     def quartiles_run(self, data_initial):
         q = data_initial.shape[0]

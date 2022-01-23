@@ -14,6 +14,7 @@ from import_data import *
 from running_denoise import *
 from transform_data import *
 from write_output import *
+from get_entropy import *
 
 
 if __name__ == '__main__':
@@ -36,6 +37,9 @@ if __name__ == '__main__':
     de.read_parameters(argument_list)
     import_data(de)
     transform_data(de)
+    if de.get_entropy:
+        get_entropy_func(de)
+        # this will break to return a file with entropy values
     if not de.merge_from_info:
         if de.entropy:
             run_denoise_entropy(de)
