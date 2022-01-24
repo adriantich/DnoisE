@@ -5,21 +5,23 @@ package:
 source:
   path: ../DnoisE
   #git_url: https://github.com/adriantich/DnoisE.git
-
+  
 requirements:
   host:
     - python
     - setuptools
+    - pip
   build:
     - python
     - cython
-    - pyinstaller
+    - nuitka
+    - git
   run:
     - python
-    - python-Levenshtein
     - pandas
     - numpy
     - tqdm
+#    - Levenshtein
 
 about:
   home: https://github.com/adriantich/DnoisE

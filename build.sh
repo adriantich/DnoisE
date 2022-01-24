@@ -2,5 +2,6 @@ $PYTHON setup.py install --single-version-externally-managed --record=record.txt
 
 cd ./src
 
-pyinstaller DnoisE.py --onefile --distpath ../bin
+python -m nuitka --enable-plugin=multiprocessing --static-libpython=no --follow-imports DnoisE.py
+
 
