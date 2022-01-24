@@ -158,6 +158,7 @@ Displaying help
                 -a --alpha [number] alpha value, 5 by default
                 -c --cores [number] number of cores, 1 by default
                 -e --entropy [number,number,number] entropy values (or any user-settable measure of variability) of the different codon positions. If -y is enabled and no values are given, default entropy values are computed from the data
+                -g --get_entropy get only entropy values from a dataset
                 -m --modal_length [number] when running DnoisE with entropy correction, sequence length expected can be set, if not, modal_length is used and only sequences with modal_length + or - 3*n are accepted
                 -r --min_abund [number] minimum abundance filtering applied at the end of analysis, 1 by default
                 -u --unique_length only modal length is accepted as sequence length when running with entropy correction
