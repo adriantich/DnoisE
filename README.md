@@ -34,6 +34,8 @@ the skew abundance ratio divided by beta(d) is the lowest (ratio_distance criter
 d, and r_d criteria.
 
 ### __WHAT'S NEW?__
+#### __In version 1.1.0__
+- Now DnoisE is able to return entropy values from sequence datasets with the *-g* option
 #### __In version 1.0.2__
 - In the previous version the entropy correction did not work correctly due to a problem when reading the parameters.
 - Now abundance filtering is possible using the *-r* parameter.
@@ -306,6 +308,12 @@ Entropy is computed from the dataset by DnoisE if *-y* is enabled and no entropy
 when entropy is computed from the data, *-x* is not mandatory as the program will compute three independent entropy 
 values associated with nucleotide positions of the current dataset (i.e., it is not relevant whether the first 
 nucleotide is a first, second, or third codon position).
+
+
+__*Get only entropy values (-g)*__
+
+To obtain entropy values from a DataSet without running the denoising algorithm run DnoisE with the -g parameter. This is 
+specially useful when running DnoisE within MOTU using the entropy values from the whole DataSet (see below).
 
 
 __*MINIMUM ABUNDANCE FILTERING (-r)*__
