@@ -171,6 +171,8 @@ def run_denoise_entropy(de):
     #     print('not Linux system detected')
     #     mp.set_start_method('spawn')
 
+    print('running data')
+
     seq_length = []
     seq_length_per_read = []
     for i in list(range(de.data_initial.shape[0])):

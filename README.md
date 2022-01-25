@@ -34,6 +34,8 @@ the skew abundance ratio divided by beta(d) is the lowest (ratio_distance criter
 d, and r_d criteria.
 
 ### __WHAT'S NEW?__
+#### __In version 1.1.0__
+- Now DnoisE is able to return entropy values from sequence datasets with the *-g* option
 #### __In version 1.0.2__
 - In the previous version the entropy correction did not work correctly due to a problem when reading the parameters.
 - Now abundance filtering is possible using the *-r* parameter.
@@ -158,6 +160,7 @@ Displaying help
                 -a --alpha [number] alpha value, 5 by default
                 -c --cores [number] number of cores, 1 by default
                 -e --entropy [number,number,number] entropy values (or any user-settable measure of variability) of the different codon positions. If -y is enabled and no values are given, default entropy values are computed from the data
+                -g --get_entropy get only entropy values from a dataset
                 -m --modal_length [number] when running DnoisE with entropy correction, sequence length expected can be set, if not, modal_length is used and only sequences with modal_length + or - 3*n are accepted
                 -r --min_abund [number] minimum abundance filtering applied at the end of analysis, 1 by default
                 -u --unique_length only modal length is accepted as sequence length when running with entropy correction
@@ -305,6 +308,12 @@ Entropy is computed from the dataset by DnoisE if *-y* is enabled and no entropy
 when entropy is computed from the data, *-x* is not mandatory as the program will compute three independent entropy 
 values associated with nucleotide positions of the current dataset (i.e., it is not relevant whether the first 
 nucleotide is a first, second, or third codon position).
+
+
+__*Get only entropy values (-g)*__
+
+To obtain entropy values from a DataSet without running the denoising algorithm run DnoisE with the -g parameter. This is 
+specially useful when running DnoisE within MOTU using the entropy values from the whole DataSet (see below).
 
 
 __*MINIMUM ABUNDANCE FILTERING (-r)*__
