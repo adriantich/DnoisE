@@ -1370,6 +1370,7 @@ def copy_to_subset(declass, desub, seq_length, len_seq):
 
     desub.alpha = declass.alpha
     desub.data_initial = declass.data_initial.loc[(np.asarray(seq_length) == len_seq)]
+    declass.data_initial = declass.data_initial.drop(desub.data_initial.index)
     desub.data_initial.index = list(range(desub.data_initial.shape[0]))
     desub.abund_col_names = declass.abund_col_names[:]
     desub.seq = declass.seq

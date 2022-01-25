@@ -182,6 +182,8 @@ def run_denoise_entropy(de):
         seq_length_per_read.append([len(i_seq)] * i_count)
     seq_length_per_read = list(itertools.chain.from_iterable(seq_length_per_read))
 
+    print('seq lengths computed')
+
     uniq_seq_lengths = set()
     uniq_seq_lengths.update(seq_length)
     uniq_seq_lengths = list(uniq_seq_lengths)
@@ -230,6 +232,7 @@ def run_denoise_entropy(de):
 
         desub = DnoisEFunctions()
         copy_to_subset(declass=de, desub=desub, seq_length=seq_length, len_seq=len_seq)
+        seq_length = list(filter(len_seq.__ne__, seq_length))
         if i == 0:
             if de.compute_entropy:
                 if desub.initial_pos == 1:
