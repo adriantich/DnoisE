@@ -195,7 +195,7 @@ def run_denoise_entropy(de):
                 good_modal_length_value = [de.modal_length_value[e]]
                 break
         if 'good_modal_length_value' not in locals():
-            good_modal_length_value = de.modal_length_value[0]
+            good_modal_length_value = [de.modal_length_value[0]]
 
         print('WARNING!! %s not available to run with entropy correction. '
               'Equal number of seqs with different seq length' % de.MOTUfile)
