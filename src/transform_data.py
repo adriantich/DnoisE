@@ -20,7 +20,10 @@ def transform_data(de):
     # obtain a column with total reads per seq.
     if not de.justcount:
         de.abund_col_names = list(de.data_initial.columns)[(de.start - 1):de.end]
-        de.first_col_names = list(de.data_initial.columns)[0:(de.start - 2)]
+        if de.start == 2:
+            de.first_col_names = [list(de.data_initial.columns)[0]]
+        else:
+            de.first_col_names = list(de.data_initial.columns)[0:(de.start - 2)]
         if de.count in de.first_col_names:
             de.first_col_names.remove(de.count)
         if de.seq in de.first_col_names:
