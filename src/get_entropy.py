@@ -55,6 +55,7 @@ def get_entropy_func(de):
 
         desub = DnoisEFunctions()
         copy_to_subset(declass=de, desub=desub, seq_length=seq_length, len_seq=len_seq)
+        seq_length = list(filter(len_seq.__ne__, seq_length))
 
         if desub.initial_pos == 1:
             e1, e2, e3 = en.mean_entropy(desub.data_initial, de.seq, de.count)
