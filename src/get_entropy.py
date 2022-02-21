@@ -48,7 +48,7 @@ def get_entropy_func(de):
 
     del seq_length_per_read, de.modal_length_value, max_count_sum
 
-    entropy_df = pd.DataFrame(columns=['seq_length', 'total_count', 'e1', 'e2', 'e3'])
+    entropy_df = pd.DataFrame(columns=['seq_length', 'total_count', 'total_seqs', 'e1', 'e2', 'e3'])
 
     for i in list(range(len(allowed_lengths))):
         len_seq = allowed_lengths[i]
@@ -63,7 +63,8 @@ def get_entropy_func(de):
             e2, e3, e1 = en.mean_entropy(desub.data_initial, de.seq, de.count)
         if desub.initial_pos == 3:
             e3, e1, e2 = en.mean_entropy(desub.data_initial, de.seq, de.count)
-        entr = [{'seq_length': len_seq, 'total_count': sum(desub.data_initial[de.count]), 'e1': e1, 'e2': e2, 'e3': e3}]
+        entr = [{'seq_length': len_seq, 'total_count': sum(desub.data_initial[de.count]),
+                 'total_seqs': len(desub.data_initial[de.count]), 'e1': e1, 'e2': e2, 'e3': e3}]
         entropy_df = entropy_df.append(pd.DataFrame(entr), ignore_index=True)
         del desub
 
