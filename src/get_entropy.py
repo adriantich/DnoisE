@@ -64,7 +64,7 @@ def get_entropy_func(de):
         if desub.initial_pos == 3:
             e3, e1, e2 = en.mean_entropy(desub.data_initial, de.seq, de.count)
         entr = [{'seq_length': len_seq, 'total_count': sum(desub.data_initial[de.count]),
-                 'total_seqs': len(desub.data_initial[de.count]), 'e1': e1, 'e2': e2, 'e3': e3}]
+                 'total_seqs': desub.data_initial.shape[0], 'e1': e1, 'e2': e2, 'e3': e3}]
         entropy_df = entropy_df.append(pd.DataFrame(entr), ignore_index=True)
         del desub
 
