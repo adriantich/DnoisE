@@ -22,7 +22,7 @@ def entropy(x, counts):
 
 
 def mean_entropy(data, seq_label, count_label):
-    x = data[seq_label].str.split('', expand=True, )
+    x = data[seq_label].str.split('', expand=True)
     entropy_values = x.apply(entropy, axis=0, counts=data[count_label])
     first = np.mean(entropy_values.loc[range(1, len(entropy_values), 3)])
     second = np.mean(entropy_values.loc[range(2, len(entropy_values), 3)])

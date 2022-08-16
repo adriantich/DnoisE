@@ -5,22 +5,21 @@ import entropy as en
 
 
 def get_entropy_func(de):
-    seq_length = []
-    seq_length_per_read = []
-    for i in list(range(de.data_initial.shape[0])):
-        i_seq = de.data_initial.loc[i, de.seq]
-        i_count = de.data_initial.loc[i, de.count]
-        seq_length.append(len(i_seq))
-        seq_length_per_read.append([len(i_seq)] * i_count)
-    seq_length_per_read = list(itertools.chain.from_iterable(seq_length_per_read))
-
-    uniq_seq_lengths = set()
-    uniq_seq_lengths.update(seq_length)
+    seq_length_per_read = {}
+    seq_length = list(map(len, np.array(de.data_initial.loc[:, de.seq])))
+    uniq_seq_lengths = set(seq_length)
     uniq_seq_lengths = list(uniq_seq_lengths)
+
+    for i in uniq_seq_lengths:
+        count_sum = sum(de.data_initial.loc[(np.asarray(seq_length) == i), de.count])
+        seq_length_per_read[i] = count_sum
+    max_count_sum = max(list(seq_length_per_read.values()))
+
+    print('seq lengths computed')
 
     # separate data in different DataFrames by sequence length
     if len(de.modal_length_value) == 0:
-        de.modal_length_value = modal_length(seq_length_per_read)
+        de.modal_length_value = [k for k, v in seq_length_per_read.items() if float(v) == max_count_sum]
 
     if len(de.modal_length_value) != 1:
         for e in range(0, len(de.modal_length_value)):
@@ -28,7 +27,7 @@ def get_entropy_func(de):
                 good_modal_length_value = [de.modal_length_value[e]]
                 break
         if 'good_modal_length_value' not in locals():
-            good_modal_length_value = de.modal_length_value[0]
+            good_modal_length_value = [de.modal_length_value[0]]
 
         print('WARNING!! %s not available to run with entropy correction. '
               'Equal number of seqs with different seq length' % de.MOTUfile)
@@ -47,14 +46,16 @@ def get_entropy_func(de):
         allowed_lengths.remove(good_modal_length_value[0])
         allowed_lengths.insert(0, good_modal_length_value[0])
 
-    del seq_length_per_read, de.modal_length_value
-    entropy_df = pd.DataFrame(columns=['seq_length', 'total_count', 'e1', 'e2', 'e3'])
+    del seq_length_per_read, de.modal_length_value, max_count_sum
+
+    entropy_df = pd.DataFrame(columns=['seq_length', 'total_count', 'total_seqs', 'e1', 'e2', 'e3'])
 
     for i in list(range(len(allowed_lengths))):
         len_seq = allowed_lengths[i]
 
         desub = DnoisEFunctions()
         copy_to_subset(declass=de, desub=desub, seq_length=seq_length, len_seq=len_seq)
+        seq_length = list(filter(len_seq.__ne__, seq_length))
 
         if desub.initial_pos == 1:
             e1, e2, e3 = en.mean_entropy(desub.data_initial, de.seq, de.count)
@@ -62,7 +63,8 @@ def get_entropy_func(de):
             e2, e3, e1 = en.mean_entropy(desub.data_initial, de.seq, de.count)
         if desub.initial_pos == 3:
             e3, e1, e2 = en.mean_entropy(desub.data_initial, de.seq, de.count)
-        entr = [{'seq_length': len_seq, 'total_count': sum(desub.data_initial[de.count]), 'e1': e1, 'e2': e2, 'e3': e3}]
+        entr = [{'seq_length': len_seq, 'total_count': sum(desub.data_initial[de.count]),
+                 'total_seqs': desub.data_initial.shape[0], 'e1': e1, 'e2': e2, 'e3': e3}]
         entropy_df = entropy_df.append(pd.DataFrame(entr), ignore_index=True)
         del desub
 

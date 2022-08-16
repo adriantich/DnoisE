@@ -1217,6 +1217,7 @@ class DnoisEFunctions:
 
 
 def run_dnoise_testing(declass):
+    print('denoising dataset of %s sequences' % declass.data_initial.shape[0])
     if declass.cores > 1:
         if declass.output_type == 'ratio':
             while len(declass.run_list) < declass.data_initial.shape[0]:
