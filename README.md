@@ -101,7 +101,13 @@ python3 -m nuitka --enable-plugin=multiprocessing --follow-imports DnoisE.py
 ```console
 conda install -c adriantich dnoise
 ```
-Different python versions (3.6, 3.7 and 3.8) are available at the [conda repository](https://anaconda.org/adriantich/dnoise/files)
+Different python versions (3.6, 3.7 and 3.8) are available at the [conda repository](https://anaconda.org/adriantich/dnoise/files).
+
+However the *Lenshtein* package is not available so its instllation must be done manually as follows
+
+```console
+pip3 install levenshtein
+```
 
 #### __2. Create an executable file (optional)__
 To create a binary file of the program run 
