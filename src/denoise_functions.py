@@ -86,7 +86,7 @@ class DnoisEFunctions:
         print("starting to denoise")
 
     def read_parameters(self, argument_list):
-        short_options = "hn:p:q:s:z:j:a:c:e:gd:m:uw:x:y"
+        short_options = "hn:p:q:s:z:j:a:c:e:gm:r:uw:x:y"
         long_options = ["help", "csv_input=", "fasta_input=", "fastq_input=",
                         "joining_criteria=", "count_name=", "sep=", "sequence=",
                         "start_sample_cols=", "end_sample_cols=",
