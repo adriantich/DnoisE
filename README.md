@@ -34,8 +34,10 @@ the skew abundance ratio divided by beta(d) is the lowest (ratio_distance criter
 d, and r_d criteria.
 
 ### __WHAT'S NEW?__
+#### __In version 1.2.0__
+- Now DnoisE can be performed within MOTU using the *-w* option.
 #### __In version 1.1.0__
-- Now DnoisE is able to return entropy values from sequence datasets with the *-g* option
+- Now DnoisE is able to return entropy values from sequence datasets with the *-g* option.
 #### __In version 1.0.2__
 - In the previous version the entropy correction did not work correctly due to a problem when reading the parameters.
 - Now abundance filtering is possible using the *-r* parameter.
@@ -157,7 +159,7 @@ Displaying help
         Output file options:
                 --csv_output [path] common path for csv format
                 --fasta_output [path] common path for fasta format
-                -j --joining_criteria [1/2/3]
+                -j --joining_criteria [1/2/3/4]
                                 1-> will join by the lesser [abundance ratio / beta(d)] (default r_d criterion)
                                 2-> will join by the lesser abundance ratio (r criterion)
                                 3-> will join by the lesser distance (d) value (d criterion)
@@ -170,9 +172,9 @@ Displaying help
                 -m --modal_length [number] when running DnoisE with entropy correction, sequence length expected can be set, if not, modal_length is used and only sequences with modal_length + or - 3*n are accepted
                 -r --min_abund [number] minimum abundance filtering applied at the end of analysis, 1 by default
                 -u --unique_length only modal length is accepted as sequence length when running with entropy correction
-                -x --first_nt_codon_position [number] as DnoisE has been developed for COI sequences amplified with Leray-XT primers, default value is 3 (i.e., the first nucleotide in the sequences is a third codon position).
+                -w --within_MOTU [MOTU/motu/...] MOTU column name. This option allows to run DnoisEwithin MOTU. Is only available for --csv_input and --csv_output
+                -x --first_nt_codon_position [number] as DnoisE has been developed for COI sequences amplified with Leray-XT primers, default value is 3 (i.e., the first nucleotide in the sequences is a third codon position)
                 -y --entropy_correction a distance correction based on entropy is performed (see https://github.com/adriantich/DnoisE). If not enabled no correction for entropy is performed (corresponding to the standard Unoise formulation)
-
 ```
 
 
@@ -336,6 +338,11 @@ lengths to show how entropy correction runs with different sequence lengths. The
 of 313bp from the former. In the test-DnoisE.txt some command lines are given as examples.
 
 #### __Running DnoisE after SWARM within MOTU__
+
+New in version 1.2!
+
+We have added the option *--within_MOTU* to run DnoisE within MOTU using as input and returning as output .csv files. 
+A column specifying the MOTU for each sequence is required.
 
 If DnoisE is run after SWARM (see [Torognes](https://github.com/torognes/swarm)) a separate .csv file for each MOTU is needed.
 MOTUs_from_Swarm.sh will return a directory were all MOTUs will be stored as separate .csv files
