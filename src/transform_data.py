@@ -12,6 +12,10 @@ This script also computes the entropy if specified.
 """
 
 
+def sort_MOTU(de):
+    de.data_initial = de.data_initial.sort_values([de.motu_column], axis=0, ascending=False)
+
+
 def transform_data(de):
     print('transforming data')
 

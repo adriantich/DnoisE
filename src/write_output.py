@@ -17,6 +17,9 @@ def write_output(de):
     if de.entropy:
         de.MOTUoutfile = str(de.MOTUoutfile + '_Adcorr')
 
+    if not de.merge_from_info:
+        de.output_info.to_csv(str(de.MOTUoutfile + '_denoising_info.csv'), index=False)
+
     if (de.output_type == 'ratio') or (de.output_type == 'all'):
         de.denoised_ratio = de.denoised_ratio[list(de.denoised_ratio.loc[:, de.count] >= de.min_abund)]
 
