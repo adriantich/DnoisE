@@ -42,8 +42,8 @@ def run_denoise(de, test=False):
     run_dnoise_testing(de)  # function in denoise_functions.py
 
     de.output_info = pd.DataFrame.from_dict(de.output_info)
-    if not test:
-        de.output_info.to_csv(str(de.MOTUoutfile + '_denoising_info.csv'), index=False)
+    # if not test:
+    #     de.output_info.to_csv(str(de.MOTUoutfile + '_denoising_info.csv'), index=False)
 
     if (de.output_type == 'ratio') or (de.output_type == 'all'):
         mothers_ratio = de.output_info.mother_ratio.unique()[1:]
@@ -52,7 +52,7 @@ def run_denoise(de, test=False):
     if (de.output_type == 'ratio_d') or (de.output_type == 'all'):
         mothers_ratio_d = de.output_info.mother_ratio_d.unique()[1:]
 
-    del de.output_info
+    # del de.output_info
 
     de.data_initial = de.data_initial.set_index(de.data_initial.loc[:, 'id'])
 
@@ -407,8 +407,8 @@ def run_denoise_entropy(de):
 
         del desub
 
-    de.output_info.to_csv(str(de.MOTUoutfile + '_denoising_info.csv'), index=False)
-    del de.output_info
+    # de.output_info.to_csv(str(de.MOTUoutfile + '_denoising_info.csv'), index=False)
+    # del de.output_info
 
 
 def run_from_info(de):

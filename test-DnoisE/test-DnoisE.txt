@@ -9,12 +9,14 @@ cd ./DnoisE
 # 1. with entropy correction
 python3 ./src/DnoisE.py --csv_input ./test-DnoisE/DnoisE_example.csv --csv_output ./test-DnoisE/output -n count -s 4 -z 79 -y
 
-
 # 2. without entropy correction
 python3 ./src/DnoisE.py --csv_input ./test-DnoisE/DnoisE_example.csv --csv_output ./test-DnoisE/output -n count -s 4 -z 79
 
 # 3. parallel
 python3 ./src/DnoisE.py --csv_input ./test-DnoisE/DnoisE_example.csv --csv_output ./test-DnoisE/output -n count -s 4 -z 79 -c 2
+
+# 4. parallel within MOTU
+python3 ./src/DnoisE.py --csv_input ./test-DnoisE/DnoisE_example_within_MOTU.csv --csv_output ./test-DnoisE/output -n count -s 4 -z 79 -c 2 -w MOTU -p 2
 
 
 ## fasta input file

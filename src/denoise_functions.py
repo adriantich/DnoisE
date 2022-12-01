@@ -79,18 +79,20 @@ class DnoisEFunctions:
     unique_length = False
     min_abund = 0
     get_entropy = False
+    within_motu = False
+    motu_column = 1
 
     def __init__(self):
         print("starting to denoise")
 
     def read_parameters(self, argument_list):
-        short_options = "hn:p:q:s:z:j:a:c:e:gd:m:ux:y"
+        short_options = "hn:p:q:s:z:j:a:c:e:gd:m:uw:x:y"
         long_options = ["help", "csv_input=", "fasta_input=", "fastq_input=",
                         "joining_criteria=", "count_name=", "sep=", "sequence=",
                         "start_sample_cols=", "end_sample_cols=",
                         "csv_output=", "fasta_output=", "joining_file=",
                         "alpha=", "cores=", "entropy=", "get_entropy", "min_abund=", "modal_length=",
-                        "unique_length", "first_nt_codon_position=", "entropy_correction"]
+                        "unique_length", "within_MOTU=", "first_nt_codon_position=", "entropy_correction"]
         try:
             arguments, values = getopt.getopt(argument_list, short_options, long_options)
         except getopt.error as err:
@@ -122,7 +124,7 @@ class DnoisEFunctions:
                       "\t\033[1mOutput file options:\033[0m\n"
                       "\t\t--csv_output [path] common path for csv format\n"
                       "\t\t--fasta_output [path] common path for fasta format\n"
-                      "\t\t-j --joining_criteria [1/2/3]\n"
+                      "\t\t-j --joining_criteria [1/2/3/4]\n"
                       "\t\t\t\t1-> will join by the lesser [abundance ratio / beta(d)] (default r_d criterion)\n"
                       "\t\t\t\t2-> will join by the lesser abundance ratio (r criterion)\n"
                       "\t\t\t\t3-> will join by the lesser distance (d) value (d criterion)\n"
@@ -142,9 +144,11 @@ class DnoisEFunctions:
                       "applied at the end of analysis, 1 by default\n"
                       "\t\t-u --unique_length only modal length is accepted as sequence length when running with "
                       "entropy correction\n"
+                      "\t\t-w --within_MOTU [MOTU/motu/...] MOTU column name. This option allows to run DnoisE"
+                      "within MOTU. Is only available for --csv_input and --csv_output\n"
                       "\t\t-x --first_nt_codon_position [number] as DnoisE has been developed for COI "
                       "sequences amplified with Leray-XT primers, default value is 3 (i.e., the first nucleotide "
-                      "in the sequences is a third codon position).\n"
+                      "in the sequences is a third codon position)\n"
                       "\t\t-y --entropy_correction a distance correction "
                       "based on entropy is performed (see https://github.com/adriantich/DnoisE). If not enabled "
                       "no correction for entropy is performed (corresponding to the standard Unoise formulation)\n")
@@ -248,7 +252,11 @@ class DnoisEFunctions:
             elif current_argument in ("-u", "--unique_length"):
                 self.unique_length = True
                 arg_u = True
-                print("Is entropy taken into account?: %s" % self.entropy)
+            elif current_argument in ("-w", "--within_MOTU"):
+                self.within_motu = True
+                self.motu_column = current_value
+                arg_w = True
+                print("DnoisE will denoise sequences within MOTUs")
             elif current_argument in ("-x", "--first_nt_codon_position"):
                 self.initial_pos = int(current_value)
                 arg_x = True
@@ -265,8 +273,15 @@ class DnoisEFunctions:
         if 'arg_ci' not in locals() and 'arg_fi' not in locals() and 'arg_fqi' not in locals():  # no input file
             print("Error: input file needed")
             sys.exit()
+        if 'arg_w' in locals() and 'arg_ci' not in locals() and 'arg_co' not in locals():  # within MOTU but not csv
+            print("Error: When computing DnoisE within MOTU, input and output files must be csv format")
+            sys.exit()
         if 'arg_ii' not in locals():
             self.merge_from_info = False
+        else:
+            if 'arg_w' in locals():
+                print("Error: When computing DnoisE within MOTU, --joining_file option not available")
+                sys.exit()
         if "arg_n" not in locals():  # no count name
             print("count_name not given, 'size' by default")
             self.count = "size"
@@ -308,12 +323,15 @@ class DnoisEFunctions:
         if 'arg_r' not in locals():
             print("min_abund not given, 0 reads by default")
             self.min_abund = 0
-        if 'arg_g' in locals(): # get_entropy TRUE
+        if 'arg_g' in locals():  # get_entropy TRUE
             self.MOTUoutfile = str(self.MOTUoutfile + '_entropy_values.csv')
             if 'arg_x' not in locals():
                 self.initial_pos = 3
             if 'arg_u' not in locals():
                 self.unique_length = False
+            if 'arg_w' in locals:
+                print('--get_entropy not available with the --within_MOTU option')
+                sys.exit()
         else:
             if "arg_y" not in locals() and "arg_e" not in locals():  # no entropy correction
                 self.entropy = False
