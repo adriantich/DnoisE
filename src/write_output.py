@@ -22,6 +22,7 @@ def write_output(de):
 
     if (de.output_type == 'ratio') or (de.output_type == 'all'):
         de.denoised_ratio = de.denoised_ratio[list(de.denoised_ratio.loc[:, de.count] >= de.min_abund)]
+        de.denoised_ratio_d.index = list(range(de.denoised_ratio_d.shape[0]))
 
         if de.output_file_type == 'fasta':
             de.denoised_ratio = de.denoised_ratio.to_dict(orient='index')
@@ -37,6 +38,7 @@ def write_output(de):
 
     if (de.output_type == 'd') or (de.output_type == 'all'):
         de.denoised_d = de.denoised_d[list(de.denoised_d.loc[:, de.count] >= de.min_abund)]
+        de.denoised_ratio_d.index = list(range(de.denoised_ratio_d.shape[0]))
 
         if de.output_file_type == 'fasta':
             de.denoised_d = de.denoised_d.to_dict(orient='index')
@@ -52,6 +54,7 @@ def write_output(de):
 
     if (de.output_type == 'ratio_d') or (de.output_type == 'all'):
         de.denoised_ratio_d = de.denoised_ratio_d[list(de.denoised_ratio_d.loc[:, de.count] >= de.min_abund)]
+        de.denoised_ratio_d.index = list(range(de.denoised_ratio_d.shape[0]))
 
         if de.output_file_type == 'fasta':
             de.denoised_ratio_d = de.denoised_ratio_d.to_dict(orient='index')
