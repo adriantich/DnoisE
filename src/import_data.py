@@ -49,7 +49,7 @@ def import_data(de):
             else:
                 size = list(input_file.values[list(range(0, input_file.shape[0], 4)),
                                               list(input_file.loc[0].str.contains(str(de.count + '=')))])
-            de.data_initial = pd.DataFrame({'id': ids, de.count: size, de.seq: seqs})
+            de.data_initial = pd.DataFrame({de.id: ids, de.count: size, de.seq: seqs})
             de.data_initial = de.data_initial.replace(to_replace='@', value='', regex=True)
             de.data_initial = de.data_initial.replace(to_replace=(de.count + '='), value='', regex=True)
             de.data_initial[de.count] = pd.to_numeric(de.data_initial[de.count])
@@ -70,7 +70,7 @@ def import_data(de):
             io_file = io.StringIO(all_file)
             de.data_initial = pd.read_csv(io_file, sep=';', header=None)
             del all_file, io_file
-            de.data_initial.columns = ['id', de.count, de.seq]
+            de.data_initial.columns = [de.id, de.count, de.seq]
             de.data_initial = de.data_initial.replace(to_replace='>', value='', regex=True)
             de.data_initial = de.data_initial.replace(to_replace=(de.count + '='), value='', regex=True)
             de.data_initial[de.count] = pd.to_numeric(de.data_initial[de.count])
@@ -80,6 +80,13 @@ def import_data(de):
 
     elif de.input_type == 'csv':
         de.data_initial = pd.read_csv(de.MOTUfile, sep=de.sep)
+        if 'ID' in de.data_initial.keys():
+            de.id = 'ID'
+        elif 'id' in de.data_initial.keys():
+            pass
+        else:
+            print("sequence name must have a column called ID or id")
+            sys.exit()
 
     if de.merge_from_info:
         de.merge_data = pd.read_csv(de.infofile, sep=',')

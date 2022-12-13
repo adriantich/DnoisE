@@ -34,7 +34,7 @@ def transform_data(de):
             de.first_col_names.remove(de.seq)
         de.data_initial.loc[:, de.count] = de.data_initial.loc[:, de.abund_col_names].sum(axis=1)
     else:
-        de.first_col_names = ['id']
+        de.first_col_names = [de.id]
 
     # sort by total reads
     de.data_initial = de.data_initial.sort_values([de.count], axis=0, ascending=False)

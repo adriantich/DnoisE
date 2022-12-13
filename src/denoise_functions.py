@@ -81,6 +81,7 @@ class DnoisEFunctions:
     get_entropy = False
     within_motu = False
     motu_column = 1
+    id = 'id'
 
     def __init__(self):
         print("starting to denoise")
@@ -368,7 +369,7 @@ class DnoisEFunctions:
         self.q10 = q - 1
 
     def denoising(self, pos):
-        pD = self.data_initial.loc[pos, 'id']
+        pD = self.data_initial.loc[pos, self.id]
         pDseq = self.data_initial.loc[pos, self.seq]
         pDabund = self.data_initial.loc[pos, self.count]
         position = len(self.run_list)
@@ -379,7 +380,7 @@ class DnoisEFunctions:
             # if the pM is a daughter sequence, move to the next pM
             if self.run_list[a].get('daughter'):
                 continue
-            pM = self.run_list[a].get('id')
+            pM = self.run_list[a].get(self.id)
             pMpos = a
             pMseq = self.data_initial.loc[pMpos, self.seq]
             pMabund = self.data_initial.loc[pMpos, self.count]
@@ -430,7 +431,7 @@ class DnoisEFunctions:
             info = {'daughter': pD, 'mother_d': None, 'd': None,
                     'mother_ratio': None, 'ratio': None,
                     'mother_ratio_d': None, 'ratio_d': None}
-            run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': False}
+            run_list = {self.id: pD, self.count: pDabund, 'run': True, 'daughter': False}
             return [True], [info], [pD], [pD], [pD], [run_list]
         else:  # it is a daughter
             # print pD name to each pM depending on different criteria
@@ -445,7 +446,7 @@ class DnoisEFunctions:
             info = {'daughter': pD, 'mother_d': pM_d, 'd': min(Ml.loc[:, 'd']),
                     'mother_ratio': pM_ratio, 'ratio': min(Ml.loc[:, 'ratio']),
                     'mother_ratio_d': pM_ratio_d, 'ratio_d': min(Ml.loc[:, 'ratio_d'])}
-            run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': True}
+            run_list = {self.id: pD, self.count: pDabund, 'run': True, 'daughter': True}
             return [False], [info], [pM_d], [pM_ratio], [pM_ratio_d], [run_list]
 
     def denoising_parallel(self, pos):
@@ -470,7 +471,7 @@ class DnoisEFunctions:
         elif pos == self.q10:
             print('100% aprox')
 
-        pD = self.data_initial.loc[pos, 'id']
+        pD = self.data_initial.loc[pos, self.id]
         pDseq = self.data_initial.loc[pos, self.seq]
         pDabund = self.data_initial.loc[pos, self.count]
         position = len(self.run_list)
@@ -482,7 +483,7 @@ class DnoisEFunctions:
             # if the pM is daughter move to the next pM
             if self.run_list[a].get('daughter'):
                 continue
-            pM = self.run_list[a].get('id')
+            pM = self.run_list[a].get(self.id)
             pMpos = a
             pMseq = self.data_initial.loc[pMpos, self.seq]
             pMabund = self.data_initial.loc[pMpos, self.count]
@@ -532,7 +533,7 @@ class DnoisEFunctions:
             info = {'daughter': pD, 'mother_d': None, 'd': None,
                     'mother_ratio': None, 'ratio': None,
                     'mother_ratio_d': None, 'ratio_d': None}
-            run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': False}
+            run_list = {self.id: pD, self.count: pDabund, 'run': True, 'daughter': False}
             return True, info, pD, pD, pD, run_list
             # exist
         else:  # it is a daughter
@@ -548,11 +549,11 @@ class DnoisEFunctions:
             info = {'daughter': pD, 'mother_d': pM_d, 'd': min(Ml.loc[:, 'd']),
                     'mother_ratio': pM_ratio, 'ratio': min(Ml.loc[:, 'ratio']),
                     'mother_ratio_d': pM_ratio_d, 'ratio_d': min(Ml.loc[:, 'ratio_d'])}
-            run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': True}
+            run_list = {self.id: pD, self.count: pDabund, 'run': True, 'daughter': True}
             return False, info, pM_d, pM_ratio, pM_ratio_d, run_list
 
     def denoising_ratio(self, pos):
-        pD = self.data_initial.loc[pos, 'id']
+        pD = self.data_initial.loc[pos, self.id]
         pDseq = self.data_initial.loc[pos, self.seq]
         pDabund = self.data_initial.loc[pos, self.count]
         position = len(self.run_list)
@@ -564,7 +565,7 @@ class DnoisEFunctions:
             # if the pM is daughter move to the next pM
             if self.run_list[a].get('daughter'):
                 continue
-            pM = self.run_list[a].get('id')
+            pM = self.run_list[a].get(self.id)
             pMpos = a
             pMseq = self.data_initial.loc[pMpos, self.seq]
             pMabund = self.data_initial.loc[pMpos, self.count]
@@ -616,7 +617,7 @@ class DnoisEFunctions:
             info = {'daughter': pD, 'mother_d': None, 'd': None,
                     'mother_ratio': None, 'ratio': None,
                     'mother_ratio_d': None, 'ratio_d': None}
-            run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': False}
+            run_list = {self.id: pD, self.count: pDabund, 'run': True, 'daughter': False}
             return [True], [info], [pD], [run_list]
         else:  # it is a daughter
             # print pD name to each pM depending on different criteria
@@ -631,7 +632,7 @@ class DnoisEFunctions:
             info = {'daughter': pD, 'mother_d': pM_d, 'd': min(Ml.loc[:, 'd']),
                     'mother_ratio': pM_ratio, 'ratio': min(Ml.loc[:, 'ratio']),
                     'mother_ratio_d': pM_ratio_d, 'ratio_d': min(Ml.loc[:, 'ratio_d'])}
-            run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': True}
+            run_list = {self.id: pD, self.count: pDabund, 'run': True, 'daughter': True}
             return [False], [info], [pM_ratio], [run_list]
 
     def denoising_parallel_ratio(self, pos):
@@ -657,7 +658,7 @@ class DnoisEFunctions:
         elif pos == self.q10:
             print('100% aprox')
 
-        pD = self.data_initial.loc[pos, 'id']
+        pD = self.data_initial.loc[pos, self.id]
         pDseq = self.data_initial.loc[pos, self.seq]
         pDabund = self.data_initial.loc[pos, self.count]
         position = len(self.run_list)
@@ -669,7 +670,7 @@ class DnoisEFunctions:
             # if the pM is daughter move to the next pM
             if self.run_list[a].get('daughter'):
                 continue
-            pM = self.run_list[a].get('id')
+            pM = self.run_list[a].get(self.id)
             pMpos = a
             pMseq = self.data_initial.loc[pMpos, self.seq]
             pMabund = self.data_initial.loc[pMpos, self.count]
@@ -720,7 +721,7 @@ class DnoisEFunctions:
             info = {'daughter': pD, 'mother_d': None, 'd': None,
                     'mother_ratio': None, 'ratio': None,
                     'mother_ratio_d': None, 'ratio_d': None}
-            run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': False}
+            run_list = {self.id: pD, self.count: pDabund, 'run': True, 'daughter': False}
             return True, info, pD, run_list
             # exist
         else:  # it is a daughter
@@ -736,11 +737,11 @@ class DnoisEFunctions:
             info = {'daughter': pD, 'mother_d': pM_d, 'd': min(Ml.loc[:, 'd']),
                     'mother_ratio': pM_ratio, 'ratio': min(Ml.loc[:, 'ratio']),
                     'mother_ratio_d': pM_ratio_d, 'ratio_d': min(Ml.loc[:, 'ratio_d'])}
-            run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': True}
+            run_list = {self.id: pD, self.count: pDabund, 'run': True, 'daughter': True}
             return False, info, pM_ratio, run_list
 
     def denoising_Adcorrected(self, pos):
-        pD = self.data_initial.loc[pos, 'id']
+        pD = self.data_initial.loc[pos, self.id]
         pDseq = self.data_initial.loc[pos, self.seq]
         pDabund = self.data_initial.loc[pos, self.count]
         position = len(self.run_list)
@@ -753,7 +754,7 @@ class DnoisEFunctions:
             # if the pM is daughter move to the next pM
             if self.run_list[a].get('daughter'):
                 continue
-            pM = self.run_list[a].get('id')
+            pM = self.run_list[a].get(self.id)
             pMpos = a
             pMseq = self.data_initial.loc[pMpos, self.seq]
             pMabund = self.data_initial.loc[pMpos, self.count]
@@ -814,7 +815,7 @@ class DnoisEFunctions:
                     'mother_ratio_d': None, 'ratio_d': None,
                     'difpos1': None, 'difpos2': None, 'difpos3': None,
                     'dtotal': None, 'betacorr': None}
-            run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': False}
+            run_list = {self.id: pD, self.count: pDabund, 'run': True, 'daughter': False}
             return [True], [info], [pD], [pD], [pD], [run_list]
         else:  # it is a daughter
             # print pD name to each pM depending on different criteria
@@ -834,7 +835,7 @@ class DnoisEFunctions:
                     'mother_ratio_d': pM_ratio_d, 'ratio_d': min(Ml.loc[:, 'ratio_d']),
                     'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3,
                     'dtotal': d, 'betacorr': betacorr}
-            run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': True}
+            run_list = {self.id: pD, self.count: pDabund, 'run': True, 'daughter': True}
             return [False], [info], [pM_d], [pM_ratio], [pM_ratio_d], [run_list]
 
     def denoising_Adcorrected_parallel(self, pos):
@@ -859,7 +860,7 @@ class DnoisEFunctions:
         elif pos == self.q10:
             print('100% aprox')
 
-        pD = self.data_initial.loc[pos, 'id']
+        pD = self.data_initial.loc[pos, self.id]
         pDseq = self.data_initial.loc[pos, self.seq]
         pDabund = self.data_initial.loc[pos, self.count]
         position = len(self.run_list)
@@ -872,7 +873,7 @@ class DnoisEFunctions:
             # if the pM is daughter move to the next pM
             if self.run_list[a].get('daughter'):
                 continue
-            pM = self.run_list[a].get('id')
+            pM = self.run_list[a].get(self.id)
             pMpos = a
             pMseq = self.data_initial.loc[pMpos, self.seq]
             pMabund = self.data_initial.loc[pMpos, self.count]
@@ -932,7 +933,7 @@ class DnoisEFunctions:
                     'mother_ratio_d': None, 'ratio_d': None,
                     'difpos1': None, 'difpos2': None, 'difpos3': None,
                     'dtotal': None, 'betacorr': None}
-            run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': False}
+            run_list = {self.id: pD, self.count: pDabund, 'run': True, 'daughter': False}
             return True, info, pD, pD, pD, run_list
             # exist
         else:  # it is a daughter
@@ -953,11 +954,11 @@ class DnoisEFunctions:
                     'mother_ratio_d': pM_ratio_d, 'ratio_d': min(Ml.loc[:, 'ratio_d']),
                     'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3,
                     'dtotal': d, 'betacorr': betacorr}
-            run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': True}
+            run_list = {self.id: pD, self.count: pDabund, 'run': True, 'daughter': True}
             return False, info, pM_d, pM_ratio, pM_ratio_d, run_list
 
     def denoising_Adcorrected_ratio(self, pos):
-        pD = self.data_initial.loc[pos, 'id']
+        pD = self.data_initial.loc[pos, self.id]
         pDseq = self.data_initial.loc[pos, self.seq]
         pDabund = self.data_initial.loc[pos, self.count]
         position = len(self.run_list)
@@ -970,7 +971,7 @@ class DnoisEFunctions:
             # if the pM is daughter move to the next pM
             if self.run_list[a].get('daughter'):
                 continue
-            pM = self.run_list[a].get('id')
+            pM = self.run_list[a].get(self.id)
             pMpos = a
             pMseq = self.data_initial.loc[pMpos, self.seq]
             pMabund = self.data_initial.loc[pMpos, self.count]
@@ -1032,7 +1033,7 @@ class DnoisEFunctions:
                     'mother_ratio_d': None, 'ratio_d': None,
                     'difpos1': None, 'difpos2': None, 'difpos3': None,
                     'dtotal': None, 'betacorr': None}
-            run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': False}
+            run_list = {self.id: pD, self.count: pDabund, 'run': True, 'daughter': False}
             return [True], [info], [pD], [run_list]
         else:  # it is a daughter
             # print pD name to each pM depending on different criteria
@@ -1052,7 +1053,7 @@ class DnoisEFunctions:
                     'mother_ratio_d': pM_ratio_d, 'ratio_d': min(Ml.loc[:, 'ratio_d']),
                     'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3,
                     'dtotal': d, 'betacorr': betacorr}
-            run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': True}
+            run_list = {self.id: pD, self.count: pDabund, 'run': True, 'daughter': True}
             return [False], [info], [pM_ratio], [run_list]
 
     def denoising_Adcorrected_parallel_ratio(self, pos):
@@ -1077,7 +1078,7 @@ class DnoisEFunctions:
         elif pos == self.q10:
             print('100% aprox')
 
-        pD = self.data_initial.loc[pos, 'id']
+        pD = self.data_initial.loc[pos, self.id]
         pDseq = self.data_initial.loc[pos, self.seq]
         pDabund = self.data_initial.loc[pos, self.count]
         position = len(self.run_list)
@@ -1090,7 +1091,7 @@ class DnoisEFunctions:
             # if the pM is daughter move to the next pM
             if self.run_list[a].get('daughter'):
                 continue
-            pM = self.run_list[a].get('id')
+            pM = self.run_list[a].get(self.id)
             pMpos = a
             pMseq = self.data_initial.loc[pMpos, self.seq]
             pMabund = self.data_initial.loc[pMpos, self.count]
@@ -1151,7 +1152,7 @@ class DnoisEFunctions:
                     'mother_ratio_d': None, 'ratio_d': None,
                     'difpos1': None, 'difpos2': None, 'difpos3': None,
                     'dtotal': None, 'betacorr': None}
-            run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': False}
+            run_list = {self.id: pD, self.count: pDabund, 'run': True, 'daughter': False}
             return True, info, pD, run_list
             # exist
         else:  # it is a daughter
@@ -1172,7 +1173,7 @@ class DnoisEFunctions:
                     'mother_ratio_d': pM_ratio_d, 'ratio_d': min(Ml.loc[:, 'ratio_d']),
                     'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3,
                     'dtotal': d, 'betacorr': betacorr}
-            run_list = {'id': pD, self.count: pDabund, 'run': True, 'daughter': True}
+            run_list = {self.id: pD, self.count: pDabund, 'run': True, 'daughter': True}
             return False, info, pM_ratio, run_list
 
     def write_d_from_info(self, mother):
@@ -1187,45 +1188,45 @@ class DnoisEFunctions:
 
     def write_ratio_from_info(self, mother):
         row = [
-            self.good_mothers[list(self.good_mothers.loc[:, 'id'] == mother)][self.first_col_names].values.tolist()[0] +
+            self.good_mothers[list(self.good_mothers.loc[:, self.id] == mother)][self.first_col_names].values.tolist()[0] +
             list(self.data_initial.loc[[[mother] +
                                         list(self.merge_data.daughter[self.merge_data.mother_ratio == mother])][0],
                                        self.abund_col_names].sum(0)) +
-            self.good_mothers[list(self.good_mothers.loc[:, 'id'] == mother)][self.seq].values.tolist()]
+            self.good_mothers[list(self.good_mothers.loc[:, self.id] == mother)][self.seq].values.tolist()]
 
         return row
 
     def write_ratio_d_from_info(self, mother):
         row = [
-            self.good_mothers[list(self.good_mothers.loc[:, 'id'] == mother)][self.first_col_names].values.tolist()[0] +
+            self.good_mothers[list(self.good_mothers.loc[:, self.id] == mother)][self.first_col_names].values.tolist()[0] +
             list(self.data_initial.loc[[[mother] +
                                         list(self.merge_data.daughter[self.merge_data.mother_ratio_d == mother])][0],
                                        self.abund_col_names].sum(0)) +
-            self.good_mothers[list(self.good_mothers.loc[:, 'id'] == mother)][self.seq].values.tolist()]
+            self.good_mothers[list(self.good_mothers.loc[:, self.id] == mother)][self.seq].values.tolist()]
 
         return row
 
     def write_output_ratio(self, mother):
         row = [
-            self.good_mothers[list(self.good_mothers.loc[:, 'id'] == mother)][self.first_col_names].values.tolist()[0] +
+            self.good_mothers[list(self.good_mothers.loc[:, self.id] == mother)][self.first_col_names].values.tolist()[0] +
             list(self.data_initial.loc[list(pd.Series(self.denoised_ratio_output) == mother), self.abund_col_names].sum(0)) +
-            self.good_mothers[list(self.good_mothers.loc[:, 'id'] == mother)][self.seq].values.tolist()]
+            self.good_mothers[list(self.good_mothers.loc[:, self.id] == mother)][self.seq].values.tolist()]
 
         return row
 
     def write_output_d(self, mother):
         row = [
-            self.good_mothers[list(self.good_mothers.loc[:, 'id'] == mother)][self.first_col_names].values.tolist()[0] +
+            self.good_mothers[list(self.good_mothers.loc[:, self.id] == mother)][self.first_col_names].values.tolist()[0] +
             list(self.data_initial.loc[list(pd.Series(self.denoised_d_output) == mother), self.abund_col_names].sum(0)) +
-            self.good_mothers[list(self.good_mothers.loc[:, 'id'] == mother)][self.seq].values.tolist()]
+            self.good_mothers[list(self.good_mothers.loc[:, self.id] == mother)][self.seq].values.tolist()]
 
         return row
 
     def write_output_ratio_d(self, mother):
         row = [
-            self.good_mothers[list(self.good_mothers.loc[:, 'id'] == mother)][self.first_col_names].values.tolist()[0] +
+            self.good_mothers[list(self.good_mothers.loc[:, self.id] == mother)][self.first_col_names].values.tolist()[0] +
             list(self.data_initial.loc[list(pd.Series(self.denoised_ratio_d_output) == mother), self.abund_col_names].sum(0)) +
-            self.good_mothers[list(self.good_mothers.loc[:, 'id'] == mother)][self.seq].values.tolist()]
+            self.good_mothers[list(self.good_mothers.loc[:, self.id] == mother)][self.seq].values.tolist()]
 
         return row
 

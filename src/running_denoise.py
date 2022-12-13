@@ -24,19 +24,19 @@ def run_denoise(de, test=False):
     #     mp.set_start_method('spawn')
 
     if de.output_type == 'ratio':
-        de.denoised_ratio_output = [de.data_initial.loc[0, 'id']]
+        de.denoised_ratio_output = [de.data_initial.loc[0, de.id]]
     else:
-        de.denoised_d_output = [de.data_initial.loc[0, 'id']]
-        de.denoised_ratio_output = [de.data_initial.loc[0, 'id']]
-        de.denoised_ratio_d_output = [de.data_initial.loc[0, 'id']]
+        de.denoised_d_output = [de.data_initial.loc[0, de.id]]
+        de.denoised_ratio_output = [de.data_initial.loc[0, de.id]]
+        de.denoised_ratio_d_output = [de.data_initial.loc[0, de.id]]
 
-    de.output_info = [{'daughter': de.data_initial.loc[0, 'id'], 'mother_d': None, 'd': None,
+    de.output_info = [{'daughter': de.data_initial.loc[0, de.id], 'mother_d': None, 'd': None,
                        'mother_ratio': None, 'ratio': None,
                        'mother_ratio_d': None, 'ratio_d': None}]
 
     de.good_seq = [True]
     de.abund_col_names.insert(0, de.count)
-    de.run_list = [{'id': de.data_initial.loc[0, 'id'], de.count: de.data_initial.loc[0, de.count],
+    de.run_list = [{de.id: de.data_initial.loc[0, de.id], de.count: de.data_initial.loc[0, de.count],
                     'run': True, 'daughter': False}]
 
     run_dnoise_testing(de)  # function in denoise_functions.py
@@ -54,7 +54,7 @@ def run_denoise(de, test=False):
 
     # del de.output_info
 
-    de.data_initial = de.data_initial.set_index(de.data_initial.loc[:, 'id'])
+    de.data_initial = de.data_initial.set_index(de.data_initial.loc[:, de.id])
 
     if (de.output_type == 'ratio') or (de.output_type == 'all'):
         de.good_mothers = de.data_initial.loc[de.good_seq][de.first_col_names + de.abund_col_names + [de.seq]]
@@ -77,12 +77,12 @@ def run_denoise(de, test=False):
                 de.denoised_ratio = pd.DataFrame(columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
                 for mother in tqdm(mothers_ratio):
                     row = [
-                        de.good_mothers[list(de.good_mothers.loc[:, 'id'] == mother)][
+                        de.good_mothers[list(de.good_mothers.loc[:, de.id] == mother)][
                             de.first_col_names].values.tolist()[
                             0] +
                         list(de.data_initial.loc[
                                  list(pd.Series(de.denoised_ratio_output) == mother), de.abund_col_names].sum(0)) +
-                        de.good_mothers[list(de.good_mothers.loc[:, 'id'] == mother)][de.seq].values.tolist()]
+                        de.good_mothers[list(de.good_mothers.loc[:, de.id] == mother)][de.seq].values.tolist()]
                     row = pd.Series(row[0], index=[de.first_col_names + de.abund_col_names + [de.seq]][0])
                     de.denoised_ratio = de.denoised_ratio.append(row, ignore_index=True)
                     de.good_mothers = de.good_mothers.drop(index=mother)
@@ -113,13 +113,13 @@ def run_denoise(de, test=False):
                 de.denoised_d = pd.DataFrame(columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
                 for mother in tqdm(mothers_d):
                     row = [
-                        de.good_mothers[list(de.good_mothers.loc[:, 'id'] == mother)][
+                        de.good_mothers[list(de.good_mothers.loc[:, de.id] == mother)][
                             de.first_col_names].values.tolist()[
                             0] +
                         list(de.data_initial.loc[
                             list(pd.Series(de.denoised_d_output) == mother), de.abund_col_names].sum(
                             0)) +
-                        de.good_mothers[list(de.good_mothers.loc[:, 'id'] == mother)][de.seq].values.tolist()]
+                        de.good_mothers[list(de.good_mothers.loc[:, de.id] == mother)][de.seq].values.tolist()]
                     row = pd.Series(row[0], index=[de.first_col_names + de.abund_col_names + [de.seq]][0])
                     de.denoised_d = de.denoised_d.append(row, ignore_index=True)
                     de.good_mothers = de.good_mothers.drop(index=mother)
@@ -150,12 +150,12 @@ def run_denoise(de, test=False):
                 de.denoised_ratio_d = pd.DataFrame(columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
                 for mother in tqdm(mothers_ratio_d):
                     row = [
-                        de.good_mothers[list(de.good_mothers.loc[:, 'id'] == mother)][de.first_col_names].values.tolist()[
+                        de.good_mothers[list(de.good_mothers.loc[:, de.id] == mother)][de.first_col_names].values.tolist()[
                             0] +
                         list(de.data_initial.loc[
                             list(pd.Series(de.denoised_ratio_d_output) == mother), de.abund_col_names].sum(
                             0)) +
-                        de.good_mothers[list(de.good_mothers.loc[:, 'id'] == mother)][de.seq].values.tolist()]
+                        de.good_mothers[list(de.good_mothers.loc[:, de.id] == mother)][de.seq].values.tolist()]
                     row = pd.Series(row[0], index=[de.first_col_names + de.abund_col_names + [de.seq]][0])
                     de.denoised_ratio_d = de.denoised_ratio_d.append(row, ignore_index=True)
                     de.good_mothers = de.good_mothers.drop(index=mother)
@@ -254,20 +254,20 @@ def run_denoise_entropy(de):
         # desub.max_ratio = ((1 / 2) ** (desub.alpha + 1)) * (1 / min(desub.Ad1, desub.Ad2, desub.Ad3))
 
         if desub.output_type == 'ratio':
-            desub.denoised_ratio_output = [desub.data_initial.loc[0, 'id']]
+            desub.denoised_ratio_output = [desub.data_initial.loc[0, de.id]]
         else:
-            desub.denoised_d_output = [desub.data_initial.loc[0, 'id']]
-            desub.denoised_ratio_output = [desub.data_initial.loc[0, 'id']]
-            desub.denoised_ratio_d_output = [desub.data_initial.loc[0, 'id']]
+            desub.denoised_d_output = [desub.data_initial.loc[0, de.id]]
+            desub.denoised_ratio_output = [desub.data_initial.loc[0, de.id]]
+            desub.denoised_ratio_d_output = [desub.data_initial.loc[0, de.id]]
 
-        desub.output_info = [{'daughter': desub.data_initial.loc[0, 'id'], 'mother_d': None, 'd': None,
+        desub.output_info = [{'daughter': desub.data_initial.loc[0, de.id], 'mother_d': None, 'd': None,
                               'mother_ratio': None, 'ratio': None,
                               'mother_ratio_d': None, 'ratio_d': None,
                               'difpos1': None, 'difpos2': None, 'difpos3': None,
                               'dtotal': None, 'betacorr': None}]
         desub.good_seq = [True]
         desub.abund_col_names.insert(0, de.count)
-        desub.run_list = [{'id': desub.data_initial.loc[0, 'id'], de.count: desub.data_initial.loc[0, de.count],
+        desub.run_list = [{de.id: desub.data_initial.loc[0, de.id], de.count: desub.data_initial.loc[0, de.count],
                            'run': True, 'daughter': False}]
 
         run_dnoise_testing(desub)
@@ -285,7 +285,7 @@ def run_denoise_entropy(de):
 
         del desub.output_info
 
-        desub.data_initial = desub.data_initial.set_index(desub.data_initial.loc[:, 'id'])
+        desub.data_initial = desub.data_initial.set_index(desub.data_initial.loc[:, de.id])
 
         if (desub.output_type == 'ratio') or (desub.output_type == 'all'):
             desub.good_mothers = desub.data_initial.loc[desub.good_seq][de.first_col_names +
@@ -310,12 +310,12 @@ def run_denoise_entropy(de):
                     desub.denoised_ratio = pd.DataFrame(columns=[de.first_col_names + desub.abund_col_names + [de.seq]][0])
                     for mother in tqdm(mothers_ratio):
                         row = [
-                            desub.good_mothers[list(desub.good_mothers.loc[:, 'id'] == mother)][de.first_col_names
+                            desub.good_mothers[list(desub.good_mothers.loc[:, de.id] == mother)][de.first_col_names
                             ].values.tolist()[0] +
                             list(desub.data_initial.loc[
                                 list(pd.Series(desub.denoised_ratio_output) == mother), desub.abund_col_names].sum(
                                 0)) +
-                            desub.good_mothers[list(desub.good_mothers.loc[:, 'id'] == mother)][de.seq].values.tolist()]
+                            desub.good_mothers[list(desub.good_mothers.loc[:, de.id] == mother)][de.seq].values.tolist()]
                         row = pd.Series(row[0], index=[de.first_col_names + desub.abund_col_names + [de.seq]][0])
                         desub.denoised_ratio = desub.denoised_ratio.append(row, ignore_index=True)
                         desub.good_mothers = desub.good_mothers.drop(index=mother)
@@ -347,13 +347,13 @@ def run_denoise_entropy(de):
                     desub.denoised_d = pd.DataFrame(columns=[de.first_col_names + desub.abund_col_names + [de.seq]][0])
                     for mother in tqdm(mothers_d):
                         row = [
-                            desub.good_mothers[list(desub.good_mothers.loc[:, 'id'] == mother)][
+                            desub.good_mothers[list(desub.good_mothers.loc[:, de.id] == mother)][
                                 de.first_col_names].values.tolist()[
                                 0] +
                             list(desub.data_initial.loc[
                                 list(pd.Series(desub.denoised_d_output) == mother), desub.abund_col_names].sum(
                                 0)) +
-                            desub.good_mothers[list(desub.good_mothers.loc[:, 'id'] == mother)][de.seq].values.tolist()]
+                            desub.good_mothers[list(desub.good_mothers.loc[:, de.id] == mother)][de.seq].values.tolist()]
                         row = pd.Series(row[0], index=[de.first_col_names + desub.abund_col_names + [de.seq]][0])
                         desub.denoised_d = desub.denoised_d.append(row, ignore_index=True)
                         desub.good_mothers = desub.good_mothers.drop(index=mother)
@@ -388,13 +388,13 @@ def run_denoise_entropy(de):
                         columns=[de.first_col_names + desub.abund_col_names + [de.seq]][0])
                     for mother in tqdm(mothers_ratio_d):
                         row = [
-                            desub.good_mothers[list(desub.good_mothers.loc[:, 'id'] == mother)][
+                            desub.good_mothers[list(desub.good_mothers.loc[:, de.id] == mother)][
                                 de.first_col_names].values.tolist()[
                                 0] +
                             list(desub.data_initial.loc[
                                 list(pd.Series(desub.denoised_ratio_d_output) == mother), desub.abund_col_names].sum(
                                 0)) +
-                            desub.good_mothers[list(desub.good_mothers.loc[:, 'id'] == mother)][de.seq].values.tolist()]
+                            desub.good_mothers[list(desub.good_mothers.loc[:, de.id] == mother)][de.seq].values.tolist()]
                         row = pd.Series(row[0], index=[de.first_col_names + desub.abund_col_names + [de.seq]][0])
                         desub.denoised_ratio_d = desub.denoised_ratio_d.append(row, ignore_index=True)
                         desub.good_mothers = desub.good_mothers.drop(index=mother)
@@ -416,7 +416,7 @@ def run_from_info(de):
     #     print('not Linux system detected')
     #     mp.set_start_method('spawn')
 
-    de.data_initial.index = de.data_initial.id
+    de.data_initial.index = de.data_initial[de.id]
     de.abund_col_names.insert(0, de.count)
     if (de.output_type == 'ratio') or (de.output_type == 'all'):
         mothers_ratio = de.merge_data.mother_ratio.unique()[1:]
