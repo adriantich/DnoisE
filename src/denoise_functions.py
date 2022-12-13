@@ -1405,6 +1405,7 @@ def copy_to_subset(declass, desub, seq_length, len_seq):
     desub.Ad3 = declass.Ad3
     desub.entropy = declass.entropy
     desub.first_col_names = declass.first_col_names
+    desub.id = declass.id
 
 
 
