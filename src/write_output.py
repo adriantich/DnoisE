@@ -28,7 +28,7 @@ def write_output(de):
             de.denoised_ratio = de.denoised_ratio.to_dict(orient='index')
             ofile = open(str(de.MOTUoutfile + '_denoised_ratio.fasta'), "w")
             for i in tqdm(range(len(de.denoised_ratio))):
-                ofile.write(">" + de.denoised_ratio[i]['id'] + ';size=' + str(de.denoised_ratio[i][de.count]) +
+                ofile.write(">" + de.denoised_ratio[i][de.id] + ';size=' + str(de.denoised_ratio[i][de.count]) +
                             ";\n" + de.denoised_ratio[i][de.seq].upper() + "\n")
             ofile.close()
         elif de.output_file_type == 'csv':
@@ -44,7 +44,7 @@ def write_output(de):
             de.denoised_d = de.denoised_d.to_dict(orient='index')
             ofile = open(str(de.MOTUoutfile + '_denoised_d.fasta'), "w")
             for i in tqdm(range(len(de.denoised_d))):
-                ofile.write(">" + de.denoised_d[i]['id'] + ';size=' + str(de.denoised_d[i][de.count]) + ";\n" +
+                ofile.write(">" + de.denoised_d[i][de.id] + ';size=' + str(de.denoised_d[i][de.count]) + ";\n" +
                             de.denoised_d[i][de.seq].upper() + "\n")
             ofile.close()
         elif de.output_file_type == 'csv':
@@ -60,7 +60,7 @@ def write_output(de):
             de.denoised_ratio_d = de.denoised_ratio_d.to_dict(orient='index')
             ofile = open(str(de.MOTUoutfile + '_denoised_ratio_d.fasta'), "w")
             for i in tqdm(range(len(de.denoised_ratio_d))):
-                ofile.write(">" + de.denoised_ratio_d[i]['id'] + ';size=' + str(de.denoised_ratio_d[i][de.count]) + ";\n" +
+                ofile.write(">" + de.denoised_ratio_d[i][de.id] + ';size=' + str(de.denoised_ratio_d[i][de.count]) + ";\n" +
                             de.denoised_ratio_d[i][de.seq].upper() + "\n")
             ofile.close()
         elif de.output_file_type == 'csv':
