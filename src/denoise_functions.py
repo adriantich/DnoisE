@@ -330,7 +330,7 @@ class DnoisEFunctions:
                 self.initial_pos = 3
             if 'arg_u' not in locals():
                 self.unique_length = False
-            if 'arg_w' in locals:
+            if 'arg_w' in locals():
                 print('--get_entropy not available with the --within_MOTU option')
                 sys.exit()
         else:
