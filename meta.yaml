@@ -1,6 +1,6 @@
 package:
   name: "dnoise"
-  version: "1.1"
+  version: "1.2"
 
 source:
   path: ../DnoisE
@@ -21,6 +21,7 @@ requirements:
     - pandas
     - numpy
     - tqdm
+    - python-levenshtein
 #    - Levenshtein
 
 about:
