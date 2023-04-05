@@ -34,6 +34,8 @@ the skew abundance ratio divided by beta(d) is the lowest (ratio_distance criter
 d, and r_d criteria.
 
 ### __WHAT'S NEW?__
+#### __In version 1.3.0__
+- DataFrame.append method was deprecated and now has been updated to pandas.concat
 #### __In version 1.2.0__
 - Now DnoisE can be performed within MOTU using the *-w* option.
 #### __In version 1.1.0__

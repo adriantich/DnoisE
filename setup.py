@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="DnoisE",
-    version="1.2",
+    version="1.3",
     description="Denoise sequence data sets from Illumina using distance corrected according to the entropy"
                 " of each codon position",
     author="Adrià Antich",
