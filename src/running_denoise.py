@@ -71,7 +71,7 @@ def run_denoise(de, test=False):
                 del pool
                 de.denoised_ratio = pd.DataFrame(row, columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
                 de.good_mothers = de.good_mothers.drop(index=mothers_ratio)
-                de.denoised_ratio = de.denoised_ratio.append(de.good_mothers, ignore_index=True)
+                de.denoised_ratio = pd.concat([de.denoised_ratio, de.good_mothers], ignore_index=True)
                 de.denoised_ratio = de.denoised_ratio.sort_values([de.count], axis=0, ascending=False)
             else:
                 de.denoised_ratio = pd.DataFrame(columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
@@ -84,9 +84,9 @@ def run_denoise(de, test=False):
                                  list(pd.Series(de.denoised_ratio_output) == mother), de.abund_col_names].sum(0)) +
                         de.good_mothers[list(de.good_mothers.loc[:, de.id] == mother)][de.seq].values.tolist()]
                     row = pd.Series(row[0], index=[de.first_col_names + de.abund_col_names + [de.seq]][0])
-                    de.denoised_ratio = de.denoised_ratio.append(row, ignore_index=True)
+                    de.denoised_ratio = pd.concat([de.denoised_ratio, row], ignore_index=True)
                     de.good_mothers = de.good_mothers.drop(index=mother)
-                de.denoised_ratio = de.denoised_ratio.append(de.good_mothers, ignore_index=True)
+                de.denoised_ratio = pd.concat([de.denoised_ratio, de.good_mothers], ignore_index=True)
                 de.denoised_ratio = de.denoised_ratio.sort_values([de.count], axis=0, ascending=False)
             if 'row' in locals():
                 del row
@@ -107,7 +107,7 @@ def run_denoise(de, test=False):
                 del pool
                 de.denoised_d = pd.DataFrame(row, columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
                 de.good_mothers = de.good_mothers.drop(index=mothers_d)
-                de.denoised_d = de.denoised_d.append(de.good_mothers, ignore_index=True)
+                de.denoised_d = pd.concat([de.denoised_d, de.good_mothers], ignore_index=True)
                 de.denoised_d = de.denoised_d.sort_values([de.count], axis=0, ascending=False)
             else:
                 de.denoised_d = pd.DataFrame(columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
@@ -121,9 +121,9 @@ def run_denoise(de, test=False):
                             0)) +
                         de.good_mothers[list(de.good_mothers.loc[:, de.id] == mother)][de.seq].values.tolist()]
                     row = pd.Series(row[0], index=[de.first_col_names + de.abund_col_names + [de.seq]][0])
-                    de.denoised_d = de.denoised_d.append(row, ignore_index=True)
+                    de.denoised_d = pd.concat([de.denoised_d, row], ignore_index=True)
                     de.good_mothers = de.good_mothers.drop(index=mother)
-                de.denoised_d = de.denoised_d.append(de.good_mothers, ignore_index=True)
+                de.denoised_d = pd.concat([de.denoised_d, de.good_mothers], ignore_index=True)
                 de.denoised_d = de.denoised_d.sort_values([de.count], axis=0, ascending=False)
             if 'row' in locals():
                 del row
@@ -144,7 +144,7 @@ def run_denoise(de, test=False):
                 del pool
                 de.denoised_ratio_d = pd.DataFrame(row, columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
                 de.good_mothers = de.good_mothers.drop(index=mothers_ratio_d)
-                de.denoised_ratio_d = de.denoised_ratio_d.append(de.good_mothers, ignore_index=True)
+                de.denoised_ratio_d = pd.concat([de.denoised_ratio_d, de.good_mothers], ignore_index=True)
                 de.denoised_ratio_d = de.denoised_ratio_d.sort_values([de.count], axis=0, ascending=False)
             else:
                 de.denoised_ratio_d = pd.DataFrame(columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
@@ -157,9 +157,9 @@ def run_denoise(de, test=False):
                             0)) +
                         de.good_mothers[list(de.good_mothers.loc[:, de.id] == mother)][de.seq].values.tolist()]
                     row = pd.Series(row[0], index=[de.first_col_names + de.abund_col_names + [de.seq]][0])
-                    de.denoised_ratio_d = de.denoised_ratio_d.append(row, ignore_index=True)
+                    de.denoised_ratio_d = pd.concat([de.denoised_ratio_d, row], ignore_index=True)
                     de.good_mothers = de.good_mothers.drop(index=mother)
-                de.denoised_ratio_d = de.denoised_ratio_d.append(de.good_mothers, ignore_index=True)
+                de.denoised_ratio_d = pd.concat([de.denoised_ratio_d, de.good_mothers], ignore_index=True)
                 de.denoised_ratio_d = de.denoised_ratio_d.sort_values([de.count], axis=0, ascending=False)
             if 'row' in locals():
                 del row
@@ -304,7 +304,7 @@ def run_denoise_entropy(de):
                                                         columns=[de.first_col_names + desub.abund_col_names +
                                                                  [de.seq]][0])
                     desub.good_mothers = desub.good_mothers.drop(index=mothers_ratio)
-                    desub.denoised_ratio = desub.denoised_ratio.append(desub.good_mothers, ignore_index=True)
+                    desub.denoised_ratio = pd.concat([desub.denoised_ratio, desub.good_mothers], ignore_index=True)
                     desub.denoised_ratio = desub.denoised_ratio.sort_values([desub.count], axis=0, ascending=False)
                 else:
                     desub.denoised_ratio = pd.DataFrame(columns=[de.first_col_names + desub.abund_col_names + [de.seq]][0])
@@ -317,9 +317,9 @@ def run_denoise_entropy(de):
                                 0)) +
                             desub.good_mothers[list(desub.good_mothers.loc[:, de.id] == mother)][de.seq].values.tolist()]
                         row = pd.Series(row[0], index=[de.first_col_names + desub.abund_col_names + [de.seq]][0])
-                        desub.denoised_ratio = desub.denoised_ratio.append(row, ignore_index=True)
+                        desub.denoised_ratio = pd.concat([desub.denoised_ratio, row], ignore_index=True)
                         desub.good_mothers = desub.good_mothers.drop(index=mother)
-                    desub.denoised_ratio = desub.denoised_ratio.append(desub.good_mothers, ignore_index=True)
+                    desub.denoised_ratio = pd.concat([desub.denoised_ratio, desub.good_mothers], ignore_index=True)
                     desub.denoised_ratio = desub.denoised_ratio.sort_values([desub.count], axis=0, ascending=False)
                 if 'row' in locals():
                     del row
@@ -341,7 +341,7 @@ def run_denoise_entropy(de):
                     del pool
                     desub.denoised_d = pd.DataFrame(row, columns=[de.first_col_names + desub.abund_col_names + [de.seq]][0])
                     desub.good_mothers = desub.good_mothers.drop(index=mothers_d)
-                    desub.denoised_d = desub.denoised_d.append(desub.good_mothers, ignore_index=True)
+                    desub.denoised_d = pd.concat([desub.denoised_d, desub.good_mothers], ignore_index=True)
                     desub.denoised_d = desub.denoised_d.sort_values([de.count], axis=0, ascending=False)
                 else:
                     desub.denoised_d = pd.DataFrame(columns=[de.first_col_names + desub.abund_col_names + [de.seq]][0])
@@ -355,9 +355,9 @@ def run_denoise_entropy(de):
                                 0)) +
                             desub.good_mothers[list(desub.good_mothers.loc[:, de.id] == mother)][de.seq].values.tolist()]
                         row = pd.Series(row[0], index=[de.first_col_names + desub.abund_col_names + [de.seq]][0])
-                        desub.denoised_d = desub.denoised_d.append(row, ignore_index=True)
+                        desub.denoised_d = pd.concat([desub.denoised_d, row], ignore_index=True)
                         desub.good_mothers = desub.good_mothers.drop(index=mother)
-                    desub.denoised_d = desub.denoised_d.append(desub.good_mothers, ignore_index=True)
+                    desub.denoised_d = pd.concat([desub.denoised_d, desub.good_mothers], ignore_index=True)
                     desub.denoised_d = desub.denoised_d.sort_values([desub.count], axis=0, ascending=False)
                 if 'row' in locals():
                     del row
@@ -381,7 +381,7 @@ def run_denoise_entropy(de):
                                                           columns=[de.first_col_names + desub.abund_col_names + [de.seq]][
                                                               0])
                     desub.good_mothers = desub.good_mothers.drop(index=mothers_ratio_d)
-                    desub.denoised_ratio_d = desub.denoised_ratio_d.append(desub.good_mothers, ignore_index=True)
+                    desub.denoised_ratio_d = pd.concat([desub.denoised_ratio_d, desub.good_mothers], ignore_index=True)
                     desub.denoised_ratio_d = desub.denoised_ratio_d.sort_values([desub.count], axis=0, ascending=False)
                 else:
                     desub.denoised_ratio_d = pd.DataFrame(
@@ -396,9 +396,9 @@ def run_denoise_entropy(de):
                                 0)) +
                             desub.good_mothers[list(desub.good_mothers.loc[:, de.id] == mother)][de.seq].values.tolist()]
                         row = pd.Series(row[0], index=[de.first_col_names + desub.abund_col_names + [de.seq]][0])
-                        desub.denoised_ratio_d = desub.denoised_ratio_d.append(row, ignore_index=True)
+                        desub.denoised_ratio_d = pd.concat([desub.denoised_ratio_d, row], ignore_index=True)
                         desub.good_mothers = desub.good_mothers.drop(index=mother)
-                    desub.denoised_ratio_d = desub.denoised_ratio_d.append(desub.good_mothers, ignore_index=True)
+                    desub.denoised_ratio_d = pd.concat([desub.denoised_ratio_d, desub.good_mothers], ignore_index=True)
                     desub.denoised_ratio_d = desub.denoised_ratio_d.sort_values([desub.count], axis=0, ascending=False)
                 if 'row' in locals():
                     del row
@@ -436,7 +436,7 @@ def run_from_info(de):
                 del pool
                 de.denoised_ratio = pd.DataFrame(row, columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
                 de.good_mothers = de.good_mothers.drop(index=mothers_ratio)
-                de.denoised_ratio = de.denoised_ratio.append(de.good_mothers, ignore_index=True)
+                de.denoised_ratio = pd.concat([de.denoised_ratio, de.good_mothers], ignore_index=True)
                 de.denoised_ratio = de.denoised_ratio.sort_values([de.count], axis=0, ascending=False)
             else:
                 de.denoised_ratio = pd.DataFrame(columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
@@ -449,9 +449,9 @@ def run_from_info(de):
                                                  de.abund_col_names].sum(0)) +
                         de.good_mothers[list(de.good_mothers.id == mother)][de.seq].values.tolist()]
                     row = pd.Series(row[0], index=[de.first_col_names + de.abund_col_names + [de.seq]][0])
-                    de.denoised_ratio = de.denoised_ratio.append(row, ignore_index=True)
+                    de.denoised_ratio = pd.concat([de.denoised_ratio, row], ignore_index=True)
                     de.good_mothers = de.good_mothers.drop(index=mother)
-                de.denoised_ratio = de.denoised_ratio.append(de.good_mothers, ignore_index=True)
+                de.denoised_ratio = pd.concat([de.denoised_ratio, de.good_mothers], ignore_index=True)
                 de.denoised_ratio = de.denoised_ratio.sort_values([de.count], axis=0, ascending=False)
             if 'row' in locals():
                 del row
@@ -474,7 +474,7 @@ def run_from_info(de):
                 del pool
                 de.denoised_d = pd.DataFrame(row, columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
                 de.good_mothers = de.good_mothers.drop(index=mothers_d)
-                de.denoised_d = de.denoised_d.append(de.good_mothers, ignore_index=True)
+                de.denoised_d = pd.concat([de.denoised_d, de.good_mothers], ignore_index=True)
                 de.denoised_d = de.denoised_d.sort_values([de.count], axis=0, ascending=False)
             else:
                 de.denoised_d = pd.DataFrame(columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
@@ -487,9 +487,9 @@ def run_from_info(de):
                                                  de.abund_col_names].sum(0)) +
                         de.good_mothers[list(de.good_mothers.id == mother)][de.seq].values.tolist()]
                     row = pd.Series(row[0], index=[de.first_col_names + de.abund_col_names + [de.seq]][0])
-                    de.denoised_d = de.denoised_d.append(row, ignore_index=True)
+                    de.denoised_d = pd.concat([de.denoised_d, row], ignore_index=True)
                     de.good_mothers = de.good_mothers.drop(index=mother)
-                de.denoised_d = de.denoised_d.append(de.good_mothers, ignore_index=True)
+                de.denoised_d = pd.concat([de.denoised_d, de.good_mothers], ignore_index=True)
                 de.denoised_d = de.denoised_d.sort_values([de.count], axis=0, ascending=False)
             if 'row' in locals():
                 del row
@@ -511,7 +511,7 @@ def run_from_info(de):
                 del pool
                 de.denoised_ratio_d = pd.DataFrame(row, columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
                 de.good_mothers = de.good_mothers.drop(index=mothers_ratio_d)
-                de.denoised_ratio_d = de.denoised_ratio_d.append(de.good_mothers, ignore_index=True)
+                de.denoised_ratio_d = pd.concat([de.denoised_ratio_d, de.good_mothers], ignore_index=True)
                 de.denoised_ratio_d = de.denoised_ratio_d.sort_values([de.count], axis=0, ascending=False)
             else:
                 de.denoised_ratio_d = pd.DataFrame(columns=[de.first_col_names + de.abund_col_names + [de.seq]][0])
@@ -524,9 +524,9 @@ def run_from_info(de):
                                                  de.abund_col_names].sum(0)) +
                         de.good_mothers[list(de.good_mothers.id == mother)][de.seq].values.tolist()]
                     row = pd.Series(row[0], index=[de.first_col_names + de.abund_col_names + [de.seq]][0])
-                    de.denoised_ratio_d = de.denoised_ratio_d.append(row, ignore_index=True)
+                    de.denoised_ratio_d = pd.concat([de.denoised_ratio_d, row], ignore_index=True)
                     de.good_mothers = de.good_mothers.drop(index=mother)
-                de.denoised_ratio_d = de.denoised_ratio_d.append(de.good_mothers, ignore_index=True)
+                de.denoised_ratio_d = pd.concat([de.denoised_ratio_d, de.good_mothers], ignore_index=True)
                 de.denoised_ratio_d = de.denoised_ratio_d.sort_values([de.count], axis=0, ascending=False)
             if 'row' in locals():
                 del row

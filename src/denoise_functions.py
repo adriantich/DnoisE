@@ -416,7 +416,7 @@ class DnoisEFunctions:
                 ratio_d = b_ratio / betacorr
                 df1 = [
                     {'pM': pM, 'pMpos': pMpos, 'pD': pD, 'ratio': b_ratio, 'd': d, 'ratio_d': ratio_d}]
-                Ml = Ml.append(df1)
+                Ml = pd.concat([Ml, df1])
                 # identification of the pM
                 # ratio
                 # d
@@ -519,7 +519,7 @@ class DnoisEFunctions:
                 ratio_d = b_ratio / betacorr
                 df1 = [
                     {'pM': pM, 'pMpos': pMpos, 'pD': pD, 'ratio': b_ratio, 'd': d, 'ratio_d': ratio_d}]
-                Ml = Ml.append(df1)
+                Ml = pd.concat([Ml, df1])
                 # identification of the pM
                 # ratio
                 # d
@@ -601,7 +601,7 @@ class DnoisEFunctions:
                 ratio_d = b_ratio / betacorr
                 df1 = [
                     {'pM': pM, 'pMpos': pMpos, 'pD': pD, 'ratio': b_ratio, 'd': d, 'ratio_d': ratio_d}]
-                Ml = Ml.append(df1)
+                Ml = pd.concat([Ml, df1])
                 # identification of the pM
                 # ratio
                 # d
@@ -706,7 +706,7 @@ class DnoisEFunctions:
                 ratio_d = b_ratio / betacorr
                 df1 = [
                     {'pM': pM, 'pMpos': pMpos, 'pD': pD, 'ratio': b_ratio, 'd': d, 'ratio_d': ratio_d}]
-                Ml = Ml.append(df1)
+                Ml = pd.concat([Ml, df1])
                 # identification of the pM
                 # ratio
                 # d
@@ -798,7 +798,7 @@ class DnoisEFunctions:
                     {'pM': pM, 'pMpos': pMpos, 'pD': pD, 'ratio': b_ratio, 'd': dcorr, 'ratio_d': ratio_d,
                      'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3,
                      'dtotal': d, 'betacorr': betacorr}]
-                Ml = Ml.append(df1)
+                Ml = pd.concat([Ml, df1])
                 # identification of the pM
                 # ratio
                 # d
@@ -917,7 +917,7 @@ class DnoisEFunctions:
                     {'pM': pM, 'pMpos': pMpos, 'pD': pD, 'ratio': b_ratio, 'd': dcorr, 'ratio_d': ratio_d,
                      'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3,
                      'dtotal': d, 'betacorr': betacorr}]
-                Ml = Ml.append(df1)
+                Ml = pd.concat([Ml, df1])
                 # identification of the pM
                 # ratio
                 # d
@@ -1015,7 +1015,7 @@ class DnoisEFunctions:
                     {'pM': pM, 'pMpos': pMpos, 'pD': pD, 'ratio': b_ratio, 'd': dcorr, 'ratio_d': ratio_d,
                      'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3,
                      'dtotal': d, 'betacorr': betacorr}]
-                Ml = Ml.append(df1)
+                Ml = pd.concat([Ml, df1])
                 # identification of the pM
                 # ratio
                 # d
@@ -1135,7 +1135,7 @@ class DnoisEFunctions:
                     {'pM': pM, 'pMpos': pMpos, 'pD': pD, 'ratio': b_ratio, 'd': dcorr, 'ratio_d': ratio_d,
                      'difpos1': difpos1, 'difpos2': difpos2, 'difpos3': difpos3,
                      'dtotal': d, 'betacorr': betacorr}]
-                Ml = Ml.append(df1)
+                Ml = pd.concat([Ml, df1])
                 # identification of the pM
                 # ratio
                 # d

@@ -44,12 +44,12 @@ def run_within_MOTU(de):
             if (de.output_type == 'ratio_d') or (de.output_type == 'all'):
                 de.denoised_ratio_d = demotu.denoised_ratio_d
         else:
-            de.output_info = de.output_info.append(demotu.output_info, ignore_index=True)
+            de.output_info = pd.concat([de.output_info, demotu.output_info], ignore_index=True)
             if (de.output_type == 'ratio') or (de.output_type == 'all'):
-                de.denoised_ratio = de.denoised_ratio.append(demotu.denoised_ratio, ignore_index=True)
+                de.denoised_ratio = pd.concat([de.denoised_ratio, demotu.denoised_ratio], ignore_index=True)
             if (de.output_type == 'd') or (de.output_type == 'all'):
-                de.denoised_d = de.denoised_d.append(demotu.denoised_d, ignore_index=True)
+                de.denoised_d = pd.concat([de.denoised_d, demotu.denoised_d], ignore_index=True)
             if (de.output_type == 'ratio_d') or (de.output_type == 'all'):
-                de.denoised_ratio_d = de.denoised_ratio_d.append(demotu.denoised_ratio_d, ignore_index=True)
+                de.denoised_ratio_d = pd.concat([de.denoised_ratio_d, demotu.denoised_ratio_d], ignore_index=True)
 
 
