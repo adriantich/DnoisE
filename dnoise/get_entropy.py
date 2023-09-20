@@ -1,7 +1,7 @@
 import pandas as pd
 
-from denoise_functions import *
-import entropy as en
+from dnoise.denoise_functions import *
+import dnoise.entropy as en
 
 
 def get_entropy_func(de):

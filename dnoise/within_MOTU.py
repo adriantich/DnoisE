@@ -11,10 +11,10 @@ within_MOTU.py contains the code to run DnoisE within each MOTU.
 
 import sys
 import multiprocessing as mp
-from denoise_functions import *
-from running_denoise import *
-from transform_data import *
-from write_output import *
+from dnoise.denoise_functions import *
+from dnoise.running_denoise import *
+from dnoise.transform_data import *
+from dnoise.write_output import *
 import copy
 import pandas as pd
 
