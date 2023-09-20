@@ -18,8 +18,7 @@ from dnoise.get_entropy import *
 from dnoise.within_MOTU import *
 
 
-if __name__ == '__main__':
-
+def main():
     # if platform.system() == 'Linux':
     #     mp.set_start_method('fork')
     # else:
@@ -57,4 +56,5 @@ if __name__ == '__main__':
     print('done')
 
 
-
+if __name__ == '__main__':
+    main()
