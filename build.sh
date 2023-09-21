@@ -1,6 +1,6 @@
 ${PYTHON} -m pip install . -vv --no-deps --ignore-installed
 
-python -m nuitka --enable-plugin=multiprocessing --standalone --static-libpython=no --follow-imports ${SRC_DIR}/dnoise/DnoisE.py
+python -m nuitka --standalone --static-libpython=no ${SRC_DIR}/dnoise/DnoisE.py
 
 mkdir -p ${PREFIX}/opt
 mkdir -p ${PREFIX}/bin
