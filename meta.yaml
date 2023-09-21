@@ -42,6 +42,9 @@ about:
 test:
   imports:
     - dnoise
+  commands:
+    - DnoisE.bin -h
+    - dnoise -h
 
 extra:
   recipe-maintainers:
