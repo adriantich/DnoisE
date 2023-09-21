@@ -33,7 +33,7 @@ Unoise formulation); (2) the “mother” with which it has the lowest d (distan
 the skew abundance ratio divided by beta(d) is the lowest (ratio_distance criterion). These criteria are short-named r, 
 d, and r_d criteria.
 
-### __WHAT'S NEW?__
+### __WHAT IS NEW?__
 #### __In version 1.3.0__
 - DataFrame.append method was deprecated and now has been updated to pandas.concat
 #### __In version 1.2.0__
@@ -59,64 +59,88 @@ DnoisE depends on the following software:
 * R
 * bash
 
-DnoisE is easy to install from the terminal. Presently it runs on UNIX/Linux systems. An executable file can be optionally created (see below), otherwise the program can be run directly from the python script DnoisE.py.
+DnoisE is easy to install from the terminal. Presently it runs on UNIX/Linux systems. An executable file can be optionally created (see below), otherwise the program can be run directly from the python script `dnoise/DnoisE.py`.
+
 
 #### __A. INSTALLATION FROM GITHUB__
 #### __1. First clone the github repository__
 
-```console
+```bash
 git clone https://github.com/adriantich/DnoisE.git
 ```
 
 #### __2a. INSTALL WITH install.sh__
-install.sh is a bash script that installs DnoisE and the required modules and creates an executable file (DnoisE.bin). It is recommended
-to use a pyenv environment to avoid potential issues with python versions (see pyenv [documentation](https://github.com/pyenv/pyenv)).
+install.sh is a bash script that installs DnoisE and the required modules and
+creates an executable file (DnoisE.bin). It is recommended to use a virtual
+environment (e.g. [venv](https://docs.python.org/3/library/venv.html) or
+[pyenv](https://github.com/pyenv/pyenv)) to avoid potential issues with python
+versions.
 
-```console
+Installation requires Python `pip` and `nuitka`.
+
+```bash
 cd DnoisE/
 bash install.sh
+# Test install, show help message
+dnoise -h
+./DnoisE.dist/DnoisE.bin -h
 ```
 
+Two versions of DnoisE are installed. The pure Python version will be available
+on the path as `dnoise`. The binary version compiled by Nuitka will be located
+in the folder `DnoisE.dist`, which also contains libraries required by the
+program. The whole folder can be moved or copied to a different location (as
+described in [Nuitka
+documentation](https://nuitka.net/doc/user-manual.html#use-case-4-program-distribution),
+and the executable `DnoisE.dist/DnoisE.bin` can be symlinked to your path.
+
+
 #### __2b. INSTALL MANUALLY__
-The manual installation requires the following modules
+
+If you wish to install only the pure Python version, you can run only the pip
+install command. Pip should automatically install the required dependencies.
+
+```bash
+cd DnoisE
+python -m pip install .
+```
+
+If you wish to only compile the binary with Nuitka, first install the required dependencies before running Nuitka.
 
    + [Pandas](https://pandas.pydata.org/)
    + [nuitka](https://nuitka.net/)
    + [levenshtein](https://maxbachmann.github.io/Levenshtein/)
    + [tqdm](https://pypi.org/project/tqdm/)
 
-To make a binary of the program, nuitka creates an executable file (DnoisE.bin) in the "./src" directory as follows:
-
-```console
-cd ./DnoisE/
+```bash
+cd ./DnoisE
 
 pip3 install pandas
 pip3 install nuitka
 pip3 install levenshtein
 pip3 install tqdm
 
-cd ./src
-
-python3 -m nuitka --enable-plugin=multiprocessing --follow-imports DnoisE.py
+python3 -m nuitka --static-libpython=no --standalone dnoise/DnoisE.py
 ```
+
 #### __B. INSTALLATION FROM CONDA__
 #### __1. Install package__
 
-```console
+```bash
 conda install -c adriantich dnoise
 ```
 Different python versions (3.6, 3.7 and 3.8) are available at the [conda repository](https://anaconda.org/adriantich/dnoise/files).
 
-However the *Lenshtein* package is not available so its instllation must be done manually as follows
+However the *Levenshtein* package is not available so its installation must be done manually as follows
 
-```console
+```bash
 pip3 install levenshtein
 ```
 
 #### __2. Create an executable file (optional)__
 To create a binary file of the program run 
 
-```console
+```bash
 python3 -m nuitka --enable-plugin=multiprocessing --follow-imports DnoisE.py
 ```
 from the directory where the conda package has been installed (typically ~/anaconda3/pkgs/dnoise-<dnoise_version>/lib/<python_version>/site-packages/src).
@@ -132,15 +156,15 @@ large files). It also accepts .fastq input files.
 
 DnoisE can be called from the executable created by *nuitka* or directly from the python script. See example below:
 
-```console
-> ./src/DnoisE.bin -h
-> python3 ./src/DnoisE.py -h
+```bash
+> ./dnoise/DnoisE.bin -h
+> python3 ./dnoise/DnoisE.py -h
 ```
 
 Parameters of DnoisE are described in help but some are explained in more detail below.
 
-```console
-> ./src/DnoisE -h
+```bash
+> ./dnoise/DnoisE -h
 
 *HELP*
 Displaying help
@@ -275,7 +299,7 @@ performed using the entropy values of each codon position in coding barcodes. We
 Leray/Leray-XT primers (Leray et al. 2013; Wangensteen et al. 2018) and consequently sequences start with a 
 codon position 3 and the first initial codon position is the second nucleotide as follows:
 
-```console
+```bash
 seq       --> T-T-T-G-A-G-T-T-C-A-A-T-...
 position  --> 3-1-2-3-1-2-3-1-2-3-1-2-...
 ```
@@ -349,8 +373,8 @@ A column specifying the MOTU for each sequence is required.
 If DnoisE is run after SWARM (see [Torognes](https://github.com/torognes/swarm)) a separate .csv file for each MOTU is needed.
 MOTUs_from_Swarm.sh will return a directory were all MOTUs will be stored as separate .csv files
 
-```console
-> bash DnoisE/src/MOTUs_from_Swarm.sh -h
+```bash
+> bash DnoisE/dnoise/MOTUs_from_Swarm.sh -h
 
 Generating a .csv file of each MOTU sequences using output of SWARM
 
