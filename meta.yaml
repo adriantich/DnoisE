@@ -12,17 +12,17 @@ requirements:
     - setuptools
     - pip
   build:
-    - python
+    - python >=3.8
     - cython
     - nuitka
+    - patchelf
     - git
   run:
-    - python
+    - python >=3.8
     - pandas
     - numpy
     - tqdm
     - python-levenshtein
-#    - Levenshtein
 
 about:
   home: https://github.com/adriantich/DnoisE
@@ -30,6 +30,10 @@ about:
   license_familY: GNU
   license_file: LICENSE
   summary: "Denoise sequence data sets from Illumina using distance corrected according to the entropy of each codon position"
+
+test:
+  imports:
+    - dnoise
 
 extra:
   recipe-maintainers:

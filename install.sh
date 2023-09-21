@@ -1,8 +1,5 @@
 #!/bin/bash
 
-python3 setup.py install
+# python -m pip install .
 
-cd ./src
-
-python3 -m nuitka --enable-plugin=multiprocessing --follow-imports DnoisE.py
-
+python -m nuitka --enable-plugin=multiprocessing --static-libpython=no --standalone --follow-imports dnoise/DnoisE.py

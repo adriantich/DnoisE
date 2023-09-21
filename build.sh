@@ -1,7 +1,10 @@
-$PYTHON setup.py install --single-version-externally-managed --record=record.txt
+${PYTHON} -m pip install . -vv --no-deps --ignore-installed
 
-cd ./src
+python -m nuitka --enable-plugin=multiprocessing --standalone --static-libpython=no --follow-imports ${SRC_DIR}/dnoise/DnoisE.py
 
-python -m nuitka --enable-plugin=multiprocessing --static-libpython=no --follow-imports DnoisE.py
+mkdir -p ${PREFIX}/opt
+mkdir -p ${PREFIX}/bin
 
+mv DnoisE.dist ${PREFIX}/opt
 
+ln -s -r ${PREFIX}/opt/DnoisE.dist/DnoisE.bin ${PREFIX}/bin/DnoisE.bin
