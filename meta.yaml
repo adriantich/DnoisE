@@ -26,8 +26,8 @@ requirements:
 
 about:
   home: https://github.com/adriantich/DnoisE
-  license: GNU GENERAL PUBLIC LICENSE
-  license_familY: GNU
+  license: GPL-3.0-only
+  license_family: GPL
   license_file: LICENSE
   summary: "Denoise sequence data sets from Illumina using distance corrected according to the entropy of each codon position"
 
