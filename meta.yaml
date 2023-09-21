@@ -16,10 +16,8 @@ requirements:
     - pip
   build:
     - python >=3.8
-    - cython
     - nuitka =1.8
     - patchelf
-    - git
     # following required in build for nuitka to compile
     - pandas =2.0
     - numpy >=1.21
