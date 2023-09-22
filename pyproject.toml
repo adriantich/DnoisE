@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "DnoisE"
+requires-python = ">=3.8"
+version = "1.4"
+description = "Denoise sequence data sets from Illumina using distance corrected according to the entropy of each codon position"
+dependencies = ["pandas==2.0", "levenshtein==0.21", "tqdm"]
+authors = [
+  { name = "Adrià Antich", email = "adriantich@gmail.com" }
+]
+
+[project.urls]
+homepage = "https://github.com/adriantich/DnoisE"
+
+[tool.setuptools.packages.find]
+include = ["dnoise"]
+
+[project.scripts]
+dnoise = "dnoise.DnoisE:main"

@@ -1,6 +1,9 @@
 package:
   name: "dnoise"
-  version: "1.3"
+  version: "1.4"
+
+build:
+  number: 0
 
 source:
   path: ../DnoisE
@@ -12,24 +15,34 @@ requirements:
     - setuptools
     - pip
   build:
-    - python
-    - cython
-    - nuitka
-    - git
-  run:
-    - python
-    - pandas
-    - numpy
+    - python >=3.8
+    - nuitka =1.8
+    - patchelf
+    # following required in build for nuitka to compile
+    - pandas =2.0
+    - numpy >=1.21
     - tqdm
-    - python-levenshtein
-#    - Levenshtein
+    - python-levenshtein =0.21
+  run:
+    - python >=3.8
+    - pandas =2.0
+    - numpy >=1.21
+    - tqdm
+    - python-levenshtein =0.21
 
 about:
   home: https://github.com/adriantich/DnoisE
-  license: GNU GENERAL PUBLIC LICENSE
-  license_familY: GNU
+  license: GPL-3.0-only
+  license_family: GPL
   license_file: LICENSE
   summary: "Denoise sequence data sets from Illumina using distance corrected according to the entropy of each codon position"
+
+test:
+  imports:
+    - dnoise
+  commands:
+    - DnoisE.bin -h
+    - dnoise -h
 
 extra:
   recipe-maintainers:

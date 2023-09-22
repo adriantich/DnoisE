@@ -9,17 +9,16 @@ measure (parameter d) according to the entropy of each codon position.
 
 import sys
 import multiprocessing as mp
-from denoise_functions import *
-from import_data import *
-from running_denoise import *
-from transform_data import *
-from write_output import *
-from get_entropy import *
-from within_MOTU import *
+from dnoise.denoise_functions import *
+from dnoise.import_data import *
+from dnoise.running_denoise import *
+from dnoise.transform_data import *
+from dnoise.write_output import *
+from dnoise.get_entropy import *
+from dnoise.within_MOTU import *
 
 
-if __name__ == '__main__':
-
+def main():
     # if platform.system() == 'Linux':
     #     mp.set_start_method('fork')
     # else:
@@ -57,4 +56,5 @@ if __name__ == '__main__':
     print('done')
 
 
-
+if __name__ == '__main__':
+    main()

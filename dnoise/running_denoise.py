@@ -14,8 +14,8 @@ import multiprocessing as mp
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
-from denoise_functions import *
-import entropy as en
+from dnoise.denoise_functions import *
+import dnoise.entropy as en
 
 
 def run_denoise(de, test=False):

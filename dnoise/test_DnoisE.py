@@ -1,8 +1,8 @@
 
 import unittest
-from denoise_functions import *
-from running_denoise import *
-from entropy import *
+from dnoise.denoise_functions import *
+from dnoise.running_denoise import *
+from dnoise.entropy import *
 import json
 from copy import deepcopy
 
