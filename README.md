@@ -34,6 +34,11 @@ the skew abundance ratio divided by beta(d) is the lowest (ratio_distance criter
 d, and r_d criteria.
 
 ### __WHAT IS NEW?__
+#### __In version 1.4.0__
+- [Brandon Seah](https://github.com/kbseah) submited some suggestions to improve the code. This are the changes reported:
+   - Replace deprecated setup.py with pyproject.toml and fix module imports
+   - Add script as entry point that can be installed to path with setuptools
+   - Modify nuitka parameters and build.sh script to get Conda packaging working
 #### __In version 1.3.0__
 - DataFrame.append method was deprecated and now has been updated to pandas.concat
 #### __In version 1.2.0__
