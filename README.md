@@ -148,7 +148,7 @@ To create a binary file of the program run
 ```bash
 python3 -m nuitka --enable-plugin=multiprocessing --follow-imports DnoisE.py
 ```
-from the directory where the conda package has been installed (typically ~/anaconda3/pkgs/dnoise-<dnoise_version>/lib/<python_version>/site-packages/src).
+from the directory where the conda package has been installed (typically ~/anaconda3/pkgs/dnoise-<dnoise_version>/lib/<python_version>/site-packages/dnoise/).
 
 
 ### __WORKFLOW__
