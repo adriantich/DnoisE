@@ -131,16 +131,29 @@ python3 -m nuitka --static-libpython=no --standalone dnoise/DnoisE.py
 #### __B. INSTALLATION FROM CONDA__
 #### __1. Install package__
 
-```bash
-conda install -c adriantich dnoise
-```
-Different python versions (3.6, 3.7 and 3.8) are available at the [conda repository](https://anaconda.org/adriantich/dnoise/files).
+From version v1.4.0 onwards, DnoisE is also available via the
+[Bioconda](https://bioconda.github.io/) channel of the [Conda package
+manager](https://docs.conda.io/en/latest/), under the package name `dnoise`.
 
-However the *Levenshtein* package is not available so its installation must be done manually as follows
+Install `dnoise` to the current Conda environment:
 
 ```bash
-pip3 install levenshtein
+conda install -c conda-forge -c bioconda -c defaults --strict-channel-priority dnoise
 ```
+
+It is not recommended to install new packages to the default Conda `base`
+environment, so you may wish to create a new environment instead. The following
+command creates a new Conda environment named `dnoise-env` with `dnoise`:
+
+```bash
+conda create -n dnoise-env -c conda-forge -c bioconda -c defaults --strict-channel-priority dnoise
+```
+
+Refer to the [Bioconda documentation
+("Usage")](https://bioconda.github.io/index.html) for an explanation of why the
+channels (`conda-forge`, `bioconda`, `defaults`) have to be specified in the
+order given.
+
 
 #### __2. Create an executable file (optional)__
 To create a binary file of the program run 
@@ -160,6 +173,8 @@ Therefore, it accepts and returns both .fas and .csv files. However, writing out
 large files). It also accepts .fastq input files.
 
 DnoisE can be called from the executable created by *nuitka* or directly from the python script. See example below:
+
+From v1.4.0 onwards, the executable is named `dnoise`.
 
 ```bash
 > ./dnoise/DnoisE.bin -h
