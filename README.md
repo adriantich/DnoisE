@@ -34,6 +34,9 @@ the skew abundance ratio divided by beta(d) is the lowest (ratio_distance criter
 d, and r_d criteria.
 
 ### __WHAT IS NEW?__
+#### __In version 1.4.1__
+- As reported by [Brandon Seah](https://github.com/kbseah) in issue [#28](https://github.com/adriantich/DnoisE/issues/28)
+there was a bug when using -c 1 in which the mothers rows needed to be transposed. This has been solved now.
 #### __In version 1.4.0__
 - [Brandon Seah](https://github.com/kbseah) submited some suggestions to improve the code. This are the changes reported:
    - Replace deprecated setup.py with pyproject.toml and fix module imports
