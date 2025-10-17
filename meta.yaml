@@ -16,19 +16,19 @@ requirements:
     - pip
   build:
     - python >=3.8
-    - nuitka =1.8
+    - nuitka 
     - patchelf
     # following required in build for nuitka to compile
     - pandas =2.0
     - numpy >=1.21
     - tqdm
-    - python-levenshtein =0.21
+    - python-levenshtein
   run:
     - python >=3.8
     - pandas =2.0
     - numpy >=1.21
     - tqdm
-    - python-levenshtein =0.21
+    - python-levenshtein
 
 about:
   home: https://github.com/adriantich/DnoisE
