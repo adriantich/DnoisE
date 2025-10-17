@@ -36,6 +36,10 @@ def main():
     print(argument_list)
     de.read_parameters(argument_list)
     import_data(de)
+    if de.data_initial.shape[0] == 1:
+        print('Warning: only one sequence in the input file, no denoising will be performed')
+        write_output_single(de)
+        sys.exit(0)
     if de.within_motu:
         run_within_MOTU(de)
     else:

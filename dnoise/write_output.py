@@ -68,4 +68,38 @@ def write_output(de):
 
         del de.denoised_ratio_d
 
+def write_output_single(de):
+    print('writing output_info')
+    if de.entropy:
+        de.MOTUoutfile = str(de.MOTUoutfile + '_Adcorr')
+
+    if (de.output_type == 'ratio') or (de.output_type == 'all'):
+
+        if de.output_file_type == 'fasta':
+            ofile = open(str(de.MOTUoutfile + '_denoised_ratio.fasta'), "w")
+            ofile.write(">" + de.data_initial.loc[0, de.id] + ';size=' + str(de.data_initial.loc[0, de.count]) +
+                        ";\n" + de.data_initial.loc[0, de.seq].upper() + "\n")
+            ofile.close()
+        elif de.output_file_type == 'csv':
+            de.data_initial.to_csv(str(de.MOTUoutfile + '_denoised_ratio.csv'), index=False)
+
+    if (de.output_type == 'd') or (de.output_type == 'all'):
+
+        if de.output_file_type == 'fasta':
+            ofile = open(str(de.MOTUoutfile + '_denoised_d.fasta'), "w")
+            ofile.write(">" + de.data_initial.loc[0, de.id] + ';size=' + str(de.data_initial.loc[0, de.count]) +
+                        ";\n" + de.data_initial.loc[0, de.seq].upper() + "\n")
+            ofile.close()
+        elif de.output_file_type == 'csv':
+            de.data_initial.to_csv(str(de.MOTUoutfile + '_denoised_d.csv'), index=False)
+
+    if (de.output_type == 'ratio_d') or (de.output_type == 'all'):
+
+        if de.output_file_type == 'fasta':
+            ofile = open(str(de.MOTUoutfile + '_denoised_ratio_d.fasta'), "w")
+            ofile.write(">" + de.data_initial.loc[0, de.id] + ';size=' + str(de.data_initial.loc[0, de.count]) +
+                        ";\n" + de.data_initial.loc[0, de.seq].upper() + "\n")
+            ofile.close()
+        elif de.output_file_type == 'csv':
+            de.data_initial.to_csv(str(de.MOTUoutfile + '_denoised_ratio_d.csv'), index=False)
 
